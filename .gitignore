@@ -134,3 +134,34 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# --- Spring Boot / Java ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/
+.gradle/
+build/
+*.log
+
+# --- C++ ---
+*.o
+*.out
+*.a
+*.so
+*.exe
+*.dll
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+.clangd/
+
+# --- Kafka / Zookeeper ---
+kafka-logs/
+zookeeper-data/
+zookeeper-logs/
+
+# Docker volumes, images, containers (only if local)
+**/tmp/
+**/data/
+
