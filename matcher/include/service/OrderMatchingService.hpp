@@ -15,7 +15,7 @@ namespace core
 
     class OrderMatchingService
     {
-        OrderBook book_;
+        OrderBook &book_ = OrderBook::getInstance(); // Reference to the singleton instance
         kafka::KafkaTradeProducer tradeProd_;
         kafka::KafkaLTPProducer ltpProd_;
         kafka::KafkaOrderBookProducer obProd_;

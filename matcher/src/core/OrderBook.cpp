@@ -7,6 +7,10 @@
 namespace core
 {
 
+    // Initialize static members
+    OrderBook *OrderBook::instance_ = nullptr;
+    std::once_flag OrderBook::initFlag_;
+
     void OrderBook::addOrder(const Order &o)
     {
         if (o.side() == dto::Side::BUY)
@@ -47,6 +51,13 @@ namespace core
     double OrderBook::getLTP() const
     {
         return lastTradedPrice_;
+    }
+
+    OrderBook &OrderBook::getInstance()
+    {
+        std::call_once(initFlag_, []()
+                       { instance_ = new OrderBook(); });
+        return *instance_;
     }
 
     // const std::map<double, std::list<Order>, std::greater<>> &OrderBook::getBids() const

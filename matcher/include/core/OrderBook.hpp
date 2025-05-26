@@ -17,11 +17,27 @@ namespace core
         friend class SellLimitStrategy;
         friend class OrderMatchingService; // Allow access to private members
 
+    private:
+        // Private constructor to prevent instantiation
+        OrderBook() = default;
+
+        // Delete copy constructor and assignment operator
+        OrderBook(const OrderBook &) = delete;
+        OrderBook &operator=(const OrderBook &) = delete;
+
+        // Static instance
+        static OrderBook *instance_;
+        static std::once_flag initFlag_;
+
+        // Private members
         std::map<double, std::list<Order>, std::greater<>> bids_;
         std::map<double, std::list<Order>> asks_;
         double lastTradedPrice_{0.0};
 
     public:
+        // Static method to get the singleton instance
+        static OrderBook &getInstance();
+
         void addOrder(const Order &o);
         void removeOrder(const Order &o);
         void updateLTP(double price);
