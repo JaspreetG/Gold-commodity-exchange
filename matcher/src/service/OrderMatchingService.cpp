@@ -5,9 +5,8 @@
 
 namespace core
 {
-
     OrderMatchingService::OrderMatchingService()
-        : tradeProd_(), ltpProd_(), obProd_() // Initialize producers
+        : book_(OrderBook::getInstance()), tradeProd_(), ltpProd_(), obProd_() // Initialize all members
     {
     }
 

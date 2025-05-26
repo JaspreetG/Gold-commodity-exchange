@@ -21,6 +21,7 @@ namespace core
         kafka::KafkaOrderBookProducer obProd_;
 
     public:
+        OrderMatchingService(); // Explicitly declare the constructor
         void handleOrder(const dto::OrderData &dto);
     };
 
