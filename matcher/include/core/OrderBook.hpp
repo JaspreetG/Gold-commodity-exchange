@@ -25,6 +25,10 @@ namespace core
         OrderBook(const OrderBook &) = delete;
         OrderBook &operator=(const OrderBook &) = delete;
 
+        // Delete move constructor and move assignment operator
+        OrderBook(OrderBook &&) = delete;
+        OrderBook &operator=(OrderBook &&) = delete;
+
         // Static instance
         static OrderBook *instance_;
         static std::once_flag initFlag_;
