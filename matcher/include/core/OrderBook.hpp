@@ -46,13 +46,20 @@ namespace core
         void removeOrder(const Order &o);
         void updateLTP(double price);
         double getLTP() const;
-        
-        Order* getBestBid();
-        Order* getBestAsk();
-        
-        //std::optional<std::reference_wrapper<Order>> getBestBid();
-        //std::optional<std::reference_wrapper<Order>> getBestAsk();
-        
+
+        // std::optional<std::reference_wrapper<Order>> getBestBid();
+        // std::optional<std::reference_wrapper<Order>> getBestAsk();
+
+        // Getter methods for bids_ and asks_
+        const std::map<double, std::list<Order>, std::greater<>> &getBids() const
+        {
+            return bids_;
+        }
+
+        const std::map<double, std::list<Order>> &getAsks() const
+        {
+            return asks_;
+        }
     };
 
 } // namespace core

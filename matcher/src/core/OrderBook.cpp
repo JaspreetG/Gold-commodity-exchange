@@ -62,33 +62,15 @@ namespace core
         return *instance_;
     }
 
-    Order *OrderBook::getBestBid()
+    const std::map<double, std::list<Order>, std::greater<>> &OrderBook::getBids() const
     {
-        if (bids_.empty())
-            return nullptr;
-
-        auto &lst = bids_.begin()->second;
-
-        return lst.empty() ? nullptr : &lst.front();
+        return bids_;
     }
 
-    Order *OrderBook::getBestAsk(){
-        if(asks_.empty()) return nullptr;
-
-        auto &lst = asks_.begin()->second;
-
-        return lst.empty() ? nullptr : &lst.front();
+    const std::map<double, std::list<Order>> &OrderBook::getAsks() const
+    {
+        return asks_;
     }
-
-    // const std::map<double, std::list<Order>, std::greater<>> &OrderBook::getBids() const
-    // {
-    //     return bids_;
-    // }
-
-    // const std::map<double, std::list<Order>> &OrderBook::getAsks() const
-    // {
-    //     return asks_;
-    // }
 
     // std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid()
     // {
@@ -105,7 +87,5 @@ namespace core
     //     auto &lst = asks_.begin()->second;
     //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
     // }
-
-    
 
 } // namespace core
