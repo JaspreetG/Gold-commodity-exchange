@@ -1,3 +1,4 @@
 {
-  "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/matcher"
+  "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/matcher",
+  "cmake.buildDirectory": "${workspaceFolder}/matcher/build"
 }

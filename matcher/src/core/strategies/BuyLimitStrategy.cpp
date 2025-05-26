@@ -1,5 +1,6 @@
 #include "core/strategies/BuyLimitStrategy.hpp"
 #include "core/OrderBook.hpp"
+#include "core/Order.hpp" // Include for full definition of Order
 #include <chrono>
 
 namespace core {
