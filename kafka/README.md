@@ -15,7 +15,7 @@ run
 docker login
 then
 
-```
+```shell
 docker-compose -f docker-compose.kafka.yml up -d
 ```
 
@@ -28,7 +28,7 @@ edit kafka env to add topics
 
 Produce a message:
 
-```
+```shell
 docker exec -it kafka-kafka-1 kafka-console-producer \
   --broker-list localhost:9092 \
   --topic orders
@@ -43,7 +43,7 @@ Then type messages like:
 
 Consume messages:
 
-```
+```shell
 docker exec -it kafka-kafka-1 kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic orders \
