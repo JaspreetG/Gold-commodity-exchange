@@ -22,10 +22,7 @@ docker-compose -f docker-compose.kafka.yml up -d
 ## 🚀 Creating Topics
 
 Run the topic creation script (after Kafka is up):
-
-```bash
-bash kafka/create-topics.sh
-```
+edit kafka env to add topics
 
 ## 🧪 Test produce/consume
 
