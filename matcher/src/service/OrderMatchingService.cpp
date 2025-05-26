@@ -6,6 +6,11 @@
 namespace core
 {
 
+    OrderMatchingService::OrderMatchingService()
+        : tradeProd_(), ltpProd_(), obProd_() // Initialize producers
+    {
+    }
+
     void OrderMatchingService::handleOrder(const dto::OrderData &dto)
     {
         Order o = OrderFactory::create(dto);
