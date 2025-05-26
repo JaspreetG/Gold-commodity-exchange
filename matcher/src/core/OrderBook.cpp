@@ -2,6 +2,8 @@
 #include "core/OrderBook.hpp"
 #include <algorithm>
 #include <stdexcept>
+#include <mutex>
+#include <thread>
 #include <optional> // Include for std::optional
 
 namespace core
@@ -70,20 +72,20 @@ namespace core
     //     return asks_;
     // }
 
-    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid()
-    // {
-    //     if (bids_.empty())
-    //         return std::nullopt;
-    //     auto &lst = bids_.begin()->second;
-    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
-    // }
+    std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid()
+    {
+        if (bids_.empty())
+            return std::nullopt;
+        auto &lst = bids_.begin()->second;
+        return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
+    }
 
-    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestAsk()
-    // {
-    //     if (asks_.empty())
-    //         return std::nullopt;
-    //     auto &lst = asks_.begin()->second;
-    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
-    // }
+    std::optional<std::reference_wrapper<Order>> OrderBook::getBestAsk()
+    {
+        if (asks_.empty())
+            return std::nullopt;
+        auto &lst = asks_.begin()->second;
+        return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
+    }
 
 } // namespace core

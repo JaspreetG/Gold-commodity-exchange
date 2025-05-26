@@ -164,4 +164,3 @@ zookeeper-logs/
 # Docker volumes, images, containers (only if local)
 **/tmp/
 **/data/
-

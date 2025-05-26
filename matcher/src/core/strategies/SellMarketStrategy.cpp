@@ -2,6 +2,7 @@
 #include "core/OrderBook.hpp"
 #include "core/Order.hpp" // Include for full definition of Order
 #include <chrono>
+#include <algorithm>
 
 namespace core
 {
