@@ -1,5 +1,18 @@
 {
   "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/matcher",
   "cmake.buildDirectory": "${workspaceFolder}/matcher/build",
-  "C_Cpp.errorSquiggles": "enabled"
+  "C_Cpp.errorSquiggles": "enabled",
+  "files.associations": {
+    "array": "cpp",
+    "istream": "cpp",
+    "locale": "cpp",
+    "variant": "cpp",
+    "complex": "cpp",
+    "memory": "cpp",
+    "future": "cpp",
+    "format": "cpp",
+    "functional": "cpp",
+    "tuple": "cpp",
+    "utility": "cpp"
+  }
 }

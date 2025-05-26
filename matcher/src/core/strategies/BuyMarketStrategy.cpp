@@ -16,11 +16,11 @@ namespace core
 
         while (qty > 0)
         {
-            auto bestAskPtr = book.getBestAsk();
-            if (!bestAskPtr)
+            auto bestAskOpt = book.getAsks();
+            if (bestAskOpt.empty())
                 break;
-            auto &bestAsk = *bestAskPtr;
-            double tradeQty = std::min(qty, bestAsk.quantity());
+            auto &bestAsk = bestAskOpt.begin()->second.front();
+            double tradeQty = std::min(qty, static_cast<double>(bestAsk.quantity()));
             double price = bestAsk.price();
 
             trades.emplace_back(incoming.id(), bestAsk.id(),

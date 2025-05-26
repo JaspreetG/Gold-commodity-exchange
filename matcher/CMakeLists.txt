@@ -29,6 +29,9 @@ link_directories(/opt/homebrew/Cellar/librdkafka/2.10.0/lib)
 # Add Abseil library for Protobuf dependencies
 find_package(absl CONFIG REQUIRED)
 
+# Add include directories for Abseil
+include_directories(${absl_INCLUDE_DIRS})
+
 # 🔗 Link everything together
 target_link_libraries(MatchingEngine
     PRIVATE proto
