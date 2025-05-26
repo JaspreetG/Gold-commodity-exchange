@@ -1,42 +1,78 @@
+#include "core/Order.hpp"
 #include "core/OrderBook.hpp"
 #include <algorithm>
 #include <stdexcept>
+#include <optional> // Include for std::optional
 
-namespace core {
+namespace core
+{
 
-void OrderBook::addOrder(const Order& o) {
-    if (o.side() == dto::Side::BUY)
-        bids_[o.price()].push_back(o);
-    else
-        asks_[o.price()].push_back(o);
-}
+    void OrderBook::addOrder(const Order &o)
+    {
+        if (o.side() == dto::Side::BUY)
+            bids_[o.price()].push_back(o);
+        else
+            asks_[o.price()].push_back(o);
+    }
 
-void OrderBook::removeOrder(const Order& o) {
-    auto& book = (o.side() == dto::Side::BUY ? bids_ : asks_);
-    auto it = book.find(o.price());
-    if (it == book.end()) return;
-    it->second.remove_if([&](const Order& ord) { return ord.id() == o.id(); });
-    if (it->second.empty()) book.erase(it);
-}
+    void OrderBook::removeOrder(const Order &o)
+    {
+        if (o.side() == dto::Side::BUY)
+        {
+            auto it = bids_.find(o.price());
+            if (it == bids_.end())
+                return;
+            it->second.remove_if([&](const Order &ord)
+                                 { return ord.id() == o.id(); });
+            if (it->second.empty())
+                bids_.erase(it);
+        }
+        else
+        {
+            auto it = asks_.find(o.price());
+            if (it == asks_.end())
+                return;
+            it->second.remove_if([&](const Order &ord)
+                                 { return ord.id() == o.id(); });
+            if (it->second.empty())
+                asks_.erase(it);
+        }
+    }
 
-void OrderBook::updateLTP(double price) {
-    lastTradedPrice_ = price;
-}
+    void OrderBook::updateLTP(double price)
+    {
+        lastTradedPrice_ = price;
+    }
 
-double OrderBook::getLTP() const {
-    return lastTradedPrice_;
-}
+    double OrderBook::getLTP() const
+    {
+        return lastTradedPrice_;
+    }
 
-std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid() {
-    if (bids_.empty()) return std::nullopt;
-    auto& lst = bids_.begin()->second;
-    return lst.empty() ? std::nullopt : std::ref(lst.front());
-}
+    // const std::map<double, std::list<Order>, std::greater<>> &OrderBook::getBids() const
+    // {
+    //     return bids_;
+    // }
 
-std::optional<std::reference_wrapper<Order>> OrderBook::getBestAsk() {
-    if (asks_.empty()) return std::nullopt;
-    auto& lst = asks_.begin()->second;
-    return lst.empty() ? std::nullopt : std::ref(lst.front());
-}
+    // const std::map<double, std::list<Order>> &OrderBook::getAsks() const
+    // {
+    //     return asks_;
+    // }
+
+    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid()
+    // {
+    //     if (bids_.empty())
+    //         return std::nullopt;
+    //     auto &lst = bids_.begin()->second;
+    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
+    // }
+
+    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestAsk()
+    // {
+    //     if (asks_.empty())
+    //         return std::nullopt;
+    //     auto &lst = asks_.begin()->second;
+    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
+    // }
 
 } // namespace core

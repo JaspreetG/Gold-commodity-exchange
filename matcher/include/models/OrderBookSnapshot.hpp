@@ -9,13 +9,14 @@ namespace models
 
     class OrderBookSnapshot
     {
-        std::map<double, std::list<core::Order>> bids_;
+    private:
+        std::map<double, std::list<core::Order>, std::greater<>> bids_;
         std::map<double, std::list<core::Order>> asks_;
         std::chrono::system_clock::time_point ts_;
 
     public:
-        OrderBookSnapshot(std::map<double, std::list<core::Order>> &bids,
-                          std::map<double, std::list<core::Order>> &asks,
+        OrderBookSnapshot(const std::map<double, std::list<core::Order>, std::greater<>> &bids,
+                          const std::map<double, std::list<core::Order>> &asks,
                           std::chrono::system_clock::time_point ts);
 
         const auto &bids() const;

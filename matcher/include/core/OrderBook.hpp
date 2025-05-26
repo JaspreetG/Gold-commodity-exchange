@@ -2,10 +2,12 @@
 #include <map>
 #include <list>
 #include <optional>
-#include "core/Order.hpp"
+#include <functional>
 
 namespace core
 {
+
+    class Order; // Forward declaration
 
     class OrderBook
     {
@@ -13,8 +15,8 @@ namespace core
         friend class SellMarketStrategy;
         friend class BuyLimitStrategy;
         friend class SellLimitStrategy;
+        friend class OrderMatchingService; // Allow access to private members
 
-    private:
         std::map<double, std::list<Order>, std::greater<>> bids_;
         std::map<double, std::list<Order>> asks_;
         double lastTradedPrice_{0.0};
@@ -27,8 +29,6 @@ namespace core
 
         // std::optional<std::reference_wrapper<Order>> getBestBid();
         // std::optional<std::reference_wrapper<Order>> getBestAsk();
-
-        friend class OrderMatchingService; // for snapshot access
     };
 
 } // namespace core
