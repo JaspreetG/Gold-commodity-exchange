@@ -2,6 +2,7 @@
 #include "core/OrderBook.hpp"
 #include "core/Order.hpp" // Include for full definition of Order
 #include <chrono>
+#include <algorithm>
 
 namespace core
 {
@@ -40,7 +41,7 @@ namespace core
         incoming.setQuantity(qty);
         if (!trades.empty())
             book.updateLTP(trades.back().price());
-        else if (incoming.quantity() > 0)
+        if (incoming.quantity() > 0)
             book.addOrder(incoming);
 
         return trades;

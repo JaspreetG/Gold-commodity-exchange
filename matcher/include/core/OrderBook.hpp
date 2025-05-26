@@ -11,11 +11,11 @@ namespace core
 
     class OrderBook
     {
-        friend class BuyMarketStrategy;
-        friend class SellMarketStrategy;
-        friend class BuyLimitStrategy;
-        friend class SellLimitStrategy;
-        friend class OrderMatchingService; // Allow access to private members
+        // friend class BuyMarketStrategy;
+        // friend class SellMarketStrategy;
+        // friend class BuyLimitStrategy;
+        // friend class SellLimitStrategy;
+        // friend class OrderMatchingService; // Allow access to private members
 
     private:
         // Private constructor to prevent instantiation
@@ -47,8 +47,8 @@ namespace core
         void updateLTP(double price);
         double getLTP() const;
 
-        // std::optional<std::reference_wrapper<Order>> getBestBid();
-        // std::optional<std::reference_wrapper<Order>> getBestAsk();
+        std::optional<std::reference_wrapper<Order>> getBestBid();
+        std::optional<std::reference_wrapper<Order>> getBestAsk();
     };
 
 } // namespace core
