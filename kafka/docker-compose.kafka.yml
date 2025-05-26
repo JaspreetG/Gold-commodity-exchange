@@ -18,3 +18,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./script.sh:/script.sh
+    command: >
+      bash -c "
+      /etc/confluent/docker/run &
+      bash /script.sh;
+      wait
+      "
