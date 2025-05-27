@@ -16,10 +16,10 @@ namespace core
 
         while (qty > 0)
         {
-            auto bestBidOpt = book.getBestBid();
-            if (!bestBidOpt)
+            auto bestBidPtr = book.getBestBid();
+            if (!bestBidPtr)
                 break;
-            auto &bestBid = bestBidOpt->get();
+            auto &bestBid = *bestBidPtr;
             double tradeQty = std::min(qty, bestBid.quantity());
             double price = bestBid.price();
 

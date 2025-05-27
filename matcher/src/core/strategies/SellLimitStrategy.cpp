@@ -17,10 +17,10 @@ namespace core
 
         while (qty > 0)
         {
-            auto bestBidOpt = book.getBestBid();
-            if (!bestBidOpt)
+            auto bestBidPtr = book.getBestBid();
+            if (!bestBidPtr)
                 break;
-            auto &bestBid = bestBidOpt->get();
+            auto &bestBid = *bestBidPtr;
             if (bestBid.price() < limit)
                 break;
 

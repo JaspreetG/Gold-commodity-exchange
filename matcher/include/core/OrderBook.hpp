@@ -46,9 +46,13 @@ namespace core
         void removeOrder(const Order &o);
         void updateLTP(double price);
         double getLTP() const;
-
-        std::optional<std::reference_wrapper<Order>> getBestBid();
-        std::optional<std::reference_wrapper<Order>> getBestAsk();
+        
+        Order* getBestBid();
+        Order* getBestAsk();
+        
+        //std::optional<std::reference_wrapper<Order>> getBestBid();
+        //std::optional<std::reference_wrapper<Order>> getBestAsk();
+        
     };
 
 } // namespace core
