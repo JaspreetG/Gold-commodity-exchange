@@ -58,7 +58,6 @@ namespace kafka
                     {
                         std::string payload(static_cast<const char *>(msg->payload), msg->len);
                         auto j = nlohmann::json::parse(payload);
-                        std::string order_id = j.at("order_id");
                         std::string user_id = j.at("user_id");
                         double quantity = j.at("quantity");
                         double price = j.at("price");
@@ -66,13 +65,13 @@ namespace kafka
                         std::string type = j.at("type");
 
                         dto::OrderData orderData = {
-                            order_id,
+                            user_id,
                             quantity,
                             price,
                             (side == "BUY" ? dto::Side::BUY : dto::Side::SELL),
                             (type == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET)};
                         svc.handleOrder(orderData);
-                        std::cout << "Received order: " << order_id << std::endl;
+                        std::cout << "Received order: " << user_id << std::endl;
                     }
                     catch (const std::exception &e)
                     {
