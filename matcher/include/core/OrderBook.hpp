@@ -47,19 +47,13 @@ namespace core
         void updateLTP(double price);
         double getLTP() const;
 
-        // std::optional<std::reference_wrapper<Order>> getBestBid();
-        // std::optional<std::reference_wrapper<Order>> getBestAsk();
+        Order *getBestBid();
+        Order *getBestAsk();
 
         // Getter methods for bids_ and asks_
-        const std::map<double, std::list<Order>, std::greater<>> &getBids() const
-        {
-            return bids_;
-        }
+        std::map<double, std::list<Order>, std::greater<>> getBids();
 
-        const std::map<double, std::list<Order>> &getAsks() const
-        {
-            return asks_;
-        }
+        std::map<double, std::list<Order>> getAsks();
     };
 
 } // namespace core

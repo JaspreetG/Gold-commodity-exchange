@@ -7,6 +7,8 @@
 namespace core
 {
 
+    BuyMarketStrategy::BuyMarketStrategy() = default;
+
     std::vector<models::Trade> BuyMarketStrategy::match(
         Order &incoming, OrderBook &book)
     {
@@ -16,11 +18,11 @@ namespace core
 
         while (qty > 0)
         {
-            auto bestAskOpt = book.getAsks();
-            if (bestAskOpt.empty())
+            auto bestAskPtr = book.getBestAsk();
+            if (!bestAskPtr)
                 break;
-            auto &bestAsk = bestAskOpt.begin()->second.front();
-            double tradeQty = std::min(qty, static_cast<double>(bestAsk.quantity()));
+            auto &bestAsk = *bestAskPtr;
+            double tradeQty = std::min(qty, bestAsk.quantity());
             double price = bestAsk.price();
 
             trades.emplace_back(incoming.id(), bestAsk.id(),
@@ -40,5 +42,7 @@ namespace core
 
         return trades;
     }
+
+    BuyMarketStrategy::~BuyMarketStrategy() {}
 
 } // namespace core

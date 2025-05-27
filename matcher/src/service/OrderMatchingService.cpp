@@ -24,7 +24,7 @@ namespace core
                             std::chrono::system_clock::now());
             ltpProd_.publish(ltp);
         }
-        models::OrderBookSnapshot snapshot(book_.bids_, book_.asks_, std::chrono::system_clock::now()); // Pass the order book to the constructor
+        models::OrderBookSnapshot snapshot(book_.getBids(), book_.getAsks(), std::chrono::system_clock::now()); // Pass the order book to the constructor
         obProd_.publish(snapshot);
     }
 

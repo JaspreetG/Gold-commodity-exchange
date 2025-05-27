@@ -6,6 +6,7 @@
 
 namespace core
 {
+    SellMarketStrategy::SellMarketStrategy() = default;
 
     std::vector<models::Trade> SellMarketStrategy::match(
         Order &incoming, OrderBook &book)
@@ -41,4 +42,5 @@ namespace core
         return trades;
     }
 
+    SellMarketStrategy::~SellMarketStrategy() {}
 } // namespace core

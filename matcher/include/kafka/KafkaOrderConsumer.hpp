@@ -1,7 +1,7 @@
 #pragma once
 
-#include "dto/order.pb.h" // Include the generated Protobuf header
-#include <rdkafka.h>      // Include librdkafka header
+#include <nlohmann/json.hpp> // For JSON parsing
+#include <rdkafka.h>         // Include librdkafka header
 
 namespace core
 {
