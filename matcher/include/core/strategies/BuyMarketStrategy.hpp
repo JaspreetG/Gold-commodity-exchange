@@ -7,6 +7,7 @@ namespace core
     class BuyMarketStrategy : public IMatchingStrategy
     {
     public:
+        BuyMarketStrategy();
         virtual ~BuyMarketStrategy();
         std::vector<models::Trade>
         match(Order &incoming, OrderBook &book) override;

@@ -10,7 +10,8 @@ namespace core
     class IMatchingStrategy
     {
     public:
-        virtual ~IMatchingStrategy() = default;
+        IMatchingStrategy() = default;
+        virtual ~IMatchingStrategy();
         virtual std::vector<models::Trade> match(Order &incoming, OrderBook &book) = 0;
     };
 

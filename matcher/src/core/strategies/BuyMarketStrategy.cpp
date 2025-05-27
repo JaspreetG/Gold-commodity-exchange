@@ -7,7 +7,7 @@
 namespace core
 {
 
-    BuyMarketStrategy::BuyMarketStrategy() = default;
+    BuyMarketStrategy::BuyMarketStrategy() {}
 
     std::vector<models::Trade> BuyMarketStrategy::match(
         Order &incoming, OrderBook &book)

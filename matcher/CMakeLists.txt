@@ -5,7 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Include source files
 file(GLOB SOURCES "src/**/*.cpp")
-add_executable(MatchingEngine ${SOURCES})
+
+# Explicitly add strategy source files to ensure they are compiled
+file(GLOB STRATEGY_SOURCES "src/core/strategies/*.cpp")
+
+add_executable(MatchingEngine ${SOURCES} ${STRATEGY_SOURCES})
 
 # Include your headers
 include_directories(include)
