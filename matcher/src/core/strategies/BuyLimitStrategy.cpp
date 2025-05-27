@@ -7,7 +7,7 @@
 namespace core
 {
 
-    BuyLimitStrategy::BuyLimitStrategy() = default;
+    BuyLimitStrategy::BuyLimitStrategy() {}
 
     std::vector<models::Trade> BuyLimitStrategy::match(
         Order &incoming, OrderBook &book)
