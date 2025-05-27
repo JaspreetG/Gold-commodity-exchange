@@ -3,6 +3,7 @@
 #include <list>
 #include <optional>
 #include <functional>
+#include <mutex>
 
 namespace core
 {
