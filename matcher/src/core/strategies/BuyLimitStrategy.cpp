@@ -14,9 +14,9 @@ std::vector<models::Trade> BuyLimitStrategy::match(
     double limit = incoming.price();
 
     while (qty > 0) {
-        auto bestAskOpt = book.getBestAsk();
-        if (!bestAskOpt) break;
-        auto& bestAsk = bestAskOpt->get();
+        auto bestAskPtr = book.getBestAsk();
+        if (!bestAskPtr) break;
+        auto& bestAsk = *bestAskPtr;
         if (bestAsk.price() > limit) break;
 
         double tradeQty = std::min(qty, bestAsk.quantity());

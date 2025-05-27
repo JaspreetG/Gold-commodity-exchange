@@ -16,10 +16,10 @@ namespace core
 
         while (qty > 0)
         {
-            auto bestAskOpt = book.getBestAsk();
-            if (!bestAskOpt)
+            auto bestAskPtr = book.getBestAsk();
+            if (!bestAskPtr)
                 break;
-            auto &bestAsk = bestAskOpt->get();
+            auto &bestAsk = *bestAskPtr;
             double tradeQty = std::min(qty, bestAsk.quantity());
             double price = bestAsk.price();
 
