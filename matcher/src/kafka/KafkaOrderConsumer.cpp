@@ -40,8 +40,8 @@ namespace kafka
                             price,
                             (side == "BUY" ? dto::Side::BUY : dto::Side::SELL),
                             (type == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET)};
-                        svc.handleOrder(orderData);
                         std::cout << "Received order: " << user_id << std::endl;
+                        svc.handleOrder(orderData);
                     }
                 }
                 catch (const std::exception &e)

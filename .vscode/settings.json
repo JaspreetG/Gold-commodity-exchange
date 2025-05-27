@@ -14,6 +14,14 @@
     "functional": "cpp",
     "tuple": "cpp",
     "utility": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "__config": "cpp",
+    "valarray": "cpp",
+    "bitset": "cpp",
+    "cstdlib": "cpp",
+    "mutex": "cpp",
+    "shared_mutex": "cpp",
+    "regex": "cpp",
+    "*.inc": "cpp"
   }
 }
