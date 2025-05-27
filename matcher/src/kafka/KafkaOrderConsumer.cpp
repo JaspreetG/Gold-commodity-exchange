@@ -1,9 +1,8 @@
 #include "kafka/KafkaOrderConsumer.hpp"
-#include "dto/order.pb.h" // Include the generated Protobuf header
-#include <rdkafka.h>      // Include librdkafka header
+#include <rdkafka.h> // Include librdkafka header
+#include <nlohmann/json.hpp>
 #include <iostream>
 #include <cstring>
-#include "dto/OrderData.hpp"                // Include the OrderData DTO
 #include "service/OrderMatchingService.hpp" // Include the full definition of OrderMatchingService
 
 namespace kafka
@@ -54,24 +53,30 @@ namespace kafka
                 }
                 else
                 {
-                    // Deserialize Protobuf message
-                    dto::Order order;
-                    if (order.ParseFromArray(msg->payload, msg->len))
+                    // Parse JSON message
+                    try
                     {
-                        std::cout << "Received order: " << order.order_id() << std::endl;
+                        std::string payload(static_cast<const char *>(msg->payload), msg->len);
+                        auto j = nlohmann::json::parse(payload);
+                        std::string order_id = j.at("order_id");
+                        std::string user_id = j.at("user_id");
+                        double quantity = j.at("quantity");
+                        double price = j.at("price");
+                        std::string side = j.at("side");
+                        std::string type = j.at("type");
 
-                        // Process the order
                         dto::OrderData orderData = {
-                            order.order_id(),
-                            order.quantity(),
-                            order.price(),
-                            order.side() == "BUY" ? dto::Side::BUY : dto::Side::SELL,
-                            order.type() == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET};
+                            order_id,
+                            quantity,
+                            price,
+                            (side == "BUY" ? dto::Side::BUY : dto::Side::SELL),
+                            (type == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET)};
                         svc.handleOrder(orderData);
+                        std::cout << "Received order: " << order_id << std::endl;
                     }
-                    else
+                    catch (const std::exception &e)
                     {
-                        std::cerr << "Failed to parse Protobuf message" << std::endl;
+                        std::cerr << "Failed to parse JSON message: " << e.what() << std::endl;
                     }
                 }
                 rd_kafka_message_destroy(msg);

@@ -62,30 +62,33 @@ namespace core
         return *instance_;
     }
 
-    const std::map<double, std::list<Order>, std::greater<>> &OrderBook::getBids() const
+    Order *OrderBook::getBestBid()
+    {
+        if (bids_.empty())
+            return nullptr;
+
+        auto &lst = bids_.begin()->second;
+
+        return lst.empty() ? nullptr : &lst.front();
+    }
+
+    Order *OrderBook::getBestAsk()
+    {
+        if (asks_.empty())
+            return nullptr;
+
+        auto &lst = asks_.begin()->second;
+
+        return lst.empty() ? nullptr : &lst.front();
+    }
+    // Corrected definitions of getBids and getAsks as member functions
+    std::map<double, std::list<Order>, std::greater<>> OrderBook::getBids()
     {
         return bids_;
     }
 
-    const std::map<double, std::list<Order>> &OrderBook::getAsks() const
+    std::map<double, std::list<Order>> OrderBook::getAsks()
     {
         return asks_;
     }
-
-    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestBid()
-    // {
-    //     if (bids_.empty())
-    //         return std::nullopt;
-    //     auto &lst = bids_.begin()->second;
-    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
-    // }
-
-    // std::optional<std::reference_wrapper<Order>> OrderBook::getBestAsk()
-    // {
-    //     if (asks_.empty())
-    //         return std::nullopt;
-    //     auto &lst = asks_.begin()->second;
-    //     return lst.empty() ? std::nullopt : std::optional<std::reference_wrapper<Order>>(std::ref(lst.front()));
-    // }
-
 } // namespace core

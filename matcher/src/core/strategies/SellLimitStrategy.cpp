@@ -7,6 +7,8 @@
 namespace core
 {
 
+    SellLimitStrategy::SellLimitStrategy() = default;
+
     std::vector<models::Trade> SellLimitStrategy::match(
         Order &incoming, OrderBook &book)
     {
@@ -46,5 +48,7 @@ namespace core
 
         return trades;
     }
+
+    SellLimitStrategy::~SellLimitStrategy() {}
 
 } // namespace core
