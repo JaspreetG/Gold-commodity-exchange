@@ -1,7 +1,8 @@
 #include "kafka/KafkaOrderConsumer.hpp"
 #include "service/OrderMatchingService.hpp"
 
-int main() {
+int main()
+{
     core::OrderMatchingService service;
     kafka::KafkaOrderConsumer consumer;
     consumer.start(service);

@@ -1,7 +1,6 @@
 #pragma once
-
-#include <nlohmann/json.hpp> // For JSON parsing
-#include <rdkafka.h>         // Include librdkafka header
+#include <cppkafka/consumer.h>
+#include <memory>
 
 namespace core
 {
@@ -15,6 +14,9 @@ namespace kafka
     {
     public:
         void start(core::OrderMatchingService &svc);
+
+    private:
+        std::unique_ptr<cppkafka::Consumer> consumer_;
     };
 
 } // namespace kafka
