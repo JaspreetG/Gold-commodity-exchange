@@ -14,7 +14,7 @@ namespace core
         Order &incoming, OrderBook &book)
     {
         std::vector<models::Trade> trades;
-        double qty = incoming.quantity();
+        int qty = incoming.quantity();
         double limit = incoming.price();
 
         while (qty > 0)
@@ -26,7 +26,7 @@ namespace core
             if (bestBid.price() < limit)
                 break;
 
-            double tradeQty = std::min(qty, bestBid.quantity());
+            int tradeQty = std::min(qty, bestBid.quantity());
             double price = bestBid.price();
 
             trades.emplace_back(bestBid.id(), incoming.id(),

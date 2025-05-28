@@ -23,7 +23,7 @@ namespace core
         while (!sellMarketQueue.empty())
         {
             Order &frontOrder = sellMarketQueue.front();
-            double qty = frontOrder.quantity();
+            int qty = frontOrder.quantity();
             std::vector<models::Trade> trades;
             while (qty > 0)
             {
@@ -31,7 +31,7 @@ namespace core
                 if (!bestBidPtr)
                     break;
                 Order &bestBid = *bestBidPtr;
-                double tradeQty = std::min(qty, bestBid.quantity());
+                int tradeQty = std::min(qty, bestBid.quantity());
                 double price = bestBid.price();
                 trades.emplace_back(bestBid.id(), frontOrder.id(), price, tradeQty, std::chrono::system_clock::now());
                 qty -= tradeQty;

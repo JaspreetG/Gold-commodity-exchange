@@ -22,9 +22,9 @@ namespace models
         std::chrono::system_clock::time_point timestamp() const;
 
         // Returns a map of price to total volume (sum of quantities) for bids
-        std::map<double, double, std::greater<>> bidVolumes() const;
+        std::map<double, int, std::greater<>> bidVolumes() const;
         // Returns a map of price to total volume (sum of quantities) for asks
-        std::map<double, double> askVolumes() const;
+        std::map<double, int> askVolumes() const;
     };
 
 } // namespace models

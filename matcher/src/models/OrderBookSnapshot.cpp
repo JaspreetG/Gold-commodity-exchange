@@ -13,12 +13,12 @@ namespace models
     {
         return ts_;
     }
-    std::map<double, double, std::greater<>> OrderBookSnapshot::bidVolumes() const
+    std::map<double, int, std::greater<>> OrderBookSnapshot::bidVolumes() const
     {
-        std::map<double, double, std::greater<>> result;
+        std::map<double, int, std::greater<>> result;
         for (std::map<double, std::list<core::Order>, std::greater<>>::const_iterator it = bids_.begin(); it != bids_.end(); ++it)
         {
-            double volume = 0.0;
+            int volume = 0;
             for (std::list<core::Order>::const_iterator orderIt = it->second.begin(); orderIt != it->second.end(); ++orderIt)
             {
                 volume += orderIt->quantity();
@@ -27,12 +27,12 @@ namespace models
         }
         return result;
     }
-    std::map<double, double> OrderBookSnapshot::askVolumes() const
+    std::map<double, int> OrderBookSnapshot::askVolumes() const
     {
-        std::map<double, double> result;
+        std::map<double, int> result;
         for (std::map<double, std::list<core::Order>>::const_iterator it = asks_.begin(); it != asks_.end(); ++it)
         {
-            double volume = 0.0;
+            int volume = 0;
             for (std::list<core::Order>::const_iterator orderIt = it->second.begin(); orderIt != it->second.end(); ++orderIt)
             {
                 volume += orderIt->quantity();
