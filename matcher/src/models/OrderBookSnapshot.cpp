@@ -9,8 +9,8 @@ namespace models
         std::chrono::system_clock::time_point ts)
         : bids_(bids), asks_(asks), ts_(ts) {}
 
-    const auto &OrderBookSnapshot::bids() const { return bids_; }
-    const auto &OrderBookSnapshot::asks() const { return asks_; }
+    const std::map<double, std::list<core::Order>, std::greater<>> &OrderBookSnapshot::bids() const { return bids_; }
+    const std::map<double, std::list<core::Order>> &OrderBookSnapshot::asks() const { return asks_; }
     std::chrono::system_clock::time_point OrderBookSnapshot::timestamp() const
     {
         return ts_;

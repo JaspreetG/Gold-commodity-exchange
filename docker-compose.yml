@@ -1,29 +1,23 @@
 version: "3"
-services:
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:80"
+# Root orchestrator: Use this file as documentation for how to bring up the stack.
+# Each service (Kafka, matcher, backend, frontend) has its own internal docker-compose file.
 
-  backend:
-    build: ./backend
-    ports:
-      - "8080:8080"
+# --- Step 1: Start Kafka and Zookeeper ---
+# Go to the kafka folder and run:
+#   cd kafka && docker-compose -f docker-compose.kafka.yml up -d
 
-  matcher:
-    build: ./matcher
-# written inside kafka folder, will be pasted here after
-# kafka:
-#   image: bitnami/kafka:latest
-#   ports:
-#     - "9092:9092"
-#   environment:
-#     KAFKA_BROKER_ID: 1
-#     KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
-#     KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-#     KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+# --- Step 2: Start the C++ matcher engine ---
+# Go to the matcher folder and run:
+#   cd matcher && docker-compose up -d
 
-# zookeeper:
-#   image: bitnami/zookeeper:latest
-#   ports:
-#     - "2181:2181"
+# --- Step 3: Start the backend (Spring Boot) ---
+# Uncomment and use when backend is implemented
+# cd backend && docker-compose up -d
+
+# --- Step 4: Start the frontend (React) ---
+# Uncomment and use when frontend is implemented
+# cd frontend && docker-compose up -d
+
+# Note:
+# - Do NOT comment out Kafka and matcher instructions above.
+# - All actual service definitions are in their respective folders.

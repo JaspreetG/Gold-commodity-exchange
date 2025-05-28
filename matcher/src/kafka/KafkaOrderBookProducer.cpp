@@ -15,17 +15,23 @@ namespace kafka
             {"metadata.broker.list", broker}};
         cppkafka::Producer producer(config);
         // Convert timestamp to milliseconds since epoch
-        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(s.timestamp().time_since_epoch()).count();
+        long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(s.timestamp().time_since_epoch()).count();
         // Prepare bids and asks as arrays of {price, size}
         nlohmann::json bids = nlohmann::json::array();
-        for (const auto &[price, orders] : s.bids())
+        for (std::map<double, std::list<core::Order>, std::greater<>>::const_iterator it = s.bids().begin(); it != s.bids().end(); ++it)
         {
-            bids.push_back({{"price", price}, {"size", static_cast<int>(orders.size())}});
+            nlohmann::json entry;
+            entry["price"] = it->first;
+            entry["size"] = static_cast<int>(it->second.size());
+            bids.push_back(entry);
         }
         nlohmann::json asks = nlohmann::json::array();
-        for (const auto &[price, orders] : s.asks())
+        for (std::map<double, std::list<core::Order>>::const_iterator it = s.asks().begin(); it != s.asks().end(); ++it)
         {
-            asks.push_back({{"price", price}, {"size", static_cast<int>(orders.size())}});
+            nlohmann::json entry;
+            entry["price"] = it->first;
+            entry["size"] = static_cast<int>(it->second.size());
+            asks.push_back(entry);
         }
         nlohmann::json j = {
             {"timestamp", ms},

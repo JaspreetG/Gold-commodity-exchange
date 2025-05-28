@@ -19,8 +19,8 @@ namespace models
                           const std::map<double, std::list<core::Order>> &asks,
                           std::chrono::system_clock::time_point ts);
 
-        const auto &bids() const;
-        const auto &asks() const;
+        const std::map<double, std::list<core::Order>, std::greater<>> &bids() const;
+        const std::map<double, std::list<core::Order>> &asks() const;
         std::chrono::system_clock::time_point timestamp() const;
     };
 
