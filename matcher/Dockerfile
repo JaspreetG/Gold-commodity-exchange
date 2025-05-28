@@ -1,5 +1,5 @@
 # ---- Build stage ----
-FROM ubuntu:22.04 AS build
+FROM ubuntu:22.04 AS cppkafka-build
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -24,6 +24,10 @@ RUN git clone --branch v0.4.1 https://github.com/mfontanini/cppkafka.git && \
     make -j$(nproc) && \
     make install
 
+    # Rahul Jha
+# Copy built cppkafka source to /app/cppkafka for CMake add_subdirectory
+RUN mkdir -p /app && cp -r /tmp/cppkafka /app/cppkafka
+
 WORKDIR /app
 COPY . .
 # Ensure json.hpp is present before building
@@ -45,9 +49,9 @@ RUN apt-get update --fix-missing && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=build /app/build/MatchingEngine /app/MatchingEngine
-COPY --from=build /usr/local/lib/libcppkafka.so.0.4.1 /usr/lib/
-COPY --from=build /usr/local/lib/libcppkafka.so /usr/lib/
+COPY --from=cppkafka-build /app/build/MatchingEngine /app/MatchingEngine
+COPY --from=cppkafka-build /usr/local/lib/libcppkafka.so.0.4.1 /usr/lib/
+COPY --from=cppkafka-build /usr/local/lib/libcppkafka.so /usr/lib/
 RUN cd /usr/lib && \
     [ -e libcppkafka.so.0 ] || ln -s libcppkafka.so.0.4.1 libcppkafka.so.0 && \
     [ -e libcppkafka.so ] || ln -s libcppkafka.so.0 libcppkafka.so && \
