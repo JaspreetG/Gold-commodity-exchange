@@ -29,7 +29,7 @@ edit kafka env to add topics
 Produce a message:
 
 ```shell
-docker exec -it kafka-kafka-1 kafka-console-producer \
+docker exec -it kafka kafka-console-producer \
   --broker-list localhost:9092 \
   --topic orders
 ```
@@ -44,7 +44,7 @@ Then type messages like:
 Consume messages:
 
 ```shell
-docker exec -it kafka-kafka-1 kafka-console-consumer \
+docker exec -it kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic orders \
   --from-beginning
