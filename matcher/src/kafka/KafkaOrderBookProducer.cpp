@@ -16,8 +16,21 @@ namespace kafka
         cppkafka::Producer producer(config);
         // Convert timestamp to milliseconds since epoch
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(s.timestamp().time_since_epoch()).count();
+        // Prepare bids and asks as arrays of {price, size}
+        nlohmann::json bids = nlohmann::json::array();
+        for (const auto &[price, orders] : s.bids())
+        {
+            bids.push_back({{"price", price}, {"size", static_cast<int>(orders.size())}});
+        }
+        nlohmann::json asks = nlohmann::json::array();
+        for (const auto &[price, orders] : s.asks())
+        {
+            asks.push_back({{"price", price}, {"size", static_cast<int>(orders.size())}});
+        }
         nlohmann::json j = {
-            {"timestamp", ms}};
+            {"timestamp", ms},
+            {"bids", bids},
+            {"asks", asks}};
         std::string payload = j.dump();
         producer.produce(cppkafka::MessageBuilder("orderbook").partition(0).payload(payload));
         producer.flush();

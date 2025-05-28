@@ -11,13 +11,7 @@ namespace kafka
 
     void KafkaOrderConsumer::start(core::OrderMatchingService &svc)
     {
-        // --- Kafka broker selection for local vs Docker ---
-        // To use a local Kafka broker (running on your host):
-        //   1. Uncomment the LOCAL_DEV block below.
-        //   2. Comment out the DOCKER block.
-        // To use Docker Compose Kafka (from inside a container):
-        //   1. Uncomment the DOCKER block below.
-        //   2. Comment out the LOCAL_DEV block.
+
 
         // --- DOCKER BLOCK: Use KAFKA_BROKER env var (default to localhost if not set) ---
         const char *broker_env = std::getenv("KAFKA_BROKER");

@@ -3,9 +3,6 @@
 # Load variables from kafka.env
 source "$(dirname "$0")/kafka.env"
 
-# Set ZOOKEEPER_CONTAINER to default if not set
-: "${ZOOKEEPER_CONTAINER:=zookeeper}"
-
 # Check if any topic was provided
 if [ -z "$TOPICS" ]; then
   echo "⚠️  No topics specified in kafka.env. Nothing to create."
@@ -22,12 +19,13 @@ done
 echo "Kafka is ready! Creating topics..."
 
 for topic in $TOPICS; do
+  echo "Creating topic: $topic"
   docker exec "$KAFKA_CONTAINER" kafka-topics \
     --create --if-not-exists \
     --bootstrap-server "$BOOTSTRAP_SERVER" \
     --replication-factor "$REPLICATION_FACTOR" \
     --partitions "$PARTITIONS" \
-    --topic "$topic"
+    --topic "$topic" || echo "Failed to create topic $topic"
 done
 
 echo -e "\nCurrent topics in Kafka:"

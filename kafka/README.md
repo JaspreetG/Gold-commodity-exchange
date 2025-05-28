@@ -31,13 +31,14 @@ Produce a message:
 ```shell
 docker exec -it kafka kafka-console-producer \
   --broker-list localhost:9092 \
-  --topic orders
+  --topic order
 ```
 
-Then type messages like:
+Then type messages like (all in one line, copy-paste ready):
 
-{"orderId": 1, "status": "created"}
-{"orderId": 2, "status": "shipped"}
+{"user_id":"order-1","quantity":10,"price":1950.5,"side":"BUY","type":"LIMIT"}
+{"user_id":"order-2","quantity":5,"price":1948.0,"side":"SELL","type":"LIMIT"}
+{"user_id":"order-3","quantity":2,"price":0,"side":"BUY","type":"MARKET"}
 
 (Press Ctrl+C to stop)
 
@@ -46,6 +47,6 @@ Consume messages:
 ```shell
 docker exec -it kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
-  --topic orders \
+  --topic order \
   --from-beginning
 ```
