@@ -43,7 +43,7 @@ namespace kafka
         std::string payload = j.dump();
         producer.produce(cppkafka::MessageBuilder("orderbook").partition(0).payload(payload));
         producer.flush();
-        std::cout << "Published OrderBook Snapshot to 'orderbook': " << payload << "\n";
+        std::cout << "Published OrderBook Snapshot to 'orderbook': " << payload << std::endl;
     }
 
 } // namespace kafka
