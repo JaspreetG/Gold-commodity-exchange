@@ -9,7 +9,7 @@ The following Kafka topics are created:
 - `order` – Handles all incoming order data (buy/sell)
 - `trade` – Used by matcher engine to publish matched orders
 - `orderbook` – Used to send orderbook to consumer
-- `ltp` – Used to sed Last traded price
+- `ltp` – Used to send Last traded price
 
 ## Run this to start kafka
 
