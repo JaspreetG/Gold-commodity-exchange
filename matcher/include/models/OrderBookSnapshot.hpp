@@ -19,9 +19,12 @@ namespace models
                           const std::map<double, std::list<core::Order>> &asks,
                           std::chrono::system_clock::time_point ts);
 
-        const std::map<double, std::list<core::Order>, std::greater<>> &bids() const;
-        const std::map<double, std::list<core::Order>> &asks() const;
         std::chrono::system_clock::time_point timestamp() const;
+
+        // Returns a map of price to total volume (sum of quantities) for bids
+        std::map<double, double, std::greater<>> bidVolumes() const;
+        // Returns a map of price to total volume (sum of quantities) for asks
+        std::map<double, double> askVolumes() const;
     };
 
 } // namespace models

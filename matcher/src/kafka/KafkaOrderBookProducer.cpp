@@ -16,21 +16,23 @@ namespace kafka
         cppkafka::Producer producer(config);
         // Convert timestamp to milliseconds since epoch
         long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(s.timestamp().time_since_epoch()).count();
-        // Prepare bids and asks as arrays of {price, size}
+        // Prepare bids and asks as arrays of {price, volume}
         nlohmann::json bids = nlohmann::json::array();
-        for (std::map<double, std::list<core::Order>, std::greater<>>::const_iterator it = s.bids().begin(); it != s.bids().end(); ++it)
+        std::map<double, double, std::greater<>> bid_vols = s.bidVolumes();
+        for (std::map<double, double, std::greater<>>::const_iterator it = bid_vols.begin(); it != bid_vols.end(); ++it)
         {
             nlohmann::json entry;
             entry["price"] = it->first;
-            entry["size"] = static_cast<int>(it->second.size());
+            entry["volume"] = it->second;
             bids.push_back(entry);
         }
         nlohmann::json asks = nlohmann::json::array();
-        for (std::map<double, std::list<core::Order>>::const_iterator it = s.asks().begin(); it != s.asks().end(); ++it)
+        std::map<double, double> ask_vols = s.askVolumes();
+        for (std::map<double, double>::const_iterator it = ask_vols.begin(); it != ask_vols.end(); ++it)
         {
             nlohmann::json entry;
             entry["price"] = it->first;
-            entry["size"] = static_cast<int>(it->second.size());
+            entry["volume"] = it->second;
             asks.push_back(entry);
         }
         nlohmann::json j = {
