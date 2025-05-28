@@ -9,8 +9,8 @@ namespace core
     public:
         BuyLimitStrategy();
         virtual ~BuyLimitStrategy();
-        std::vector<models::Trade>
-        match(Order &incoming, OrderBook &book) override;
+        std::vector<models::Trade> match(Order &incoming, OrderBook &book) override;
+        static std::vector<models::Trade> marketTrades(OrderBook &book);
     };
 
 } // namespace core

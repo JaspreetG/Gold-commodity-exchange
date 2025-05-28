@@ -1,6 +1,7 @@
 #include "core/strategies/BuyLimitStrategy.hpp"
 #include "core/OrderBook.hpp"
 #include "core/Order.hpp" // Include for full definition of Order
+#include "core/strategies/SellMarketStrategy.hpp"
 #include <chrono>
 #include <algorithm>
 
@@ -46,6 +47,9 @@ namespace core
         if (incoming.quantity() > 0)
             book.addOrder(incoming);
 
+        // After processing buy limit, process any pending sell market orders
+        std::vector<models::Trade> marketTrades = core::SellMarketStrategy::processQueue(book);
+        trades.insert(trades.end(), marketTrades.begin(), marketTrades.end());
         return trades;
     }
 

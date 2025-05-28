@@ -1,5 +1,6 @@
 #pragma once
 #include "core/IMatchingStrategy.hpp"
+#include <deque>
 
 namespace core
 {
@@ -8,9 +9,12 @@ namespace core
     {
     public:
         BuyMarketStrategy();
-        virtual ~BuyMarketStrategy();
-        std::vector<models::Trade>
-        match(Order &incoming, OrderBook &book) override;
+        std::vector<models::Trade> match(Order &incoming, OrderBook &book) override;
+        static std::vector<models::Trade> processQueue(OrderBook &book);
+        ~BuyMarketStrategy();
+
+    private:
+        static std::deque<Order> buyMarketQueue;
     };
 
 } // namespace core
