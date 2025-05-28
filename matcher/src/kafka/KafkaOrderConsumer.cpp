@@ -19,18 +19,7 @@ namespace kafka
         //   1. Uncomment the DOCKER block below.
         //   2. Comment out the LOCAL_DEV block.
 
-        // --- LOCAL_DEV BLOCK: Use localhost for Kafka broker ---
-        // Uncomment this block for local development (Kafka running on your host):
-        /*
-        cppkafka::Configuration config = {
-            {"metadata.broker.list", "127.0.0.1:9092"}, // Change port if needed
-            {"group.id", "matcher-group"},
-            {"auto.offset.reset", "earliest"}
-        };
-        */
-
         // --- DOCKER BLOCK: Use KAFKA_BROKER env var (default to localhost if not set) ---
-        // Uncomment this block when running inside Docker:
         const char *broker_env = std::getenv("KAFKA_BROKER");
         std::string broker = broker_env ? broker_env : "127.0.0.1:9092";
         cppkafka::Configuration config = {
@@ -41,7 +30,7 @@ namespace kafka
         // --- End of Kafka broker selection ---
         // Create the consumer with the configuration
         consumer_ = std::make_unique<cppkafka::Consumer>(config);
-        consumer_->subscribe({"orders"});
+        consumer_->subscribe({"order"});
         std::cout << "KafkaOrderConsumer started, listening for messages..." << std::endl;
         while (true)
         {
