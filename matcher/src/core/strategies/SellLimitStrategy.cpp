@@ -1,6 +1,7 @@
 #include "core/strategies/SellLimitStrategy.hpp"
 #include "core/OrderBook.hpp"
 #include "core/Order.hpp" // Include for full definition of Order
+#include "core/strategies/BuyMarketStrategy.hpp"
 #include <chrono>
 #include <algorithm>
 
@@ -12,7 +13,6 @@ namespace core
     std::vector<models::Trade> SellLimitStrategy::match(
         Order &incoming, OrderBook &book)
     {
-
         std::vector<models::Trade> trades;
         double qty = incoming.quantity();
         double limit = incoming.price();
@@ -45,6 +45,10 @@ namespace core
             book.updateLTP(trades.back().price());
         if (incoming.quantity() > 0)
             book.addOrder(incoming);
+
+        // After processing sell limit, process any pending buy market orders
+        std::vector<models::Trade> marketTrades = BuyMarketStrategy::processQueue(book);
+        trades.insert(trades.end(), marketTrades.begin(), marketTrades.end());
 
         return trades;
     }
