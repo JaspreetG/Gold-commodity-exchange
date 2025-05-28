@@ -3,6 +3,9 @@
 # Load variables from kafka.env
 source "$(dirname "$0")/kafka.env"
 
+# Set ZOOKEEPER_CONTAINER to default if not set
+: "${ZOOKEEPER_CONTAINER:=zookeeper}"
+
 # Check if any topic was provided
 if [ -z "$TOPICS" ]; then
   echo "⚠️  No topics specified in kafka.env. Nothing to create."
