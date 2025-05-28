@@ -19,19 +19,22 @@ RUN apt-get update --fix-missing && \
 
 # Build cppkafka from source inside the container
 WORKDIR /tmp
-RUN git clone --branch 0.4.0 https://github.com/mfontanini/cppkafka.git && \
+RUN git clone --branch v0.4.1 https://github.com/mfontanini/cppkafka.git && \
     cd cppkafka && \
     mkdir build && cd build && \
     cmake .. && \
     make -j$(nproc) && \
     make install && \
-    cp -a /usr/local/lib/libcppkafka.so* /usr/lib/ && \
-    if [ -f /usr/local/lib/libcppkafka.so.0.4.1 ]; then cp -a /usr/local/lib/libcppkafka.so.0.4.1 /usr/lib/; fi
-
-ADD https://raw.githubusercontent.com/nlohmann/json/v3.11.3/single_include/nlohmann/json.hpp /usr/include/nlohmann/json.hpp
+    ls -l /usr/local/lib/ && \
+    mkdir -p /cppkafka-lib && \
+    cp -L /usr/local/lib/libcppkafka.so.0.4.1 /cppkafka-lib/ && \
+    # Only copy .so.0.4.1 and .so, skip .so.0 which does not exist
+    cp -L /usr/local/lib/libcppkafka.so /cppkafka-lib/
 
 WORKDIR /app
 COPY . .
+# Ensure json.hpp is present before building
+ADD https://raw.githubusercontent.com/nlohmann/json/v3.11.3/single_include/nlohmann/json.hpp /usr/include/nlohmann/json.hpp
 
 RUN cmake -Bbuild -H. && cmake --build build --target MatchingEngine -- -j$(nproc)
 
@@ -58,8 +61,8 @@ RUN apt-get update --fix-missing && \
 
 WORKDIR /app
 COPY --from=build /app/build/MatchingEngine /app/MatchingEngine
-# Copy all possible libcppkafka shared objects and symlinks at once
-COPY --from=build /usr/lib/libcppkafka.so* /usr/lib/
+COPY --from=build /cppkafka-lib/libcppkafka.so.0.4.1 /usr/lib/
+COPY --from=build /cppkafka-lib/libcppkafka.so /usr/lib/
 # Ensure symlinks for libcppkafka are present and run ldconfig in a single RUN block
 RUN set -eux; \
   cd /usr/lib; \
