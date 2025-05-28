@@ -2,6 +2,7 @@
 #include "models/LTP.hpp"
 #include "models/OrderBookSnapshot.hpp"
 #include <chrono>
+#include <iostream>
 
 namespace core
 {
@@ -24,6 +25,7 @@ namespace core
                             std::chrono::system_clock::now());
             ltpProd_.publish(ltp);
         }
+
         models::OrderBookSnapshot snapshot(book_.getBids(), book_.getAsks(), std::chrono::system_clock::now()); // Pass the order book to the constructor
         obProd_.publish(snapshot);
     }

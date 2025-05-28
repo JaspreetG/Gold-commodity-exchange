@@ -38,8 +38,9 @@ docker exec -it kafka kafka-console-producer \
 Then type messages like (all in one line, copy-paste ready):
 
 {"user_id":"order-1","quantity":10,"price":1950.5,"side":"BUY","type":"LIMIT"}
-{"user_id":"order-2","quantity":5,"price":1948.0,"side":"SELL","type":"LIMIT"}
+{"user_id":"order-2","quantity":5,"price":1900.0,"side":"SELL","type":"LIMIT"}
 {"user_id":"order-3","quantity":2,"price":0,"side":"BUY","type":"MARKET"}
+{"user_id":"order-2","quantity":100,"price":1900.0,"side":"SELL","type":"LIMIT"}
 
 (Press Ctrl+C to stop)
 

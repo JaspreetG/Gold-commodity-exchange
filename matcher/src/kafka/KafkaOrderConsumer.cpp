@@ -49,6 +49,7 @@ namespace kafka
                             (type == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET)};
                         std::cout << "Received order: " << user_id << std::endl;
                         svc.handleOrder(orderData);
+                        // std::cout << "Order handled successfully." << std::endl;
                     }
                 }
                 catch (const std::exception &e)
