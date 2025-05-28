@@ -52,3 +52,24 @@ docker exec -it kafka kafka-console-consumer \
   --topic order \
   --from-beginning
 ```
+
+```shell
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic orderbook \
+  --from-beginning
+```
+
+```shell
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic ltp \
+  --from-beginning
+```
+
+```shell
+docker exec -it kafka kafka-console-consumer \
+  --bootstrap-server localhost:9092 \
+  --topic trade \
+  --from-beginning
+```
