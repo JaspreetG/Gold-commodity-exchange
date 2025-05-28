@@ -22,7 +22,7 @@ namespace kafka
         std::string payload = j.dump();
         producer.produce(cppkafka::MessageBuilder("ltp").partition(0).payload(payload));
         producer.flush();
-        std::cout << "Published LTP to 'ltp': " << payload << "\n";
+        std::cout << "Published LTP to 'ltp': " << payload << std::endl;
     }
 
 } // namespace kafka

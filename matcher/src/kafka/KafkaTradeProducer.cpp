@@ -22,7 +22,7 @@ namespace kafka
         std::string payload = j.dump();
         producer.produce(cppkafka::MessageBuilder("trade").partition(0).payload(payload));
         producer.flush();
-        std::cout << "Published Trade to 'trade': " << payload << "\n";
+        std::cout << "Published Trade to 'trade': " << payload << std::endl;
     }
 
 } // namespace kafka

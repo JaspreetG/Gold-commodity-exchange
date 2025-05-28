@@ -27,7 +27,7 @@ namespace kafka
         std::cout << "KafkaOrderConsumer started, listening for messages..." << std::endl;
         while (true)
         {
-            auto msg = consumer_->poll();
+            auto msg = consumer_->poll(std::chrono::seconds(1));
             if (msg && !msg.get_error()) // Correct error check
             {
                 try
