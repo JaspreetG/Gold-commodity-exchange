@@ -12,7 +12,6 @@ namespace kafka
     void KafkaOrderConsumer::start(core::OrderMatchingService &svc)
     {
 
-
         // --- DOCKER BLOCK: Use KAFKA_BROKER env var (default to localhost if not set) ---
         const char *broker_env = std::getenv("KAFKA_BROKER");
         std::string broker = broker_env ? broker_env : "127.0.0.1:9092";
@@ -38,7 +37,7 @@ namespace kafka
                     {
                         nlohmann::json j = nlohmann::json::parse(payload);
                         std::string user_id = j.at("user_id");
-                        double quantity = j.at("quantity");
+                        int quantity = j.at("quantity");
                         double price = j.at("price");
                         std::string side = j.at("side");
                         std::string type = j.at("type");

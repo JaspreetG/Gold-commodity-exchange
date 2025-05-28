@@ -14,7 +14,7 @@ namespace core
     {
     private:
         std::string id_;
-        double quantity_;
+        int quantity_;
         double price_;
         dto::Side side_;
         dto::OrderType type_;
@@ -25,11 +25,11 @@ namespace core
               std::shared_ptr<IMatchingStrategy> strat);
 
         const std::string &id() const;
-        double quantity() const;
+        int quantity() const;
         double price() const;
         dto::Side side() const;
         dto::OrderType type() const;
-        void setQuantity(double q);
+        void setQuantity(int q);
 
         std::vector<models::Trade> match(OrderBook &book);
     };
