@@ -27,6 +27,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
       - ./script.sh:/script.sh
+      - ./kafka.env:/kafka.env
     command: >
       bash -c "
       /etc/confluent/docker/run &
