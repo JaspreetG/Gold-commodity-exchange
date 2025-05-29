@@ -35,11 +35,11 @@ make
 
 - The executable `MatchingEngine` will be created in the `matcher` directory.
 
-3. **Run Kafka and Zookeeper (if not using Docker Compose):**
+- **Run Kafka and Zookeeper (if not using Docker Compose):**
 
-   - Start Zookeeper and Kafka brokers as required.
+  - Start Zookeeper and Kafka brokers as required.
 
-4. **Run the matcher engine:**
+- **Run the matcher engine:**
 
 ```sh
 ./MatchingEngine

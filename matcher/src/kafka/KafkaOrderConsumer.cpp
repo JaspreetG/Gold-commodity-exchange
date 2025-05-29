@@ -14,7 +14,8 @@ namespace kafka
 
         // --- DOCKER BLOCK: Use KAFKA_BROKER env var (default to localhost if not set) ---
         const char *broker_env = std::getenv("KAFKA_BROKER");
-        std::string broker = broker_env ? broker_env : "127.0.0.1:9092";
+        std::string broker = broker_env ? broker_env : "127.0.0.1:29092";
+        std::cout << "Using Kafka broker: " << broker << std::endl;
         cppkafka::Configuration config = {
             {"metadata.broker.list", broker},
             {"group.id", "matcher-group"},
