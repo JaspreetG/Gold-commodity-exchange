@@ -1,13 +1,13 @@
-package com.goldexchange.wallet_service;
+package io.goldexchange.trade_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WalletServiceApplication {
+public class TradeServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WalletServiceApplication.class, args);
+		SpringApplication.run(TradeServiceApplication.class, args);
 	}
 
 }
