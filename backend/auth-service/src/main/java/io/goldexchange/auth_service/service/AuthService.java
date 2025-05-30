@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
+import org.apache.commons.codec.binary.Base32;
 
 @Service
 public class AuthService {
@@ -52,7 +53,9 @@ public class AuthService {
             byte[] combined = new byte[keyBytes.length + timeBytes.length];
             System.arraycopy(keyBytes, 0, combined, 0, keyBytes.length);
             System.arraycopy(timeBytes, 0, combined, keyBytes.length, timeBytes.length);
-            return Base64.getEncoder().encodeToString(combined);
+            // Use Base32 encoding for Google Authenticator compatibility
+            Base32 base32 = new Base32();
+            return base32.encodeToString(combined).replace("=", "");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Failed to generate secret key", e);
         }
@@ -65,6 +68,7 @@ public class AuthService {
 
     public String generateQrCode(String userName, String secretKey) {
         String issuer = "GoldExchange";
+        // Use Base32 secretKey for QR code
         String qrCodeData = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, userName, secretKey, issuer);
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -72,7 +76,8 @@ public class AuthService {
             ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
             byte[] pngData = pngOutputStream.toByteArray();
-            return "data:image/png;base64," + Base64.getEncoder().encodeToString(pngData);
+            // Still encode the image as Base64 for data URI
+            return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(pngData);
         } catch (WriterException e) {
             throw new RuntimeException("Failed to generate QR code", e);
         } catch (java.io.IOException e) {
@@ -84,7 +89,9 @@ public class AuthService {
         try {
             // Google Authenticator compatible TOTP
             long timeIndex = System.currentTimeMillis() / 1000 / 30;
-            byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+            // Use Base32 decoder to match the Base32-encoded secret key
+            Base32 base32 = new Base32();
+            byte[] keyBytes = base32.decode(secretKey);
             SecretKeySpec signKey = new SecretKeySpec(keyBytes, "HmacSHA1");
             Mac mac = Mac.getInstance("HmacSHA1");
             mac.init(signKey);
@@ -102,7 +109,20 @@ public class AuthService {
                          (hash[offset + 3] & 0xFF);
             int otp = binary % 1000000;
             String generatedTotp = String.format("%06d", otp);
-            return generatedTotp.equals(totp);
+
+            boolean valid=generatedTotp.equals(totp);
+            if(!valid){
+                if(user.getState().equals("temporary")){
+                    authRepository.deleteById(user.getUserId());
+                }
+            }
+
+            if (valid) {
+                user.setState("permanent");
+                authRepository.save(user);
+            }
+            return valid;
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to verify TOTP", e);
         }

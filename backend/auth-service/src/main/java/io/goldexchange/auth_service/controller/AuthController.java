@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
+import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
 
 import java.util.Map;
@@ -25,7 +26,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
         String phoneNumber = user.getPhoneNumber();
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
