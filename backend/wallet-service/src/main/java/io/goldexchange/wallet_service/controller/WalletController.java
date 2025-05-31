@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/wallet")
+@PreAuthorize("isAuthenticated()")
 public class WalletController {
     @Autowired
     private WalletService walletService;
@@ -79,7 +80,11 @@ public class WalletController {
         }
         Long userId = (Long) authentication.getPrincipal();
         // Use walletService to withdraw money
-        walletService.withdrawMoney(userId, req.getAmount());
+        try {
+            walletService.withdrawMoney(userId, req.getAmount());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));
+        }
         return ResponseEntity.ok(java.util.Map.of("message", "Money withdrawn successfully"));
     }
 }
