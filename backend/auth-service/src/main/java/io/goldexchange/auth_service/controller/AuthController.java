@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
-import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
 
 import java.util.Map;
@@ -26,7 +25,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
+    public ResponseEntity<?> login(@RequestBody User user) {
         String phoneNumber = user.getPhoneNumber();
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
@@ -89,10 +88,9 @@ public class AuthController {
         // Generate a new secret key for TOTP
         String secretKey = authService.generateSecretKey();
         // Save user with state 'temporary'
-        //made it uncatched
-        authService.saveUser(userName, phoneNumber, secretKey);
+        User user = authService.saveUser(userName, phoneNumber, secretKey);
         // Generate QR code for the secret key
-        String qrCodeData = authService.generateQrCode(userName, secretKey);
+        String qrCodeData = authService.generateQrCode(userName, phoneNumber, secretKey);
         return ResponseEntity.ok(Map.of("qrCode", qrCodeData, "secretKey", secretKey));
     }
 }
