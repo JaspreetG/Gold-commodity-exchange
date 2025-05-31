@@ -17,6 +17,14 @@ public class WalletService {
         return wallet;
     }
 
+    public Wallet createWallet(Long userId) {
+        Wallet wallet = new Wallet();
+        wallet.setUserId(userId);
+        wallet.setBalance(0.0);
+        wallet.setGold(0.0);
+        return walletRepository.save(wallet);
+    }
+
     @Transactional
     public void addMoney(Long userId, Double amount) {
         Wallet wallet = walletRepository.findByUserId(userId);

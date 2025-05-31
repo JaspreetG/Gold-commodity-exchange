@@ -61,6 +61,10 @@ public class AuthController {
             }
             String deviceFingerprint = request.getDeviceFingerprint();
             String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
+            
+            //create jwt
+            authService.createWallet(user,jwt,deviceFingerprint);
+
             ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
                 .httpOnly(true)
                 .path("/")
