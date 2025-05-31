@@ -1,5 +1,6 @@
 package io.goldexchange.wallet_service.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -8,13 +9,39 @@ import io.goldexchange.wallet_service.dto.AddMoneyRequest;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
 import io.goldexchange.wallet_service.model.Wallet;
 import io.goldexchange.wallet_service.service.WalletService;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/wallet")
 public class WalletController {
     @Autowired
     private WalletService walletService;
+
+    @PostMapping("/createWallet")
+    public ResponseEntity<?> createWallet(Authentication authentication, HttpServletRequest request) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized: User not authenticated"));
+        }
+
+        Long userId = (Long) authentication.getPrincipal();
+
+        // Check if wallet already exists
+        Wallet existingWallet = walletService.getWallet(userId);
+        if (existingWallet != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Wallet already exists"));
+        }
+
+        // Create new wallet
+        Wallet wallet = walletService.createWallet(userId);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Wallet created successfully", "wallet", wallet));
+    }
 
     @GetMapping("/getWallet")
     @PreAuthorize("isAuthenticated()")
@@ -24,6 +51,10 @@ public class WalletController {
         }
         Long userId = (Long) authentication.getPrincipal();
         Wallet wallet = walletService.getWallet(userId);
+
+        if (wallet == null) {
+            return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
+        }
 
         return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
     }

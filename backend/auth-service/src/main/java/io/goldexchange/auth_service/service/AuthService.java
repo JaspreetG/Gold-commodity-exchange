@@ -9,7 +9,14 @@ import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.repository.AuthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.Mac;
@@ -22,11 +29,18 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.Date;
 import org.apache.commons.codec.binary.Base32;
+import java.util.Map;
 
 @Service
 public class AuthService {
     @Autowired
     private AuthRepository authRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Value("${wallet.service.url}")
+    private String walletServiceUrl;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -72,7 +86,8 @@ public class AuthService {
     public String generateQrCode(String userName, String secretKey) {
         String issuer = "GoldExchange";
         // Use Base32 secretKey for QR code
-        String qrCodeData = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, userName, secretKey, issuer);
+        String qrCodeData = String.format("otpauth://totp/%s:%s?secret=%s&issuer=%s", issuer, userName, secretKey,
+                issuer);
         try {
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(qrCodeData, BarcodeFormat.QR_CODE, 250, 250);
@@ -107,15 +122,15 @@ public class AuthService {
             byte[] hash = mac.doFinal(data);
             int offset = hash[hash.length - 1] & 0xF;
             int binary = ((hash[offset] & 0x7F) << 24) |
-                         ((hash[offset + 1] & 0xFF) << 16) |
-                         ((hash[offset + 2] & 0xFF) << 8) |
-                         (hash[offset + 3] & 0xFF);
+                    ((hash[offset + 1] & 0xFF) << 16) |
+                    ((hash[offset + 2] & 0xFF) << 8) |
+                    (hash[offset + 3] & 0xFF);
             int otp = binary % 1000000;
             String generatedTotp = String.format("%06d", otp);
 
-            boolean valid=generatedTotp.equals(totp);
-            if(!valid){
-                if(user.getState().equals("temporary")){
+            boolean valid = generatedTotp.equals(totp);
+            if (!valid) {
+                if (user.getState().equals("temporary")) {
                     authRepository.deleteById(user.getUserId());
                 }
             }
@@ -123,6 +138,7 @@ public class AuthService {
             if (valid) {
                 user.setState("permanent");
                 authRepository.save(user);
+                // rest template call
             }
             return valid;
 
@@ -140,4 +156,35 @@ public class AuthService {
                 .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes(StandardCharsets.UTF_8))
                 .compact();
     }
+
+    public void createWallet(User user, String jwt, String deviceFingerprint) {
+        try {
+            if ("permanent".equals(user.getState())) {
+                String url = walletServiceUrl; // ensure this is the correct endpoint
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
+                headers.set("X-Device-Fingerprint", deviceFingerprint);
+                headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
+
+                HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+                ResponseEntity<Map> response = restTemplate.exchange(
+                        url,
+                        HttpMethod.POST,
+                        requestEntity,
+                        Map.class);
+
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    System.out.println("Wallet created successfully.");
+                } else {
+                    System.err.println("Wallet creation failed with status: " + response.getStatusCode());
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("Failed to create wallet: " + e.getMessage());
+        }
+    }
+
 }
