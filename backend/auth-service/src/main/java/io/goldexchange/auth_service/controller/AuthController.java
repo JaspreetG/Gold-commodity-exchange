@@ -26,7 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    
+
     @Autowired
     private AuthService authService;
 
@@ -52,9 +52,11 @@ public class AuthController {
     @PostMapping("/verify")
     public ResponseEntity<?> verify(@RequestBody VerifyTotpRequest request, HttpServletResponse response) {
         try {
-            OtpAuthenticationToken authRequest = new OtpAuthenticationToken(request.getPhoneNumber(), request.getTotp());
+            OtpAuthenticationToken authRequest = new OtpAuthenticationToken(request.getPhoneNumber(),
+                    request.getTotp());
             Authentication authentication = authenticationManager.authenticate(authRequest);
-            // If authentication is successful, you can generate JWT and set cookie as before
+            // If authentication is successful, you can generate JWT and set cookie as
+            // before
             User user = (User) authentication.getPrincipal();
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
@@ -66,10 +68,10 @@ public class AuthController {
             authService.createWallet(user,jwt,deviceFingerprint);
 
             ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
-                .httpOnly(true)
-                .path("/")
-                .sameSite("Strict")
-                .build();
+                    .httpOnly(true)
+                    .path("/")
+                    .sameSite("Strict")
+                    .build();
             response.addHeader("Set-Cookie", cookie.toString());
             return ResponseEntity.ok(Map.of("message", "Login successful"));
         } catch (AuthenticationException e) {
@@ -86,7 +88,8 @@ public class AuthController {
         }
         boolean exists = authService.userExistsByPhone(phoneNumber);
         if (exists) {
-            return ResponseEntity.badRequest().body(Map.of("redirect", "login", "error", "Phone number already registered"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("redirect", "login", "error", "Phone number already registered"));
         }
         // Generate a new secret key for TOTP
         String secretKey = authService.generateSecretKey();
