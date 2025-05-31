@@ -7,13 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import io.goldexchange.wallet_service.dto.AddMoneyRequest;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
-import io.goldexchange.wallet_service.model.Wallet;
 import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import io.goldexchange.wallet_service.dto.WalletDTO;
-
 
 import java.util.Map;
 

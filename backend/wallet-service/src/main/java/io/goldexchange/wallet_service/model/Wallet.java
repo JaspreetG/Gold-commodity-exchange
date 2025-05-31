@@ -11,13 +11,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Table(name = "wallets")
 public class Wallet {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long walletId;
 
     private Long userId;
     private Double balance;
-    private Double Gold;
+    private Double gold;
 
 }

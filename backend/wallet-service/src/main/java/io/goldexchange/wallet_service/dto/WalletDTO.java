@@ -1,6 +1,5 @@
 package io.goldexchange.wallet_service.dto;
 
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -9,9 +8,9 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletDTO {
-    
+
     private Long walletId;
     private Long userId;
     private Double balance;
-    private Double Gold;
+    private Double gold;
 }

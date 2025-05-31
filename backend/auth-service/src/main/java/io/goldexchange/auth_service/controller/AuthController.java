@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
 
-import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.security.OtpAuthenticationToken;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
@@ -19,7 +18,6 @@ import io.goldexchange.auth_service.dto.RegisterRequest;
 import io.goldexchange.auth_service.dto.UserDTO;
 
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
@@ -65,9 +63,9 @@ public class AuthController {
             }
             String deviceFingerprint = request.getDeviceFingerprint();
             String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
-            
-            //create jwt
-            authService.createWallet(user,jwt,deviceFingerprint);
+
+            // create jwt
+            authService.createWallet(user, jwt, deviceFingerprint);
 
             ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
                     .httpOnly(true)
@@ -75,7 +73,7 @@ public class AuthController {
                     .sameSite("Strict")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
-            return ResponseEntity.ok(Map.of("message", "Login successful","User",user));
+            return ResponseEntity.ok(Map.of("message", "Login successful", "User", user));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }

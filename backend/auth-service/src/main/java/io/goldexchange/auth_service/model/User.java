@@ -23,6 +23,4 @@ public class User {
     private String phoneNumber;
     private String secretKey;
     private String state;
-
-    // Add other fields as needed
 }
