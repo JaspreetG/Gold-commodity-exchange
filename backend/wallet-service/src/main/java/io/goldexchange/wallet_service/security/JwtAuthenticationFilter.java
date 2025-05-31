@@ -37,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
+        
 
         // Proceed if token exists
         if (jwtToken != null) {
