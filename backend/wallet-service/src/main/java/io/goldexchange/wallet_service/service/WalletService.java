@@ -1,51 +1,17 @@
 package io.goldexchange.wallet_service.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.goldexchange.wallet_service.model.Wallet;
-import io.goldexchange.wallet_service.repository.WalletRepository;
+import io.goldexchange.wallet_service.dto.WalletDTO;
 
-@Service
-public class WalletService {
-    @Autowired
-    private WalletRepository walletRepository;
+public interface WalletService {
 
-    public Wallet getWallet(Long userId) {
-        Wallet wallet = walletRepository.findByUserId(userId);
-        return wallet;
-    }
+    WalletDTO getWallet(Long userId);
 
-    public Wallet createWallet(Long userId) {
-        Wallet wallet = new Wallet();
-        wallet.setUserId(userId);
-        wallet.setBalance(0.0);
-        wallet.setGold(0.0);
-        return walletRepository.save(wallet);
-    }
+    WalletDTO createWallet(Long userId);
 
-    @Transactional
-    public void addMoney(Long userId, Double amount) {
-        Wallet wallet = walletRepository.findByUserId(userId);
-        if (wallet == null) {
-            wallet = new Wallet();
-            wallet.setUserId(userId);
-            wallet.setBalance(amount);
-        } else {
-            wallet.setBalance(wallet.getBalance() + amount);
-        }
-        walletRepository.save(wallet);
-    }
+    void addMoney(Long userId, Double amount);
 
-    @Transactional
-    public void withdrawMoney(Long userId, Double amount) {
-        Wallet wallet = walletRepository.findByUserId(userId);
-        if (wallet != null && wallet.getBalance() >= amount) {
-            wallet.setBalance(wallet.getBalance() - amount);
-            walletRepository.save(wallet);
-        } else {
-            throw new IllegalArgumentException("Insufficient balance");
-        }
-    }
+    void withdrawMoney(Long userId, Double amount);
+
 }

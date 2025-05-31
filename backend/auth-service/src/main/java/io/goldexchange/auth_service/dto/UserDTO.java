@@ -1,14 +1,19 @@
 package io.goldexchange.auth_service.dto;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class VerifyTotpRequest {
+public class UserDTO {
+
+    private Long userId;
+    private String userName;
     private String phoneNumber;
-    private String totp;
-    private String deviceFingerprint;
+    private String secretKey;
+    private String state;
+
 }

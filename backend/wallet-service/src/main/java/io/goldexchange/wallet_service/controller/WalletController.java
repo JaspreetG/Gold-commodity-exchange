@@ -12,6 +12,9 @@ import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import io.goldexchange.wallet_service.dto.WalletDTO;
+
+
 import java.util.Map;
 
 @RestController
@@ -31,14 +34,14 @@ public class WalletController {
         Long userId = (Long) authentication.getPrincipal();
 
         // Check if wallet already exists
-        Wallet existingWallet = walletService.getWallet(userId);
+        WalletDTO existingWallet = walletService.getWallet(userId);
         if (existingWallet != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "Wallet already exists"));
         }
 
         // Create new wallet
-        Wallet wallet = walletService.createWallet(userId);
+        WalletDTO wallet = walletService.createWallet(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(Map.of("message", "Wallet created successfully", "wallet", wallet));
@@ -51,7 +54,7 @@ public class WalletController {
             return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
         }
         Long userId = (Long) authentication.getPrincipal();
-        Wallet wallet = walletService.getWallet(userId);
+        WalletDTO wallet = walletService.getWallet(userId);
 
         if (wallet == null) {
             return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
