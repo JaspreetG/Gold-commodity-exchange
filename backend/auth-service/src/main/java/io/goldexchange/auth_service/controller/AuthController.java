@@ -89,7 +89,7 @@ public class AuthController {
         // Save user with state 'temporary'
         User user = authService.saveUser(userName, phoneNumber, secretKey);
         // Generate QR code for the secret key
-        String qrCodeData = authService.generateQrCode(userName, phoneNumber, secretKey);
+        String qrCodeData = authService.generateQrCode(userName, secretKey);
         return ResponseEntity.ok(Map.of("qrCode", qrCodeData, "secretKey", secretKey));
     }
 }
