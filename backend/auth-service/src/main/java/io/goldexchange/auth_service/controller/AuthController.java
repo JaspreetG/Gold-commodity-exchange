@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
 
 import io.goldexchange.auth_service.model.User;
+import io.goldexchange.auth_service.security.OtpAuthenticationToken;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 
 import java.util.Map;
 
@@ -23,6 +28,9 @@ public class AuthController {
     
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User user) {
@@ -42,36 +50,26 @@ public class AuthController {
 
     @PostMapping("/verify")
     public ResponseEntity<?> verify(@RequestBody VerifyTotpRequest request, HttpServletResponse response) {
-        String phoneNumber = request.getPhoneNumber();
-        String totp = request.getTotp();
-        String deviceFingerprint = request.getDeviceFingerprint();
-        
-
-        if (phoneNumber == null || totp == null || deviceFingerprint == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Missing required fields"));
+        try {
+            OtpAuthenticationToken authRequest = new OtpAuthenticationToken(request.getPhoneNumber(), request.getTotp());
+            Authentication authentication = authenticationManager.authenticate(authRequest);
+            // If authentication is successful, you can generate JWT and set cookie as before
+            User user = (User) authentication.getPrincipal();
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
+            }
+            String deviceFingerprint = request.getDeviceFingerprint();
+            String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
+            ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
+                .httpOnly(true)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+            response.addHeader("Set-Cookie", cookie.toString());
+            return ResponseEntity.ok(Map.of("message", "Login successful"));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
-
-        User user = authService.getUserByPhone(phoneNumber);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
-        }
-
-        
-
-        String secretKey = user.getSecretKey();
-        boolean isTotpValid = authService.verifyTotp(secretKey, totp,user);
-        if (!isTotpValid) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Invalid TOTP"));
-        }
-        
-        String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
-        ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
-            .httpOnly(true)
-            .path("/")
-            .sameSite("Strict")
-            .build();
-        response.addHeader("Set-Cookie", cookie.toString());
-        return ResponseEntity.ok(Map.of("message", "Login successful"));
     }
 
     @PostMapping("/register")
