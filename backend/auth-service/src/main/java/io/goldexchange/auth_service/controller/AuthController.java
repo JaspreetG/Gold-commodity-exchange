@@ -14,6 +14,7 @@ import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.security.OtpAuthenticationToken;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
+import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,7 +34,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
         String phoneNumber = user.getPhoneNumber();
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
