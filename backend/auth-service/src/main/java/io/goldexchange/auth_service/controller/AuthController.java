@@ -16,6 +16,8 @@ import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
 import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
+import io.goldexchange.auth_service.dto.UserDTO;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -57,7 +59,7 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(authRequest);
             // If authentication is successful, you can generate JWT and set cookie as
             // before
-            User user = (User) authentication.getPrincipal();
+            UserDTO user = (UserDTO) authentication.getPrincipal();
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
             }
@@ -73,7 +75,7 @@ public class AuthController {
                     .sameSite("Strict")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
-            return ResponseEntity.ok(Map.of("message", "Login successful"));
+            return ResponseEntity.ok(Map.of("message", "Login successful","User",user));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
@@ -94,7 +96,7 @@ public class AuthController {
         // Generate a new secret key for TOTP
         String secretKey = authService.generateSecretKey();
         // Save user with state 'temporary'
-        User user = authService.saveUser(userName, phoneNumber, secretKey);
+        authService.saveUser(userName, phoneNumber, secretKey);
         // Generate QR code for the secret key
         String qrCodeData = authService.generateQrCode(userName, secretKey);
         return ResponseEntity.ok(Map.of("qrCode", qrCodeData, "secretKey", secretKey));

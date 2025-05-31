@@ -8,6 +8,10 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddMoneyRequest {
-    private Double amount;
+public class WalletDTO {
+    
+    private Long walletId;
+    private Long userId;
+    private Double balance;
+    private Double Gold;
 }
