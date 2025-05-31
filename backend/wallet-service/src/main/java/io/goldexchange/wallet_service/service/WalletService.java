@@ -1,7 +1,5 @@
 package io.goldexchange.wallet_service.service;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import io.goldexchange.wallet_service.dto.WalletDTO;
 
 public interface WalletService {
