@@ -19,7 +19,7 @@ public class TradeController {
         this.tradeService = tradeService;
     }
 
-    @PostMapping("/order")
+    @PostMapping("/createOrder")
     public ResponseEntity<?> placeOrder(@RequestBody OrderRequest orderRequest) {
         try {
             tradeService.sendOrderToMatcher(orderRequest);
