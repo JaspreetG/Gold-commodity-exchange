@@ -27,7 +27,7 @@ public class WalletServiceImpl implements WalletService {
         Wallet wallet = walletRepository.findByUserId(userId);
 
         if (wallet == null) {
-            throw new RuntimeException("Wallet not found for userId: " + userId);
+            return new WalletDTO();
         }
 
         WalletDTO walletDTO = new WalletDTO();
@@ -56,9 +56,9 @@ public class WalletServiceImpl implements WalletService {
 
         Wallet savedWallet = walletRepository.save(wallet);
 
-        if (savedWallet == null) {
-            throw new IllegalStateException("Failed to save wallet for user: " + userId);
-        }
+        // if (savedWallet == null) {
+        //     throw new IllegalStateException("Failed to save wallet for user: " + userId);
+        // }
 
         WalletDTO walletDTO = new WalletDTO();
         BeanUtils.copyProperties(savedWallet, walletDTO);
