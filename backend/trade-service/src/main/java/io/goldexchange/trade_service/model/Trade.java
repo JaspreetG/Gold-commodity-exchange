@@ -1,6 +1,7 @@
 package io.goldexchange.trade_service.model;
 
-import java.security.Timestamp;
+
+import java.sql.Timestamp;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,6 +24,13 @@ public class Trade {
     private Double price;
     private Double quantity;
     private Timestamp createdAt;
+
+    @PrePersist
+    public void onPrePersist() {
+        if (createdAt == null) {
+            createdAt = new Timestamp(System.currentTimeMillis());
+        }
+    }
 
 }
 
