@@ -27,7 +27,7 @@ public class WalletServiceImpl implements WalletService {
         Wallet wallet = walletRepository.findByUserId(userId);
 
         if (wallet == null) {
-            return new WalletDTO();
+            return null;
         }
 
         WalletDTO walletDTO = new WalletDTO();
