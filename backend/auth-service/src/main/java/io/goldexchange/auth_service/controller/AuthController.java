@@ -1,5 +1,6 @@
 package io.goldexchange.auth_service.controller;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import io.goldexchange.auth_service.security.OtpAuthenticationToken;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
+import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
 import io.goldexchange.auth_service.dto.UserDTO;
@@ -57,10 +59,15 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(authRequest);
             // If authentication is successful, you can generate JWT and set cookie as
             // before
-            UserDTO user = (UserDTO) authentication.getPrincipal();
-            if (user == null) {
+            User userEntity = (User) authentication.getPrincipal();
+            if (userEntity == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
             }
+            
+            UserDTO user=new UserDTO();
+            BeanUtils.copyProperties(userEntity, user);
+            
+           
             String deviceFingerprint = request.getDeviceFingerprint();
             String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
 
