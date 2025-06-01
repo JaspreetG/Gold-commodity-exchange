@@ -37,7 +37,7 @@ namespace kafka
                     if (!payload.empty())
                     {
                         nlohmann::json j = nlohmann::json::parse(payload);
-                        std::string user_id = j.at("user_id");
+                        std::string user_id = j.at("userId");
                         int quantity = j.at("quantity");
                         double price = j.at("price");
                         std::string side = j.at("side");
