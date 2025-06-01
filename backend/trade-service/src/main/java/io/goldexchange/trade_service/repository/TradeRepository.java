@@ -1,8 +1,9 @@
 package io.goldexchange.trade_service.repository;
 
+import io.goldexchange.trade_service.model.Trade;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TradeRepository {
-    // Repository methods will go here
+public interface TradeRepository extends JpaRepository<Trade, Long> {
 }
