@@ -14,24 +14,54 @@ public class WalletServiceImpl implements WalletService {
     @Autowired
     private WalletRepositoryWrapper walletRepository;
 
+    // @Override
+    // public WalletDTO getWallet(Long userId) {
+    // Wallet wallet = walletRepository.findByUserId(userId);
+    // WalletDTO walletDTO = new WalletDTO();
+    // BeanUtils.copyProperties(wallet, walletDTO);
+    // return walletDTO;
+    // }
+
     @Override
     public WalletDTO getWallet(Long userId) {
         Wallet wallet = walletRepository.findByUserId(userId);
+
+        if (wallet == null) {
+            throw new RuntimeException("Wallet not found for userId: " + userId);
+        }
+
         WalletDTO walletDTO = new WalletDTO();
         BeanUtils.copyProperties(wallet, walletDTO);
         return walletDTO;
     }
 
+    // @Override
+    // public WalletDTO createWallet(Long userId){
+    // Wallet wallet = new Wallet();
+    // wallet.setUserId(userId);
+    // wallet.setBalance(0.0);
+    // wallet.setGold(0.0);
+    // wallet=walletRepository.save(wallet);
+
+    // WalletDTO walletDTO=new WalletDTO();
+    // BeanUtils.copyProperties(wallet, walletDTO);
+    // return walletDTO;
+    // }
     @Override
-    public WalletDTO createWallet(Long userId){
+    public WalletDTO createWallet(Long userId) {
         Wallet wallet = new Wallet();
         wallet.setUserId(userId);
         wallet.setBalance(0.0);
         wallet.setGold(0.0);
-        wallet=walletRepository.save(wallet);
 
-        WalletDTO walletDTO=new WalletDTO();
-        BeanUtils.copyProperties(wallet, walletDTO);
+        Wallet savedWallet = walletRepository.save(wallet);
+
+        if (savedWallet == null) {
+            throw new IllegalStateException("Failed to save wallet for user: " + userId);
+        }
+
+        WalletDTO walletDTO = new WalletDTO();
+        BeanUtils.copyProperties(savedWallet, walletDTO);
         return walletDTO;
     }
 
