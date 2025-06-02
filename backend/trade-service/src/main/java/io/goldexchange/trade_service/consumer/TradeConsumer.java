@@ -1,5 +1,6 @@
 package io.goldexchange.trade_service.consumer;
 
+import io.goldexchange.trade_service.dto.TradeConsumerDTO;
 import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.service.TradeService;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,8 +22,8 @@ public class TradeConsumer {
     @KafkaListener(topics = "trade", groupId = "matcher-group")
     public void listenTrade(String message) {
         try {
-            Trade trade = objectMapper.readValue(message, Trade.class);
-            tradeService.saveTrade(trade);
+            TradeConsumerDTO tradeConsumerDTO = objectMapper.readValue(message, TradeConsumerDTO.class);
+            tradeService.saveTrade(tradeConsumerDTO);
             messagingTemplate.convertAndSend("/topic/trade", message);
         } catch (Exception e) {
             // Log error

@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRequest {
+public class OrderProducerDTO {
+    private String userId;
     private int quantity;
     private Double price;
     private String side; // BUY or SELL

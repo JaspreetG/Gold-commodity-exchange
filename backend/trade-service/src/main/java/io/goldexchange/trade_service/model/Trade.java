@@ -22,7 +22,7 @@ public class Trade {
     private Long buyerId;  //buyer
     private Long sellerId;  // seller
     private Double price;
-    private Double quantity;
+    private int quantity;
     private Timestamp createdAt;
 
     @PrePersist
