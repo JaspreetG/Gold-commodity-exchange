@@ -11,12 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class TradeConsumer {
     private final TradeService tradeService;
-    private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public TradeConsumer(TradeService tradeService, SimpMessagingTemplate messagingTemplate) {
+    public TradeConsumer(TradeService tradeService) {
         this.tradeService = tradeService;
-        this.messagingTemplate = messagingTemplate;
     }
 
     @KafkaListener(topics = "trade", groupId = "matcher-group")
@@ -24,9 +22,9 @@ public class TradeConsumer {
         try {
             TradeConsumerDTO tradeConsumerDTO = objectMapper.readValue(message, TradeConsumerDTO.class);
             tradeService.saveTrade(tradeConsumerDTO);
-            messagingTemplate.convertAndSend("/topic/trade", message);
         } catch (Exception e) {
             // Log error
+            throw new RuntimeException("Failed to process trade message", e);
         }
     }
 }
