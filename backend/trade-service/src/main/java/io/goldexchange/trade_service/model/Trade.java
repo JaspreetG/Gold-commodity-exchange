@@ -17,13 +17,13 @@ public class Trade {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tradeId;
+    private Long tradeId;                //it is not for unique trade
 
-    private Long buyerId;  //buyer
-    private Long sellerId;  // seller
+    private Long userId;  
     private Double price;
     private int quantity;
     private Timestamp createdAt;
+    private String side; // BUY or SELL
 
     @PrePersist
     public void onPrePersist() {

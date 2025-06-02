@@ -1,7 +1,12 @@
 package io.goldexchange.trade_service.controller;
 
 import io.goldexchange.trade_service.dto.OrderRequest;
+import io.goldexchange.trade_service.dto.PastTradeDTO;
+import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.service.TradeService;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -46,8 +51,12 @@ public class TradeController {
             }
             Long userId = (Long) authentication.getPrincipal();
 
-            tradeService.pastTrades(userId);
-            return ResponseEntity.ok(java.util.Map.of("status", "Trades sent sucessfully"));
+            List<PastTradeDTO> pastTrades=tradeService.pastTrades(userId);
+            if (pastTrades.isEmpty()) {
+                return ResponseEntity.ok(java.util.Map.of("message", "No past trades found"));
+            }
+
+            return ResponseEntity.ok(java.util.Map.of("status", "Trades sent sucessfully","pastTrades",pastTrades));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send trades"));
         }
