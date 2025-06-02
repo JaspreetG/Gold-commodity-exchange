@@ -10,7 +10,7 @@ namespace kafka
     void KafkaTradeProducer::publish(const models::Trade &t)
     {
         const char *broker_env = std::getenv("KAFKA_BROKER");
-        std::string broker = broker_env ? broker_env : "127.0.0.1:9092";
+        std::string broker = broker_env ? broker_env : "127.0.0.1:29092";
         cppkafka::Configuration config = {
             {"metadata.broker.list", broker}};
         cppkafka::Producer producer(config);
