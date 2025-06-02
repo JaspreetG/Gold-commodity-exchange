@@ -15,6 +15,7 @@ import java.util.Map;
 //changed file name
 @Configuration
 public class KafkaProducerConfig {
+    
     @Value("${KAFKA_BROKER:127.0.0.1:29092}")
     private String bootstrapServers;
 
@@ -32,3 +33,4 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 }
+
