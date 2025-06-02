@@ -12,6 +12,7 @@ public class OrderProducer {
     }
 
     public void sendOrder(String orderJson) {
+
         kafkaTemplate.send("order", orderJson);
     }
 }
