@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @PreAuthorize("isAuthenticated()")
@@ -27,12 +30,30 @@ public class TradeController {
                 return ResponseEntity.status(401).body(java.util.Map.of("error", "Unauthorized: User not authenticated"));
             }
             Long userId = (Long) authentication.getPrincipal();
-            orderRequest.setUserId(userId);
-            
-            tradeService.sendOrderToMatcher(orderRequest);
+
+            tradeService.sendOrderToMatcher(orderRequest, userId);
             return ResponseEntity.ok(java.util.Map.of("status", "Order sent to matcher"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send order"));
         }
     }
+
+    @GetMapping("/getPastTrades")
+    public ResponseEntity<?> pastTrades(Authentication authentication) {
+        try {
+            if (authentication == null || authentication.getPrincipal() == null) {
+                return ResponseEntity.status(401).body(java.util.Map.of("error", "Unauthorized: User not authenticated"));
+            }
+            Long userId = (Long) authentication.getPrincipal();
+
+            tradeService.pastTrades(userId);
+            return ResponseEntity.ok(java.util.Map.of("status", "Trades sent sucessfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send trades"));
+        }
+    }
+
+
+    
+    
 }
