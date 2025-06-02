@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
 import io.goldexchange.trade_service.dto.OrderRequest;
+import io.goldexchange.trade_service.dto.PastTradeDTO;
 import io.goldexchange.trade_service.dto.TradeConsumerDTO;
 import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.producer.OrderProducer;
 import io.goldexchange.trade_service.repository.TradeRepository;
+
+import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -23,7 +26,7 @@ public class TradeService {
         this.orderProducer = orderProducer;
     }
 
-    public void sendOrderToMatcher(OrderRequest orderRequest,Long userId) throws Exception {
+    public void sendOrderToMatcher(OrderRequest orderRequest, Long userId) throws Exception {
 
         OrderProducerDTO orderProducerDTO = new OrderProducerDTO();
         BeanUtils.copyProperties(orderRequest, orderProducerDTO);
@@ -33,12 +36,56 @@ public class TradeService {
         orderProducer.sendOrder(orderJson);
     }
 
-    public Trade saveTrade(TradeConsumerDTO tradeConsumerDTO) {
-        Trade trade = new Trade();
-        trade.setBuyerId(Long.parseLong(tradeConsumerDTO.getBuyerId()));
-        trade.setSellerId(Long.parseLong(tradeConsumerDTO.getSellerId()));
-        trade.setPrice(tradeConsumerDTO.getPrice());
-        trade.setQuantity(tradeConsumerDTO.getQuantity());
-        return tradeRepository.save(trade);
+    public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
+
+        try {
+            // buy side
+            Trade tradeBuyerSide = new Trade();
+            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyerId()));
+            tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
+            tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
+            tradeBuyerSide.setSide("BUY");
+
+            tradeRepository.save(tradeBuyerSide);
+
+            // seller side
+            Trade tradeSellerSide = new Trade();
+            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellerId()));
+            tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
+            tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
+            tradeBuyerSide.setSide("SELL");
+
+            tradeRepository.save(tradeSellerSide);
+
+        } catch (Exception e) {
+            // TODO: handle exception
+            throw new RuntimeException("Error saving trade: " + e.getMessage(), e);
+        }
     }
+
+    public List<PastTradeDTO> pastTrades(Long userId) {
+        // Fetch trades where user is involved
+        List<Trade> userTrades = tradeRepository.findByUserId(userId);
+
+        if (userTrades == null || userTrades.isEmpty()) {
+           return null;
+        }
+
+        List<PastTradeDTO> pastTrades= userTrades.stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .map(trade -> {
+                    PastTradeDTO pastTradeDTO = new PastTradeDTO();
+                    pastTradeDTO.setUserId(trade.getUserId());
+                    pastTradeDTO.setPrice(trade.getPrice());
+                    pastTradeDTO.setQuantity(trade.getQuantity());
+                    pastTradeDTO.setSide(trade.getSide());
+                    pastTradeDTO.setCreatedAt(trade.getCreatedAt());
+                    return pastTradeDTO;
+                })
+                .toList();
+
+        return pastTrades;
+    }
+
+
 }
