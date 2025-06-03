@@ -36,8 +36,13 @@ public class TradeController {
             }
             Long userId = (Long) authentication.getPrincipal();
 
-            tradeService.sendOrderToMatcher(orderRequest, userId);
-            return ResponseEntity.ok(java.util.Map.of("status", "Order sent to matcher"));
+            boolean isPossible=tradeService.checkWallet(orderRequest);
+
+            if(isPossible){
+                tradeService.sendOrderToMatcher(orderRequest, userId);
+               return ResponseEntity.ok(java.util.Map.of("status", "Order sent to matcher"));
+            }
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send order due to insufficient funds"));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send order"));
         }

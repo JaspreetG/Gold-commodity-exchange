@@ -1,5 +1,6 @@
 package io.goldexchange.trade_service.Security;
 
+import io.goldexchange.trade_service.dto.AuthCredentials;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -58,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, null, null // You can set roles/authorities if needed
+                        userId, new AuthCredentials(jwtToken, deviceFingerprint), null // You can set roles/authorities if needed
                 );
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
