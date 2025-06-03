@@ -6,6 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import io.goldexchange.wallet_service.dto.AddMoneyRequest;
+import io.goldexchange.wallet_service.dto.UserIdDTO;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
 import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,6 +61,24 @@ public class WalletController {
 
         return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
     }
+
+    //for callby saveTrade() in service of trade to get wallet of another user with whom trade has happend
+    // @GetMapping("/updateWalletbyUserId")
+    // @PreAuthorize("isAuthenticated()")
+    // public ResponseEntity<?> updateWalletByUserId(@RequestBody UserIdDTO userIdDTO, Authentication authentication) {
+    //     if (authentication == null || authentication.getPrincipal() == null) {
+    //         return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
+    //     }
+    //     Long userId = userIdDTO.getUserId();
+    //     WalletDTO wallet = walletService.updateWalletByUserId(userId);
+
+    //     if (wallet == null) {
+    //         return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
+    //     }
+
+    //     return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
+    // }
+
 
     @PostMapping("/addMoney")
     @PreAuthorize("isAuthenticated()")

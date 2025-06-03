@@ -2,24 +2,43 @@ package io.goldexchange.trade_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.goldexchange.trade_service.dto.AuthCredentials;
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
 import io.goldexchange.trade_service.dto.OrderRequest;
 import io.goldexchange.trade_service.dto.PastTradeDTO;
 import io.goldexchange.trade_service.dto.TradeConsumerDTO;
+import io.goldexchange.trade_service.dto.WalletDTO;
 import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.producer.OrderProducer;
 import io.goldexchange.trade_service.repository.TradeRepository;
 
 import java.util.List;
+import java.util.Map;
 
+import org.hibernate.query.Order;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class TradeService {
     private final TradeRepository tradeRepository;
     private final OrderProducer orderProducer;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${wallet.service.url}")
+    private String walletServiceUrl;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository) {
         this.tradeRepository = tradeRepository;
@@ -44,7 +63,7 @@ public class TradeService {
             // System.out.println(tradeConsumerDTO.getSellOrderId());
             // System.out.println(tradeConsumerDTO.getPrice());
             // System.out.println(tradeConsumerDTO.getQuantity());
-            
+
             // buy side
             Trade tradeBuyerSide = new Trade();
             tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
@@ -60,7 +79,6 @@ public class TradeService {
             // System.out.println(tradeConsumerDTO.getPrice());
             // System.out.println(tradeConsumerDTO.getQuantity());
 
-
             // seller side
             Trade tradeSellerSide = new Trade();
             tradeSellerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellOrderId()));
@@ -69,6 +87,11 @@ public class TradeService {
             tradeSellerSide.setSide("SELL");
 
             tradeRepository.save(tradeSellerSide);
+
+            // wallet update
+            // WalletDTO walletDTOBuyerSide = updateWalletByUserId(tradeBuyerSide.getUserId());
+            // WalletDTO walletDTOSellerSide = updateWalletByUserId(tradeSellerSide.getUserId());
+
 
         } catch (Exception e) {
             // TODO: handle exception
@@ -81,10 +104,10 @@ public class TradeService {
         List<Trade> userTrades = tradeRepository.findByUserId(userId);
 
         if (userTrades == null || userTrades.isEmpty()) {
-           return null;
+            return null;
         }
 
-        List<PastTradeDTO> pastTrades= userTrades.stream()
+        List<PastTradeDTO> pastTrades = userTrades.stream()
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .map(trade -> {
                     PastTradeDTO pastTradeDTO = new PastTradeDTO();
@@ -100,5 +123,94 @@ public class TradeService {
         return pastTrades;
     }
 
+
+    public WalletDTO getWallet() {
+        WalletDTO walletDTO = null;
+
+        try {
+            String url = walletServiceUrl; // ensure this is the correct endpoint
+            AuthCredentials creds = (AuthCredentials) SecurityContextHolder.getContext().getAuthentication()
+                    .getCredentials();
+            String deviceFingerprint = creds.getFingerprint();
+            String jwt = creds.getJwt();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
+            headers.set("X-Device-Fingerprint", deviceFingerprint);
+            headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
+
+            HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+            ResponseEntity<WalletDTO> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    requestEntity,
+                    WalletDTO.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Wallet fetched successfully.");
+                walletDTO = response.getBody();
+            } else {
+                System.err.println("Wallet fetch failed with status: " + response.getStatusCode());
+                throw new RuntimeException("Failed to fetch wallet");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to fetch wallet: " + e.getMessage());
+        }
+
+        return walletDTO;
+    }
+
+    public boolean checkWallet(OrderRequest orderRequest) {
+        WalletDTO walletDTO = getWallet();
+        if (walletDTO == null) {
+            return false;
+        }
+
+        // Check if the user has enough balance
+        if (orderRequest.getSide().equals("BUY")) {
+            return walletDTO.getBalance() >= orderRequest.getPrice();
+        } else if (orderRequest.getSide().equals("SELL")) {
+            return walletDTO.getGold() >= orderRequest.getQuantity();
+        }
+        return false;
+    }
+
+    // public WalletDTO updateWalletByUserId(Long userId) {
+    //     WalletDTO walletDTO = null;
+
+    //     try {
+    //         String url = walletServiceUrl; // ensure this is the correct endpoint
+    //         AuthCredentials creds = (AuthCredentials) SecurityContextHolder.getContext().getAuthentication()
+    //                 .getCredentials();
+    //         String deviceFingerprint = creds.getFingerprint();
+    //         String jwt = creds.getJwt();
+
+    //         HttpHeaders headers = new HttpHeaders();
+    //         headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
+    //         headers.set("X-Device-Fingerprint", deviceFingerprint);
+    //         headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
+
+    //         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+    //         ResponseEntity<WalletDTO> response = restTemplate.exchange(
+    //                 url,
+    //                 HttpMethod.GET,
+    //                 requestEntity,
+    //                 WalletDTO.class);
+
+    //         if (response.getStatusCode().is2xxSuccessful()) {
+    //             System.out.println("Wallet fetched successfully.");
+    //             walletDTO = response.getBody();
+    //         } else {
+    //             System.err.println("Wallet fetch failed with status: " + response.getStatusCode());
+    //             throw new RuntimeException("Failed to fetch wallet");
+    //         }
+    //     } catch (Exception e) {
+    //         System.err.println("Failed to fetch wallet: " + e.getMessage());
+    //     }
+
+    //     return walletDTO;
+    // }
 
 }

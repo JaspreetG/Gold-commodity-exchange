@@ -65,6 +65,17 @@ public class WalletServiceImpl implements WalletService {
         return walletDTO;
     }
 
+    // @Override
+    // public void updateWalletByUserId(Long userId) {
+    //     Wallet wallet = walletRepository.findByUserId(userId);
+    //     if (wallet == null) {
+    //         return; // or throw an exception if you prefer
+    //     }
+    //     WalletDTO walletDTO = new WalletDTO();
+    //     BeanUtils.copyProperties(wallet, walletDTO);
+    //     return walletDTO;
+    // }
+
     @Override
     @Transactional
     public void addMoney(Long userId, Double amount) {
@@ -90,4 +101,5 @@ public class WalletServiceImpl implements WalletService {
             throw new IllegalArgumentException("Insufficient balance");
         }
     }
+
 }

@@ -12,4 +12,6 @@ public interface WalletService {
 
     void withdrawMoney(Long userId, Double amount);
 
+    // void updateWalletByUserId(Long userId);
+
 }
