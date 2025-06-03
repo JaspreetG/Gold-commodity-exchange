@@ -16,8 +16,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class TradeConsumerDTO {
 
-    private String buyerId;  //buyer
-    private String sellerId;  // seller
+    private String buyOrderId;  //buyer
+    private String sellOrderId;  // seller
     private Double price;
     private int quantity;
 
