@@ -39,21 +39,34 @@ public class TradeService {
     public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
 
         try {
+            // System.out.println("BeforBuySide");
+            // System.out.println(tradeConsumerDTO.getBuyOrderId());
+            // System.out.println(tradeConsumerDTO.getSellOrderId());
+            // System.out.println(tradeConsumerDTO.getPrice());
+            // System.out.println(tradeConsumerDTO.getQuantity());
+            
             // buy side
             Trade tradeBuyerSide = new Trade();
-            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyerId()));
+            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
             tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
             tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
             tradeBuyerSide.setSide("BUY");
 
             tradeRepository.save(tradeBuyerSide);
 
+            // System.out.println("BeforSellSide");
+            // System.out.println(tradeConsumerDTO.getBuyOrderId());
+            // System.out.println(tradeConsumerDTO.getSellOrderId());
+            // System.out.println(tradeConsumerDTO.getPrice());
+            // System.out.println(tradeConsumerDTO.getQuantity());
+
+
             // seller side
             Trade tradeSellerSide = new Trade();
-            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellerId()));
-            tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
-            tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
-            tradeBuyerSide.setSide("SELL");
+            tradeSellerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellOrderId()));
+            tradeSellerSide.setPrice(tradeConsumerDTO.getPrice());
+            tradeSellerSide.setQuantity(tradeConsumerDTO.getQuantity());
+            tradeSellerSide.setSide("SELL");
 
             tradeRepository.save(tradeSellerSide);
 
