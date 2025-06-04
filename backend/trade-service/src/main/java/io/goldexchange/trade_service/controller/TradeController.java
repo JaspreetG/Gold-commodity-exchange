@@ -4,6 +4,7 @@ import io.goldexchange.trade_service.dto.OrderRequest;
 import io.goldexchange.trade_service.dto.PastTradeDTO;
 import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.service.TradeService;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TradeController {
     }
 
     @PostMapping("/createOrder")
-    public ResponseEntity<?> placeOrder(@RequestBody OrderRequest orderRequest,Authentication authentication) {
+    public ResponseEntity<?> placeOrder(@Valid @RequestBody OrderRequest orderRequest,Authentication authentication) {
         try {
             if (authentication == null || authentication.getPrincipal() == null) {
                 return ResponseEntity.status(401).body(java.util.Map.of("error", "Unauthorized: User not authenticated"));

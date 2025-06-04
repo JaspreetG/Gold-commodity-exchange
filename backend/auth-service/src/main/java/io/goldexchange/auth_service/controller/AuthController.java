@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletResponse;
-
+import jakarta.validation.Valid;
 import io.goldexchange.auth_service.security.OtpAuthenticationToken;
 import io.goldexchange.auth_service.service.AuthService;
 import io.goldexchange.auth_service.dto.VerifyTotpRequest;
@@ -36,7 +36,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest user) {
         String phoneNumber = user.getPhoneNumber();
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verify(@RequestBody VerifyTotpRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> verify(@Valid @RequestBody VerifyTotpRequest request, HttpServletResponse response) {
         try {
             OtpAuthenticationToken authRequest = new OtpAuthenticationToken(request.getPhoneNumber(),
                     request.getTotp());
@@ -87,7 +87,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         String userName = request.getUserName();
         String phoneNumber = request.getPhoneNumber();
         if (userName == null || userName.isEmpty() || phoneNumber == null || phoneNumber.isEmpty()) {
