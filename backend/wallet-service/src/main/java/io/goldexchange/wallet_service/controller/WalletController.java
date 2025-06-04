@@ -7,10 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import io.goldexchange.wallet_service.dto.AddMoneyRequest;
 import io.goldexchange.wallet_service.dto.TradeDTO;
-import io.goldexchange.wallet_service.dto.UserIdDTO;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
 import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,7 +88,7 @@ public class WalletController {
 
     @PostMapping("/addMoney")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> addMoney(@RequestBody AddMoneyRequest req, Authentication authentication) {
+    public ResponseEntity<?> addMoney(@Valid @RequestBody AddMoneyRequest req, Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
         }
@@ -100,7 +100,7 @@ public class WalletController {
 
     @PostMapping("/withdrawMoney")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> withdrawMoney(@RequestBody WithdrawMoneyRequest req, Authentication authentication) {
+    public ResponseEntity<?> withdrawMoney(@Valid @RequestBody WithdrawMoneyRequest req, Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
         }

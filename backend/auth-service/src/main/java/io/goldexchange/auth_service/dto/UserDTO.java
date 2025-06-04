@@ -13,7 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDTO {
 
+    @JsonIgnore
     private Long userId;
+    
     private String userName;
     private String phoneNumber;
 

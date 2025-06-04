@@ -110,7 +110,7 @@ public class TradeService {
 
             ResponseEntity<Map> response = restTemplate.exchange(
                     url,
-                    HttpMethod.GET,
+                    HttpMethod.POST,
                     requestEntity,
                     Map.class);
 
@@ -202,41 +202,5 @@ public class TradeService {
         return false;
     }
 
-    // public WalletDTO updateWalletByUserId(Long userId) {
-    //     WalletDTO walletDTO = null;
-
-    //     try {
-    //         String url = walletServiceUrl; // ensure this is the correct endpoint
-    //         AuthCredentials creds = (AuthCredentials) SecurityContextHolder.getContext().getAuthentication()
-    //                 .getCredentials();
-    //         String deviceFingerprint = creds.getFingerprint();
-    //         String jwt = creds.getJwt();
-
-    //         HttpHeaders headers = new HttpHeaders();
-    //         headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
-    //         headers.set("X-Device-Fingerprint", deviceFingerprint);
-    //         headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
-
-    //         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
-
-    //         ResponseEntity<WalletDTO> response = restTemplate.exchange(
-    //                 url,
-    //                 HttpMethod.GET,
-    //                 requestEntity,
-    //                 WalletDTO.class);
-
-    //         if (response.getStatusCode().is2xxSuccessful()) {
-    //             System.out.println("Wallet fetched successfully.");
-    //             walletDTO = response.getBody();
-    //         } else {
-    //             System.err.println("Wallet fetch failed with status: " + response.getStatusCode());
-    //             throw new RuntimeException("Failed to fetch wallet");
-    //         }
-    //     } catch (Exception e) {
-    //         System.err.println("Failed to fetch wallet: " + e.getMessage());
-    //     }
-
-    //     return walletDTO;
-    // }
-
+   
 }
