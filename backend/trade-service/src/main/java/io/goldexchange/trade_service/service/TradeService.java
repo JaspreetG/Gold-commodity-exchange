@@ -173,9 +173,10 @@ public class TradeService {
                     requestEntity,
                     WalletDTO.class);
 
+                System.out.println(response.getBody());
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("Wallet fetched successfully.");
-                walletDTO = response.getBody();
+                walletDTO = (WalletDTO) response.getBody();
             } else {
                 System.err.println("Wallet fetch failed with status: " + response.getStatusCode());
                 throw new RuntimeException("Failed to fetch wallet");
@@ -183,7 +184,8 @@ public class TradeService {
         } catch (Exception e) {
             System.err.println("Failed to fetch wallet: " + e.getMessage());
         }
-
+        System.out.println("inside getWallet");
+        System.out.println(walletDTO);
         return walletDTO;
     }
 
@@ -192,6 +194,7 @@ public class TradeService {
         if (walletDTO == null) {
             return false;
         }
+        System.out.println(walletDTO);
 
         // Check if the user has enough balance
         if (orderRequest.getSide().equals("BUY")) {

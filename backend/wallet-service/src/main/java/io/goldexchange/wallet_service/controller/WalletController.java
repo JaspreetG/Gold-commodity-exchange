@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import io.goldexchange.wallet_service.dto.AddGoldRequestDTO;
 import io.goldexchange.wallet_service.dto.AddMoneyRequest;
 import io.goldexchange.wallet_service.dto.TradeDTO;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.goldexchange.wallet_service.dto.WalletDTO;
+import io.goldexchange.wallet_service.dto.WithdrawGoldRequestDTO;
 
 import java.util.Map;
 
@@ -60,12 +63,13 @@ public class WalletController {
             return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
         }
         Long userId = (Long) authentication.getPrincipal();
+        System.out.println("get wallet bja");
         WalletDTO wallet = walletService.getWallet(userId);
 
         if (wallet == null) {
             return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
         }
-
+        System.out.println(wallet);
         return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
     }
 
@@ -112,5 +116,30 @@ public class WalletController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(java.util.Map.of("error", e.getMessage()));
         }
         return ResponseEntity.ok(java.util.Map.of("message", "Money withdrawn successfully"));
+    }
+
+    @PostMapping("/addGold")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> addGold(@Valid @RequestBody AddGoldRequestDTO req, Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
+        }
+        // System.out.println("Entered");
+        Long userId = (Long) authentication.getPrincipal();
+        // Use walletService to add money
+        walletService.addGold(userId, req.getQuantity());
+        return ResponseEntity.ok(java.util.Map.of("message", "Gold added successfully"));
+    }
+
+    @PostMapping("/withdrawGold")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> withdrawGold(@Valid @RequestBody WithdrawGoldRequestDTO req, Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
+        }
+        Long userId = (Long) authentication.getPrincipal();
+        // Use walletService to add money
+        walletService.withdrawGold(userId, req.getQuantity());
+        return ResponseEntity.ok(java.util.Map.of("message", "Gold withdrawn successfully"));
     }
 }
