@@ -17,14 +17,14 @@ import java.nio.charset.StandardCharsets;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    
+
     @Value("${jwt.secret}")
     private String jwtSecret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
 
         String jwtToken = null;
 
@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-        
 
         // Proceed if token exists
         if (jwtToken != null) {
@@ -78,4 +77,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().contains("/internal/updateWalletByUserId");
+    }
+
 }

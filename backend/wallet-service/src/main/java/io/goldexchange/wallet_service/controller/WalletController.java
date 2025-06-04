@@ -6,12 +6,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import io.goldexchange.wallet_service.dto.AddMoneyRequest;
+import io.goldexchange.wallet_service.dto.TradeDTO;
 import io.goldexchange.wallet_service.dto.UserIdDTO;
 import io.goldexchange.wallet_service.dto.WithdrawMoneyRequest;
 import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
 import io.goldexchange.wallet_service.dto.WalletDTO;
 
 import java.util.Map;
@@ -20,8 +23,12 @@ import java.util.Map;
 @RequestMapping("api/wallet")
 @PreAuthorize("isAuthenticated()")
 public class WalletController {
+
     @Autowired
     private WalletService walletService;
+
+    @Value("${internal.secret.token}")
+    private String internalSecretToken;
 
     @PostMapping("/createWallet")
     public ResponseEntity<?> createWallet(Authentication authentication, HttpServletRequest request) {
@@ -62,23 +69,22 @@ public class WalletController {
         return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
     }
 
-    //for callby saveTrade() in service of trade to get wallet of another user with whom trade has happend
-    // @GetMapping("/updateWalletbyUserId")
-    // @PreAuthorize("isAuthenticated()")
-    // public ResponseEntity<?> updateWalletByUserId(@RequestBody UserIdDTO userIdDTO, Authentication authentication) {
-    //     if (authentication == null || authentication.getPrincipal() == null) {
-    //         return ResponseEntity.status(401).body(java.util.Map.of("redirect", "/login"));
-    //     }
-    //     Long userId = userIdDTO.getUserId();
-    //     WalletDTO wallet = walletService.updateWalletByUserId(userId);
+    // for callby saveTrade() in service of trade to get wallet of another user with
+    // whom trade has happend
+    @PostMapping("/internal/updateWallets")
+    public ResponseEntity<?> updateWallets(@RequestHeader("X-Internal-Secret") String internalSecret, @RequestBody TradeDTO tradeDTO) {
 
-    //     if (wallet == null) {
-    //         return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
-    //     }
-
-    //     return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
-    // }
-
+        // Validate internal service secret
+        try{
+            if (!"your-secret-token".equals(internalSecret)) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized internal call");
+            }
+            walletService.updateWallets(tradeDTO);
+            return ResponseEntity.ok(Map.of("message", "wallet updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Exception in updating wallets: " + e.getMessage()));
+        }
+    }
 
     @PostMapping("/addMoney")
     @PreAuthorize("isAuthenticated()")
