@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.goldexchange.wallet_service.dto.TradeDTO;
 import io.goldexchange.wallet_service.dto.WalletDTO;
 import io.goldexchange.wallet_service.model.Wallet;
 import io.goldexchange.wallet_service.repository.WalletRepositoryWrapper;
@@ -35,18 +36,6 @@ public class WalletServiceImpl implements WalletService {
         return walletDTO;
     }
 
-    // @Override
-    // public WalletDTO createWallet(Long userId){
-    // Wallet wallet = new Wallet();
-    // wallet.setUserId(userId);
-    // wallet.setBalance(0.0);
-    // wallet.setGold(0.0);
-    // wallet=walletRepository.save(wallet);
-
-    // WalletDTO walletDTO=new WalletDTO();
-    // BeanUtils.copyProperties(wallet, walletDTO);
-    // return walletDTO;
-    // }
     @Override
     public WalletDTO createWallet(Long userId) {
         Wallet wallet = new Wallet();
@@ -65,29 +54,34 @@ public class WalletServiceImpl implements WalletService {
         return walletDTO;
     }
 
-    // @Override
-    // public void updateWalletByUserId(Long userId) {
-    //     Wallet wallet = walletRepository.findByUserId(userId);
-    //     if (wallet == null) {
-    //         return; // or throw an exception if you prefer
-    //     }
-    //     WalletDTO walletDTO = new WalletDTO();
-    //     BeanUtils.copyProperties(wallet, walletDTO);
-    //     return walletDTO;
-    // }
+    @Override
+    public void updateWallets(TradeDTO tradeDTO) {
+        // Assuming tradeDTO contains userId and amount for both users involved in the trade
+        Long buyUserId = Long.parseLong(tradeDTO.getBuyOrderId());
+        Long sellUserId = Long.parseLong(tradeDTO.getSellOrderId());
+        Double price = tradeDTO.getPrice();
+        int quantity=tradeDTO.getQuantity();
+
+        //BuyUser's wallet
+        withdrawMoney(buyUserId, price);
+        addGold(buyUserId, quantity);   
+
+        // SellUser's wallet
+        addMoney(sellUserId, price);
+        withdrawGold(sellUserId, quantity);
+
+    }
 
     @Override
     @Transactional
     public void addMoney(Long userId, Double amount) {
         Wallet wallet = walletRepository.findByUserId(userId);
-        if (wallet == null) {
-            wallet = new Wallet();
-            wallet.setUserId(userId);
-            wallet.setBalance(amount);
-        } else {
+        if (wallet != null) {
             wallet.setBalance(wallet.getBalance() + amount);
+            walletRepository.save(wallet);
+        } else {
+           throw new IllegalArgumentException("Wallet not found for user: " + userId);
         }
-        walletRepository.save(wallet);
     }
 
     @Override
@@ -99,6 +93,30 @@ public class WalletServiceImpl implements WalletService {
             walletRepository.save(wallet);
         } else {
             throw new IllegalArgumentException("Insufficient balance");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void addGold(Long userId, int quantity) {
+        Wallet wallet = walletRepository.findByUserId(userId);
+        if (wallet != null) {
+            wallet.setGold(wallet.getGold() + quantity);
+            walletRepository.save(wallet);
+        } else {
+            throw new IllegalArgumentException("Wallet not found for user: " + userId);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void withdrawGold(Long userId, int quantity) {
+        Wallet wallet = walletRepository.findByUserId(userId);
+        if (wallet != null && wallet.getGold() >= quantity) {
+            wallet.setGold(wallet.getGold() - quantity);
+            walletRepository.save(wallet);
+        } else {
+            throw new IllegalArgumentException("Insufficient gold");
         }
     }
 

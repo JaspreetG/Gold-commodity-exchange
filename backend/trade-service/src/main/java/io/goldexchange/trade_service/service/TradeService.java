@@ -89,13 +89,39 @@ public class TradeService {
             tradeRepository.save(tradeSellerSide);
 
             // wallet update
-            // WalletDTO walletDTOBuyerSide = updateWalletByUserId(tradeBuyerSide.getUserId());
-            // WalletDTO walletDTOSellerSide = updateWalletByUserId(tradeSellerSide.getUserId());
+            updateWallets(tradeConsumerDTO);
+    
 
 
         } catch (Exception e) {
             // TODO: handle exception
             throw new RuntimeException("Error saving trade: " + e.getMessage(), e);
+        }
+    }
+
+    public void updateWallets(TradeConsumerDTO tradeConsumerDTO) {
+        try {
+            String url = walletServiceUrl+"internal/updateWallets"; // ensure this is the correct endpoint
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("X-Internal-Secret", "mySecretToken"); // Use a secure token for internal calls
+            headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
+
+            HttpEntity<TradeConsumerDTO> requestEntity = new HttpEntity<>(tradeConsumerDTO,headers);
+
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    requestEntity,
+                    Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Wallet updated successfully.");
+            } else {
+                System.err.println("Wallet update failed with status: " + response.getStatusCode());
+                throw new RuntimeException("Failed to update wallet");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating wallets: " + e.getMessage(), e);
         }
     }
 
@@ -128,11 +154,11 @@ public class TradeService {
         WalletDTO walletDTO = null;
 
         try {
-            String url = walletServiceUrl; // ensure this is the correct endpoint
+            String url = walletServiceUrl+"getWallet"; // ensure this is the correct endpoint
             AuthCredentials creds = (AuthCredentials) SecurityContextHolder.getContext().getAuthentication()
                     .getCredentials();
             String deviceFingerprint = creds.getFingerprint();
-            String jwt = creds.getJwt();
+            String jwt = creds.getJwt(); 
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
