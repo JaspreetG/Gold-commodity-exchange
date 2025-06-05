@@ -1,6 +1,6 @@
-package io.goldexchange.trade_service.Security;
+package io.goldexchange.auth_service.security;
 
-import io.goldexchange.trade_service.dto.AuthCredentials;
+
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,17 +23,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Only filter /api/auth/getUser
+        String path = request.getServletPath();
+        return !("/api/auth/getUser".equals(path) || "/api/auth/logout".equals(path));
+    }
+
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        // ✅ Skip JWT validation for WebSocket handshake
-        String path = request.getServletPath();
-        if (path.startsWith("/ws")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
+    
+        
         String jwtToken = null;
 
         // Read JWT from cookies
@@ -65,8 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        userId, new AuthCredentials(jwtToken, deviceFingerprint), null // You can set roles/authorities
-                                                                                       // if needed
+                        userId, null, null // You can set roles/authorities if needed
                 );
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
@@ -86,4 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+
+   
 }

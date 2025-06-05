@@ -9,14 +9,19 @@ import com.google.zxing.common.BitMatrix;
 import io.goldexchange.auth_service.dto.UserDTO;
 import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.repository.AuthRepositoryWrapper;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.KeyGenerator;
@@ -29,6 +34,8 @@ import java.util.Optional;
 import java.nio.charset.StandardCharsets;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Date;
 import org.apache.commons.codec.binary.Base32;
 import java.util.Map;
@@ -195,6 +202,34 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             System.err.println("Failed to create wallet: " + e.getMessage());
         }
+    }
+
+    @Override
+    public UserDTO getUserById(Long userId) {
+
+        Optional<User> userOpt = authRepository.findById(userId);
+        System.out.println(userOpt);
+
+        if (userOpt.isEmpty()) {
+            return null;
+        }
+
+        User user = userOpt.get();
+        UserDTO userDTO = new UserDTO();
+        BeanUtils.copyProperties(user, userDTO);
+        return userDTO;
+    }
+
+    public void logout(HttpServletResponse response) {
+
+        // Remove the JWT cookie by setting it with maxAge=0
+        ResponseCookie cookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
 }

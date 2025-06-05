@@ -22,10 +22,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Skip JWT auth for internal endpoints
+        System.out.println("********SHOULD NOT FILTER***********");
+        String path = request.getServletPath();
+        return path.startsWith("/api/wallet/internal");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
+    
+        
         String jwtToken = null;
 
         // Read JWT from cookies
@@ -78,9 +88,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().contains("/internal/updateWalletByUserId");
-    }
+    // @Override
+    // protected boolean shouldNotFilter(HttpServletRequest request) {
+    //     return request.getRequestURI().contains("/internal/updateWallet");
+    // }
 
 }

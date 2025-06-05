@@ -2,6 +2,7 @@ package io.goldexchange.auth_service.service;
 
 import io.goldexchange.auth_service.dto.UserDTO;
 import io.goldexchange.auth_service.model.User;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
@@ -20,5 +21,9 @@ public interface AuthService {
     String generateJwt(Long userId, String deviceFingerprint);
 
     void createWallet(UserDTO user, String jwt, String deviceFingerprint);
+
+    UserDTO getUserById(Long userId);
+
+    void logout(HttpServletResponse response);
 
 }
