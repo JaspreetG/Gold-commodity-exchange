@@ -24,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -63,11 +65,10 @@ public class AuthController {
             if (userEntity == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
             }
-            
-            UserDTO user=new UserDTO();
+
+            UserDTO user = new UserDTO();
             BeanUtils.copyProperties(userEntity, user);
-            
-           
+
             String deviceFingerprint = request.getDeviceFingerprint();
             String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
 
@@ -106,4 +107,32 @@ public class AuthController {
         String qrCodeData = authService.generateQrCode(userName, secretKey);
         return ResponseEntity.ok(Map.of("qrCode", qrCodeData, "secretKey", secretKey));
     }
+
+    @GetMapping("/getUser")
+    public ResponseEntity<?> getUser(Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
+        }
+        // The principal is userId (Long) set by JwtAuthenticationFilter
+        Long userId = (Long) authentication.getPrincipal();
+        UserDTO userDTO = authService.getUserById(userId);
+        System.out.println(userDTO);
+        if (userDTO == null) {
+            return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+        }
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response,Authentication authentication) {
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "User not authenticated, login first"));
+        }
+
+        authService.logout(response);
+        // Remove the JWT cookie by setting it with maxAge=0
+        
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
+    }
+
 }

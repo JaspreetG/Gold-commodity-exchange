@@ -24,7 +24,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/wallet")
-@PreAuthorize("isAuthenticated()")
 public class WalletController {
 
     @Autowired
@@ -34,6 +33,7 @@ public class WalletController {
     private String internalSecretToken;
 
     @PostMapping("/createWallet")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createWallet(Authentication authentication, HttpServletRequest request) {
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -70,7 +70,7 @@ public class WalletController {
             return ResponseEntity.status(404).body(java.util.Map.of("error", "Wallet not found"));
         }
         System.out.println(wallet);
-        return ResponseEntity.ok(java.util.Map.of("wallet", wallet));
+        return ResponseEntity.ok(wallet);
     }
 
     // for callby saveTrade() in service of trade to get wallet of another user with
@@ -80,9 +80,12 @@ public class WalletController {
 
         // Validate internal service secret
         try{
-            if (!"your-secret-token".equals(internalSecret)) {
+            System.out.println("*********IN UPDATE WALLETS WALLET SERVICE*********");
+            if (!(internalSecretToken.equals(internalSecret))) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized internal call");
             }
+            System.out.println("*********PASSED*********");
+
             walletService.updateWallets(tradeDTO);
             return ResponseEntity.ok(Map.of("message", "wallet updated successfully"));
         } catch (Exception e) {

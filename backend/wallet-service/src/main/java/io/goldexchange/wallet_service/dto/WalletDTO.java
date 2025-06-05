@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletDTO {
-
+    
     private Long walletId;
     private Long userId;
     private Double balance;

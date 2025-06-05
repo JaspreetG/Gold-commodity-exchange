@@ -58,12 +58,7 @@ public class TradeService {
     public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
 
         try {
-            // System.out.println("BeforBuySide");
-            // System.out.println(tradeConsumerDTO.getBuyOrderId());
-            // System.out.println(tradeConsumerDTO.getSellOrderId());
-            // System.out.println(tradeConsumerDTO.getPrice());
-            // System.out.println(tradeConsumerDTO.getQuantity());
-
+            
             // buy side
             Trade tradeBuyerSide = new Trade();
             tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
@@ -72,12 +67,6 @@ public class TradeService {
             tradeBuyerSide.setSide("BUY");
 
             tradeRepository.save(tradeBuyerSide);
-
-            // System.out.println("BeforSellSide");
-            // System.out.println(tradeConsumerDTO.getBuyOrderId());
-            // System.out.println(tradeConsumerDTO.getSellOrderId());
-            // System.out.println(tradeConsumerDTO.getPrice());
-            // System.out.println(tradeConsumerDTO.getQuantity());
 
             // seller side
             Trade tradeSellerSide = new Trade();
@@ -184,8 +173,6 @@ public class TradeService {
         } catch (Exception e) {
             System.err.println("Failed to fetch wallet: " + e.getMessage());
         }
-        System.out.println("inside getWallet");
-        System.out.println(walletDTO);
         return walletDTO;
     }
 
@@ -194,7 +181,6 @@ public class TradeService {
         if (walletDTO == null) {
             return false;
         }
-        System.out.println(walletDTO);
 
         // Check if the user has enough balance
         if (orderRequest.getSide().equals("BUY")) {
