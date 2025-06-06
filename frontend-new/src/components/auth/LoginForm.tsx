@@ -29,10 +29,10 @@ const LoginForm = ({
   const [registrationData, setRegistrationData] =
     useState<RegistrationData | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "IND",
-    name: "India",
-    flag: "🇮🇳",
-    dialCode: "+91",
+    code: "US",
+    name: "United States",
+    flag: "🇺🇸",
+    dialCode: "+1",
   });
   const [secretCopied, setSecretCopied] = useState(false);
 
