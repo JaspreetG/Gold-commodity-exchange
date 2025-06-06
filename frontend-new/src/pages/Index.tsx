@@ -1,52 +1,65 @@
+import { useState, useEffect, useCallback } from "react";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-import { useState, useEffect } from "react";
 import LoginForm from "@/components/auth/LoginForm";
 import Dashboard from "@/components/dashboard/Dashboard";
 import LandingPage from "@/components/landing/LandingPage";
 import { User } from "@/types/auth";
 
-type AppState = 'landing' | 'login' | 'signup' | 'dashboard';
+type AppState = "landing" | "login" | "signup" | "dashboard";
 
 const Index = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [appState, setAppState] = useState<AppState>('landing');
+  const [appState, setAppState] = useState<AppState>("landing");
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const savedUser = localStorage.getItem('goldex_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-      setAppState('dashboard');
-    } else {
-      setAppState('landing');
+  // 🔁 Shared reusable function to fetch the logged-in user
+  const fetchUser = useCallback(async () => {
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const fingerprint = result.visitorId;
+
+      const res = await fetch("/getuser", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "X-Device-Fingerprint": fingerprint,
+        },
+      });
+
+      if (!res.ok) throw new Error("Unauthorized");
+      const data: User = await res.json();
+      setUser(data);
+      setAppState("dashboard");
+    } catch (err) {
+      console.error("User fetch failed", err);
+      setAppState("landing");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
-  const handleLogin = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('goldex_user', JSON.stringify(userData));
-    setAppState('dashboard');
+  // 🔁 Initial load: check if already logged in
+  // TODO: implement react query here
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  // 🔄 After login/signup, fetch from backend
+  const handleLogin = () => {
+    setIsLoading(true);
+    fetchUser();
   };
 
   const handleLogout = () => {
     setUser(null);
-    localStorage.removeItem('goldex_user');
-    setAppState('landing');
+    setAppState("landing");
   };
 
-  const handleLoginClick = () => {
-    setAppState('login');
-  };
-
-  const handleSignupClick = () => {
-    setAppState('signup');
-  };
-
-  const handleBackToLanding = () => {
-    setAppState('landing');
-  };
+  const handleLoginClick = () => setAppState("login");
+  const handleSignupClick = () => setAppState("signup");
+  const handleBackToLanding = () => setAppState("landing");
 
   if (isLoading) {
     return (
@@ -56,38 +69,26 @@ const Index = () => {
     );
   }
 
-  if (appState === 'landing') {
+  if (appState === "landing") {
     return (
-      <LandingPage 
+      <LandingPage
         onLoginClick={handleLoginClick}
         onSignupClick={handleSignupClick}
       />
     );
   }
 
-  if (appState === 'login') {
+  if (appState === "login" || appState === "signup") {
     return (
-      <LoginForm 
-        onLogin={handleLogin} 
+      <LoginForm
+        onLogin={handleLogin} // 👈 will call fetchUser after login
         onBackToLanding={handleBackToLanding}
-        isSignup={false}
+        isSignup={appState === "signup"}
       />
     );
   }
 
-  if (appState === 'signup') {
-    return (
-      <LoginForm 
-        onLogin={handleLogin} 
-        onBackToLanding={handleBackToLanding}
-        isSignup={true}
-      />
-    );
-  }
-
-  return (
-    <Dashboard user={user!} onLogout={handleLogout} />
-  );
+  return <Dashboard user={user!} onLogout={handleLogout} />;
 };
 
 export default Index;
