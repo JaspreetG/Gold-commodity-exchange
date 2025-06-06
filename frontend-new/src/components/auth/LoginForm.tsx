@@ -352,13 +352,15 @@ import { Coins, Phone, Shield } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
 import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
 
 
 
 type AuthStep = "phone" | "totp";
+const { login, isLoggingIn } = useAuthStore();
+
 
 const LoginForm = () => {
-
   const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -381,22 +383,21 @@ const LoginForm = () => {
     setIsLoading(true);
 
     await login(phone);
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // const userExists = Math.random() > 0.3;
+   
 
-    if (userExists) {
-      toast({
-        title: "Phone verified",
-        description: "Please enter your TOTP code",
-      });
-      setStep("totp");
-    } else {
-      toast({
-        title: "Account not found",
-        description: "Please sign up first",
-        variant: "destructive",
-      });
-    }
+    // if (userExists) {
+    //   toast({
+    //     title: "Phone verified",
+    //     description: "Please enter your TOTP code",
+    //   });
+    //   setStep("totp");
+    // } else {
+    //   toast({
+    //     title: "Account not found",
+    //     description: "Please sign up first",
+    //     variant: "destructive",
+    //   });
+    // }
 
     setIsLoading(false);
   };
