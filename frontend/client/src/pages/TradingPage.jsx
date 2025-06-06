@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 
 const dummyOrders = [
-  { id: 1, type: "Buy", quantity: 10, price: 5900, orderType: "Limit" },
-  { id: 2, type: "Sell", quantity: 5, price: 5920, orderType: "Limit" },
-  { id: 3, type: "Buy", quantity: 20, price: 5890, orderType: "Limit" },
-  { id: 4, type: "Sell", quantity: 15, price: 5930, orderType: "Limit" },
+  { id: 1, type: "BUY", quantity: 10, price: 5900, orderType: "Limit" },
+  { id: 2, type: "SELL", quantity: 5, price: 5920, orderType: "Limit" },
+  { id: 3, type: "BUY", quantity: 20, price: 5890, orderType: "Limit" },
+  { id: 4, type: "SELL", quantity: 15, price: 5930, orderType: "Limit" },
 ];
 
-const TradingPage=()=>{
+const TradingPage = () => {
   const [orders, setOrders] = useState(dummyOrders);
-  const [form, setForm] = useState({ type: "Buy", quantity: "", price: "", orderType: "Limit" });
+  const [form, setForm] = useState({
+    type: "BUY",
+    quantity: "",
+    price: "",
+    orderType: "Limit",
+  });
 
   const handleInputChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,8 +25,10 @@ const TradingPage=()=>{
 
     let price = parseFloat(form.price);
     if (form.orderType === "Market") {
-      const relevantOrders = orders.filter(o => o.type !== form.type);
-      const sorted = relevantOrders.sort((a, b) => form.type === "Buy" ? a.price - b.price : b.price - a.price);
+      const relevantOrders = orders.filter((o) => o.type !== form.type);
+      const sorted = relevantOrders.sort((a, b) =>
+        form.type === "BUY" ? a.price - b.price : b.price - a.price
+      );
       price = sorted.length ? sorted[0].price : 5900; // Default price if no matching order found
     }
 
@@ -33,14 +40,17 @@ const TradingPage=()=>{
       orderType: form.orderType,
     };
     setOrders([newOrder, ...orders]);
-    setForm({ type: "Buy", quantity: "", price: "", orderType: "Limit" });
+    setForm({ type: "BUY", quantity: "", price: "", orderType: "Limit" });
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-2xl font-bold mb-8 m-auto">Gold Trading Page</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow mb-6">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-4 rounded shadow mb-6"
+      >
         <div className="flex gap-4 flex-wrap items-end">
           <div>
             <label className="block text-sm font-medium">Order Type</label>
@@ -50,8 +60,8 @@ const TradingPage=()=>{
               onChange={handleInputChange}
               className="border rounded p-2"
             >
-              <option value="Buy">Buy</option>
-              <option value="Sell">Sell</option>
+              <option value="BUY">Buy</option>
+              <option value="SELL">Sell</option>
             </select>
           </div>
 
@@ -82,7 +92,9 @@ const TradingPage=()=>{
 
           {form.orderType === "Limit" && (
             <div>
-              <label className="block text-sm font-medium">Price (INR/gm)</label>
+              <label className="block text-sm font-medium">
+                Price (INR/gm)
+              </label>
               <input
                 type="number"
                 name="price"
@@ -116,7 +128,12 @@ const TradingPage=()=>{
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id} className={order.type === "Buy" ? "text-green-600" : "text-red-600"}>
+              <tr
+                key={order.id}
+                className={
+                  order.type === "BUY" ? "text-green-600" : "text-red-600"
+                }
+              >
                 <td className="py-1 border-b">{order.type}</td>
                 <td className="py-1 border-b">{order.orderType}</td>
                 <td className="py-1 border-b">{order.quantity}</td>
@@ -128,7 +145,6 @@ const TradingPage=()=>{
       </div>
     </div>
   );
-}
+};
 
 export default TradingPage;
-

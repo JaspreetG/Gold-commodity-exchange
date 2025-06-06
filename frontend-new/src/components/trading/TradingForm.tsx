@@ -73,7 +73,7 @@ const TradingForm = ({
     updateBalance("gold", quantity);
 
     onTrade({
-      type: "buy",
+      type: "BUY",
       price,
       quantity,
       total,
@@ -130,7 +130,7 @@ const TradingForm = ({
     updateBalance("usd", total);
 
     onTrade({
-      type: "sell",
+      type: "SELL",
       price,
       quantity,
       total,
@@ -156,23 +156,23 @@ const TradingForm = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="buy" className="w-full">
+        <Tabs defaultValue="BUY" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-gray-100">
             <TabsTrigger
-              value="buy"
+              value="BUY"
               className="text-gray-700 data-[state=active]:bg-green-600 data-[state=active]:text-white"
             >
               Buy Gold
             </TabsTrigger>
             <TabsTrigger
-              value="sell"
+              value="SELL"
               className="text-gray-700 data-[state=active]:bg-red-600 data-[state=active]:text-white"
             >
               Sell Gold
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="buy" className="space-y-5 mt-6">
+          <TabsContent value="BUY" className="space-y-5 mt-6">
             <div className="space-y-3">
               <Label className="text-gray-700 font-light text-sm">
                 Order Type
@@ -293,7 +293,7 @@ const TradingForm = ({
             </Button>
           </TabsContent>
 
-          <TabsContent value="sell" className="space-y-5 mt-6">
+          <TabsContent value="SELL" className="space-y-5 mt-6">
             <div className="space-y-3">
               <Label className="text-gray-700 font-light text-sm">
                 Order Type

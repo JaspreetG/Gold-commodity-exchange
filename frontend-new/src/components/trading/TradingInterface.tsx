@@ -64,7 +64,7 @@ const TradingInterface = ({
     const mockTrades: Trade[] = [
       {
         id: "1",
-        type: "buy",
+        type: "BUY",
         price: 2048.5,
         quantity: 0.5,
         total: 1024.25,
@@ -73,7 +73,7 @@ const TradingInterface = ({
       },
       {
         id: "2",
-        type: "sell",
+        type: "SELL",
         price: 2052.0,
         quantity: 0.25,
         total: 513.0,
