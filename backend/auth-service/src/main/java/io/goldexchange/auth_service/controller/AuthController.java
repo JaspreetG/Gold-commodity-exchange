@@ -24,10 +24,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import java.util.Map;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
+@CrossOrigin(
+    origins = "http://localhost:3000",
+    allowCredentials = "true"
+)
 @RequestMapping("/api/auth")
 public class AuthController {
 

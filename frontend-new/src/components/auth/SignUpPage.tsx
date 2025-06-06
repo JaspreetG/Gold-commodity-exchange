@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { User, RegistrationData } from "@/types/auth";
 import { Coins, Phone, QrCode, Copy, Check } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
@@ -59,10 +58,10 @@ const SignupForm = () => {
             secret: mockSecret,
         });
 
-        toast({
-            title: "Setup Required",
-            description: "Please scan the QR code with your authenticator app",
-        });
+        // toast({
+        //     title: "Setup Required",
+        //     description: "Please scan the QR code with your authenticator app",
+        // });
 
         setStep("register-qr");
         setIsLoading(false);
@@ -73,11 +72,11 @@ const SignupForm = () => {
         setIsLoading(true);
 
         if (totpCode.length !== 6) {
-            toast({
-                title: "Invalid TOTP Code",
-                description: "Please enter a 6-digit TOTP code",
-                variant: "destructive",
-            });
+            // toast({
+            //     title: "Invalid TOTP Code",
+            //     description: "Please enter a 6-digit TOTP code",
+            //     variant: "destructive",
+            // });
             setIsLoading(false);
             return;
         }
@@ -94,10 +93,10 @@ const SignupForm = () => {
             },
         };
 
-        toast({
-            title: "Registration Successful",
-            description: "Welcome to GoldEx! Your account has been created.",
-        });
+        // toast({
+        //     title: "Registration Successful",
+        //     description: "Welcome to GoldEx! Your account has been created.",
+        // });
 
         // onLogin(mockUser); call /verify endpoint here no need of onLogin
         setIsLoading(false);
@@ -108,10 +107,10 @@ const SignupForm = () => {
         if (registrationData?.secret) {
             await navigator.clipboard.writeText(registrationData.secret);
             setSecretCopied(true);
-            toast({
-                title: "Secret copied",
-                description: "Secret key copied to clipboard",
-            });
+            // toast({
+            //     title: "Secret copied",
+            //     description: "Secret key copied to clipboard",
+            // });
             setTimeout(() => setSecretCopied(false), 2000);
         }
     };

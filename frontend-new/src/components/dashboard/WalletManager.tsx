@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
 import { Plus, DollarSign, Coins } from "lucide-react";
 
 interface WalletManagerProps {
@@ -23,11 +22,11 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
   const handleAddUSD = async () => {
     const amount = parseFloat(usdAmount);
     if (!amount || amount <= 0) {
-      toast({
-        title: "Invalid Amount",
-        description: "Please enter a valid USD amount",
-        variant: "destructive"
-      });
+      // toast({
+      //   title: "Invalid Amount",
+      //   description: "Please enter a valid USD amount",
+      //   variant: "destructive"
+      // });
       return;
     }
 
@@ -39,20 +38,20 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
     setUsdAmount("");
     setIsLoading(false);
     
-    toast({
-      title: "Funds Added",
-      description: `$${amount.toLocaleString()} has been added to your account`
-    });
+    // toast({
+    //   title: "Funds Added",
+    //   description: `$${amount.toLocaleString()} has been added to your account`
+    // });
   };
 
   const handleAddGold = async () => {
     const amount = parseFloat(goldAmount);
     if (!amount || amount <= 0) {
-      toast({
-        title: "Invalid Amount",
-        description: "Please enter a valid gold amount",
-        variant: "destructive"
-      });
+      // toast({
+      //   title: "Invalid Amount",
+      //   description: "Please enter a valid gold amount",
+      //   variant: "destructive"
+      // });
       return;
     }
 
@@ -64,10 +63,10 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
     setGoldAmount("");
     setIsLoading(false);
     
-    toast({
-      title: "Gold Added",
-      description: `${amount} oz of gold has been added to your account`
-    });
+    // toast({
+    //   title: "Gold Added",
+    //   description: `${amount} oz of gold has been added to your account`
+    // });
   };
 
   return (

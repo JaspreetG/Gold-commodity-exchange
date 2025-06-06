@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { toast } from "@/hooks/use-toast";
 import { Trade } from "@/types/trading";
 import { TrendingUp } from "lucide-react";
 
@@ -36,33 +35,33 @@ const TradingForm = ({
   const handleBuy = async () => {
     const quantity = parseFloat(buyQuantity);
     if (!quantity || quantity <= 0) {
-      toast({
-        title: "Invalid Quantity",
-        description: "Please enter a valid quantity",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Invalid Quantity",
+      //   description: "Please enter a valid quantity",
+      //   variant: "destructive",
+      // });
       return;
     }
 
     const price =
       buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
     if (buyOrderType === "limit" && (!price || price <= 0)) {
-      toast({
-        title: "Invalid Price",
-        description: "Please enter a valid price",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Invalid Price",
+      //   description: "Please enter a valid price",
+      //   variant: "destructive",
+      // });
       return;
     }
 
     const total = quantity * price;
 
     if (total > userBalances.usd) {
-      toast({
-        title: "Insufficient Funds",
-        description: "You don't have enough USD to complete this trade",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Insufficient Funds",
+      //   description: "You don't have enough USD to complete this trade",
+      //   variant: "destructive",
+      // });
       return;
     }
 
@@ -84,40 +83,40 @@ const TradingForm = ({
     setBuyPrice("");
     setIsLoading(false);
 
-    toast({
-      title: "Buy Order Executed",
-      description: `Successfully bought ${quantity} oz of gold for $${total.toLocaleString()}`,
-    });
+    // toast({
+    //   title: "Buy Order Executed",
+    //   description: `Successfully bought ${quantity} oz of gold for $${total.toLocaleString()}`,
+    // });
   };
 
   const handleSell = async () => {
     const quantity = parseFloat(sellQuantity);
     if (!quantity || quantity <= 0) {
-      toast({
-        title: "Invalid Quantity",
-        description: "Please enter a valid quantity",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Invalid Quantity",
+      //   description: "Please enter a valid quantity",
+      //   variant: "destructive",
+      // });
       return;
     }
 
     if (quantity > userBalances.gold) {
-      toast({
-        title: "Insufficient Gold",
-        description: "You don't have enough gold to complete this trade",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Insufficient Gold",
+      //   description: "You don't have enough gold to complete this trade",
+      //   variant: "destructive",
+      // });
       return;
     }
 
     const price =
       sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
     if (sellOrderType === "limit" && (!price || price <= 0)) {
-      toast({
-        title: "Invalid Price",
-        description: "Please enter a valid price",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Invalid Price",
+      //   description: "Please enter a valid price",
+      //   variant: "destructive",
+      // });
       return;
     }
 
@@ -141,10 +140,10 @@ const TradingForm = ({
     setSellPrice("");
     setIsLoading(false);
 
-    toast({
-      title: "Sell Order Executed",
-      description: `Successfully sold ${quantity} oz of gold for $${total.toLocaleString()}`,
-    });
+    // toast({
+    //   title: "Sell Order Executed",
+    //   description: `Successfully sold ${quantity} oz of gold for $${total.toLocaleString()}`,
+    // });
   };
 
   return (
