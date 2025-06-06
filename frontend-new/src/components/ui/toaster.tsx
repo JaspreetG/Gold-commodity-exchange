@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "../../store/useAuthStore";
 import {
   Toast,
   ToastClose,
@@ -13,7 +13,7 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
+      {toasts.map(function ({ id, title, description, ...props }) {
         return (
           <Toast
             key={id}
@@ -32,7 +32,6 @@ export function Toaster() {
                 </ToastDescription>
               )}
             </div>
-            {action}
             <ToastClose />
           </Toast>
         );

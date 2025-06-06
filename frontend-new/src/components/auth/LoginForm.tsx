@@ -346,7 +346,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
 import { User } from "@/types/auth";
 import { Coins, Phone, Shield } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
@@ -357,10 +356,10 @@ import { useAuthStore } from "../../store/useAuthStore";
 
 
 type AuthStep = "phone" | "totp";
-const { login, isLoggingIn } = useAuthStore();
 
 
 const LoginForm = () => {
+  const { login, isLoggingIn } = useAuthStore();
   const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -382,7 +381,9 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    await login(phone);
+    await login({phone});
+    setStep("totp");
+
    
 
     // if (userExists) {
@@ -407,11 +408,11 @@ const LoginForm = () => {
     setIsLoading(true);
 
     if (totpCode.length !== 6) {
-      toast({
-        title: "Invalid TOTP Code",
-        description: "Please enter a 6-digit TOTP code",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Invalid TOTP Code",
+      //   description: "Please enter a 6-digit TOTP code",
+      //   variant: "destructive",
+      // });
       setIsLoading(false);
       return;
     }
@@ -428,10 +429,10 @@ const LoginForm = () => {
       },
     };
 
-    toast({
-      title: "Login Successful",
-      description: "Welcome back to GoldEx",
-    });
+    // toast({
+    //   title: "Login Successful",
+    //   description: "Welcome back to GoldEx",
+    // });
 
     // onLogin(mockUser);
     setIsLoading(false);
