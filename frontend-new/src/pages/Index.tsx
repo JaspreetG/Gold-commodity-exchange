@@ -41,7 +41,7 @@ const Index = () => {
   }, []);
 
   // 🔁 Initial load: check if already logged in
-  // TODO: implement react query here
+  // TODO : implement react querry here
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
@@ -50,6 +50,8 @@ const Index = () => {
   const handleLogin = () => {
     setIsLoading(true);
     fetchUser();
+    // setUser(data);
+    setAppState("dashboard");
   };
 
   const handleLogout = () => {
