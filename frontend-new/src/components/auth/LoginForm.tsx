@@ -338,7 +338,6 @@
 
 // export default LoginForm;
 
-
 // components/LoginForm.tsx
 
 import { useState } from "react";
@@ -353,10 +352,7 @@ import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 
-
-
 type AuthStep = "phone" | "totp";
-
 
 const LoginForm = () => {
   const { login, isLoggingIn } = useAuthStore();
@@ -381,10 +377,8 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    await login({phone});
+    await login({ phone }, navigate);
     setStep("totp");
-
-   
 
     // if (userExists) {
     //   toast({
@@ -465,14 +459,21 @@ const LoginForm = () => {
             {step === "phone" && (
               <form onSubmit={handlePhoneSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="phone" className="text-gray-700 font-light">Phone Number</Label>
+                  <Label htmlFor="phone" className="text-gray-700 font-light">
+                    Phone Number
+                  </Label>
                   <div className="flex mt-2 space-x-2">
-                    <CountryCodeSelect selectedCountry={selectedCountry} onSelect={setSelectedCountry} />
+                    <CountryCodeSelect
+                      selectedCountry={selectedCountry}
+                      onSelect={setSelectedCountry}
+                    />
                     <Input
                       id="phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                      onChange={(e) =>
+                        setPhone(e.target.value.replace(/\D/g, ""))
+                      }
                       className="flex-1 border-gray-200 focus:border-black"
                       placeholder="555 123 4567"
                       required
@@ -480,7 +481,11 @@ const LoginForm = () => {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full bg-black hover:bg-gray-800 text-white font-light" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-black hover:bg-gray-800 text-white font-light"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Verifying..." : "Next"}
                 </Button>
 
@@ -498,7 +503,9 @@ const LoginForm = () => {
             {step === "totp" && (
               <form onSubmit={handleTOTPSubmit} className="space-y-6">
                 <div>
-                  <Label className="text-gray-700 font-light">Enter TOTP Code</Label>
+                  <Label className="text-gray-700 font-light">
+                    Enter TOTP Code
+                  </Label>
                   <div className="mt-4">
                     <OTPInput value={totpCode} onChange={setTotpCode} />
                   </div>
@@ -534,4 +541,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-
