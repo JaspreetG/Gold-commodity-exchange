@@ -83,7 +83,6 @@ public class TradeService {
 
 
         } catch (Exception e) {
-            // TODO: handle exception
             throw new RuntimeException("Error saving trade: " + e.getMessage(), e);
         }
     }
