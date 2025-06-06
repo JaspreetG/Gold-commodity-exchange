@@ -2,31 +2,67 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>golden-totp-trader</title>
-    <link
-      rel="icon"
-      href="./public/favicon_io/favicon-32x32.png"
-      type="image/png"
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Gold Commodity Exchange</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon_io/favicon-32x32.png" type="image/png" />
+
     <meta
       name="description"
-      content="A secure trading app with TOTP authentication"
+      content="Trade gold with confidence on Gold Commodity Exchange – a secure and real-time commodity trading platform."
     />
-    <meta name="author" content="Your Name or Company" />
+    <meta name="author" content="Gold Commodity Exchange Team" />
+    <meta name="theme-color" content="#0f172a" />
 
-    <meta property="og:title" content="golden-totp-trader" />
+    <!-- Open Graph -->
+    <meta property="og:title" content="Gold Commodity Exchange" />
     <meta
       property="og:description"
-      content="A secure trading app with TOTP authentication"
+      content="Trade gold securely and efficiently with our cutting-edge commodity trading platform."
     />
     <meta property="og:type" content="website" />
 
+    <!-- ⚠️ TODO: Replace with your actual hosted preview image -->
+    <meta
+      property="og:image"
+      content="https://yourdomain.com/images/og-preview.png"
+    />
+
+    <!-- ⚠️ TODO: Replace with your actual production domain -->
+    <meta property="og:url" content="https://yourdomain.com" />
+
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gold Commodity Exchange" />
+    <meta
+      name="twitter:description"
+      content="Join the Gold Commodity Exchange and experience secure, real-time gold trading."
+    />
+
+    <!-- ⚠️ TODO: Replace with the same hosted image as og:image -->
+    <meta
+      name="twitter:image"
+      content="https://yourdomain.com/images/og-preview.png"
+    />
+
+    <!-- ⚠️ TODO: Only include this if you're using PWA functionality -->
+    <link rel="manifest" href="/manifest.json" />
   </head>
 
-  <body>
+  <body class="bg-slate-950 text-white">
     <div id="root"></div>
+
+    <!-- Main app entry -->
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Fallback for unsupported browsers -->
+    <script nomodule>
+      alert("Please use a modern browser to access Gold Commodity Exchange.");
+    </script>
   </body>
 </html>
