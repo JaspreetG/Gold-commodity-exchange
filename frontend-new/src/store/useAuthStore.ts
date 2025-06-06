@@ -9,11 +9,11 @@ type ToasterToast = ToastProps & {
 };
 
 interface User {
-  // TODO: Define the fields returned by the backend for the user
   id: string;
+  phone: string;
   name: string;
   email: string;
-  // Add any other fields returned by the backend for the user
+  // Add other user fields as needed
 }
 
 interface SignupData {
@@ -45,69 +45,92 @@ interface AuthStore {
   disconnectSocket?: () => void;
 }
 
-interface AuthUser {
-  id: string;
-  phone: string;
-  name: string;
-  // Add other user fields as needed
-}
-
-interface AuthStore {
-  authUser: AuthUser | null;
-  isSigningUp: boolean;
-  isLoggingIn: boolean;
-  signup: (data: Record<string, any>) => Promise<void>;
-  login: (data: Record<string, any>) => Promise<void>;
-  logout: () => Promise<void>;
-}
-
 const authApi = axiosInstance("auth");
 
-export const useAuthStore = create((set, get) => ({
-    authUser: null,
-    isSigningUp: false,
-    isLoggingIn: false,
+export const useAuthStore = create<AuthStore>((set, get) => ({
+  authUser: null,
+  isSigningUp: false,
+  isLoggingIn: false,
 
+  toasts: [],
 
-    signup: async (data) => {
-        set({ isSigningUp: true });
-        try {
-            const res = await authApi.post("/auth/signup", data);
-            set({ authUser: res.data });
-            toast.success("Account created successfully");
-            get().connectSocket();
-        } catch (error) {
-            toast.error(error.response.data.message);
-        } finally {
-            set({ isSigningUp: false });
-        }
-    },
+  addToast: ({ title, description }) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    set((state) => ({
+      toasts: [...state.toasts, { id, title, description }],
+    }));
+    return id;
+  },
 
-    login: async (data) => {
-        set({ isLoggingIn: true });
-        try {
-            const res = await axiosInstance.post("/auth/login", data);
-            set({ authUser: res.data });
-            toast.success("Logged in successfully");
+  dismissToast: (id) => {
+    set((state) => ({
+      toasts: state.toasts.map((toast) =>
+        toast.id === id ? { ...toast, open: false } : toast
+      ),
+    }));
+  },
 
-            get().connectSocket();
-        } catch (error) {
-            toast.error(error.response.data.message);
-        } finally {
-            set({ isLoggingIn: false });
-        }
-    },
+  removeToast: (id) => {
+    set((state) => ({
+      toasts: state.toasts.filter((toast) => toast.id !== id),
+    }));
+  },
 
-    logout: async () => {
-        try {
-            await axiosInstance.post("/auth/logout");
-            set({ authUser: null });
-            toast.success("Logged out successfully");
-            get().disconnectSocket();
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-    },
+  signup: async (data) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await authApi.post("/auth/signup", data);
+      set({ authUser: res.data });
+      get().addToast({
+        title: "Success",
+        description: "Account created successfully",
+      });
+      get().connectSocket();
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: error.response.data.message,
+      });
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
 
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await authApi.post("/auth/login", data);
+      set({ authUser: res.data });
+      get().addToast({
+        title: "Success",
+        description: "Logged in successfully",
+      });
 
+      get().connectSocket();
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: error.response.data.message,
+      });
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  logout: async () => {
+    try {
+      await authApi.post("/auth/logout");
+      set({ authUser: null });
+      get().addToast({
+        title: "Success",
+        description: "Logged out successfully",
+      });
+      get().disconnectSocket();
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: error.response.data.message,
+      });
+    }
+  },
 }));
