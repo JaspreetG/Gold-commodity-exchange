@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,19 +15,24 @@ interface LoginFormProps {
   isSignup?: boolean;
 }
 
-type AuthStep = 'phone' | 'totp' | 'register-qr';
+type AuthStep = "phone" | "totp" | "register-qr";
 
-const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProps) => {
-  const [step, setStep] = useState<AuthStep>('phone');
+const LoginForm = ({
+  onLogin,
+  onBackToLanding,
+  isSignup = false,
+}: LoginFormProps) => {
+  const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [registrationData, setRegistrationData] = useState<RegistrationData | null>(null);
+  const [registrationData, setRegistrationData] =
+    useState<RegistrationData | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "US",
-    name: "United States", 
-    flag: "🇺🇸",
-    dialCode: "+1"
+    code: "IND",
+    name: "India",
+    flag: "🇮🇳",
+    dialCode: "+91",
   });
   const [secretCopied, setSecretCopied] = useState(false);
 
@@ -36,43 +40,44 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
     e.preventDefault();
     setIsLoading(true);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    //TODO: IMPLEMENT REAL PHONE VERIFICATION
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (isSignup) {
       // For signup, always go to QR registration
       const mockSecret = "JBSWY3DPEHPK3PXP";
       const qrCodeUrl = `otpauth://totp/GoldEx:${selectedCountry.dialCode}${phone}?secret=${mockSecret}&issuer=GoldEx`;
-      
+
       setRegistrationData({
         phone: `${selectedCountry.dialCode}${phone}`,
         qrCode: qrCodeUrl,
-        secret: mockSecret
+        secret: mockSecret,
       });
-      
+
       toast({
         title: "Setup Required",
         description: "Please scan the QR code with your authenticator app",
       });
-      setStep('register-qr');
+      setStep("register-qr");
     } else {
       // For login, simulate user existence check
       const userExists = Math.random() > 0.3;
-      
+
       if (userExists) {
         toast({
           title: "Phone verified",
           description: "Please enter your TOTP code",
         });
-        setStep('totp');
+        setStep("totp");
       } else {
         toast({
           title: "Account not found",
           description: "Please sign up first",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     }
-    
+
     setIsLoading(false);
   };
 
@@ -84,13 +89,13 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
       toast({
         title: "Invalid TOTP Code",
         description: "Please enter a 6-digit TOTP code",
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsLoading(false);
       return;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const mockUser: User = {
       id: "1",
@@ -98,11 +103,11 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
       name: "Gold Trader",
       balances: {
         usd: 10000,
-        gold: 5.25
-      }
+        gold: 5.25,
+      },
     };
 
-    if (step === 'register-qr') {
+    if (step === "register-qr") {
       toast({
         title: "Registration Successful",
         description: "Welcome to GoldEx! Your account has been created.",
@@ -119,7 +124,7 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
   };
 
   const resetForm = () => {
-    setStep('phone');
+    setStep("phone");
     setPhone("");
     setTotpCode("");
     setRegistrationData(null);
@@ -142,7 +147,7 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
     <div className="min-h-screen flex items-center justify-center bg-white p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-12">
-          <button 
+          <button
             onClick={onBackToLanding}
             className="flex items-center justify-center mb-6 mx-auto hover:opacity-80 transition-opacity"
           >
@@ -150,26 +155,28 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
             <h1 className="text-4xl font-light text-black">GoldEx</h1>
           </button>
           <p className="text-gray-600 font-light">
-            {isSignup ? 'Create your account' : 'Welcome back'}
+            {isSignup ? "Create your account" : "Welcome back"}
           </p>
         </div>
 
         <Card className="border border-gray-200 shadow-sm">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-black font-light flex items-center justify-center">
-              {step === 'phone' && <Phone className="h-5 w-5 mr-2" />}
-              {step === 'totp' && <Shield className="h-5 w-5 mr-2" />}
-              {step === 'register-qr' && <QrCode className="h-5 w-5 mr-2" />}
-              {step === 'phone' && 'Enter Phone Number'}
-              {step === 'totp' && 'Enter TOTP Code'}
-              {step === 'register-qr' && 'Setup Authenticator'}
+              {step === "phone" && <Phone className="h-5 w-5 mr-2" />}
+              {step === "totp" && <Shield className="h-5 w-5 mr-2" />}
+              {step === "register-qr" && <QrCode className="h-5 w-5 mr-2" />}
+              {step === "phone" && "Enter Phone Number"}
+              {step === "totp" && "Enter TOTP Code"}
+              {step === "register-qr" && "Setup Authenticator"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {step === 'phone' && (
+            {step === "phone" && (
               <form onSubmit={handlePhoneSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="phone" className="text-gray-700 font-light">Phone Number</Label>
+                  <Label htmlFor="phone" className="text-gray-700 font-light">
+                    Phone Number
+                  </Label>
                   <div className="flex mt-2 space-x-2">
                     <CountryCodeSelect
                       selectedCountry={selectedCountry}
@@ -179,23 +186,25 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                       id="phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                      onChange={(e) =>
+                        setPhone(e.target.value.replace(/\D/g, ""))
+                      }
                       className="flex-1 border-gray-200 focus:border-black"
                       placeholder="555 123 4567"
                       required
                     />
                   </div>
                 </div>
-                
-                <Button 
-                  type="submit" 
+
+                <Button
+                  type="submit"
                   className="w-full bg-black hover:bg-gray-800 text-white font-light"
                   disabled={isLoading}
                 >
                   {isLoading ? "Verifying..." : "Next"}
                 </Button>
-                
-                <Button 
+
+                <Button
                   type="button"
                   onClick={onBackToLanding}
                   variant="outline"
@@ -206,7 +215,7 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
               </form>
             )}
 
-            {step === 'register-qr' && (
+            {step === "register-qr" && (
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="bg-white p-6 border border-gray-200 rounded-lg mb-4">
@@ -216,9 +225,11 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                       Scan with authenticator app
                     </div>
                   </div>
-                  
+
                   <div className="mb-4">
-                    <Label className="text-gray-700 font-light text-sm">Secret Key</Label>
+                    <Label className="text-gray-700 font-light text-sm">
+                      Secret Key
+                    </Label>
                     <div className="flex items-center mt-2 space-x-2">
                       <Input
                         value={registrationData?.secret || ""}
@@ -232,26 +243,33 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                         size="sm"
                         className="border-gray-200 hover:bg-gray-50"
                       >
-                        {secretCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                        {secretCopied ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
-                  
+
                   <p className="text-xs text-gray-600 font-light mb-6">
-                    Scan the QR code or enter the secret key manually in your authenticator app
+                    Scan the QR code or enter the secret key manually in your
+                    authenticator app
                   </p>
                 </div>
-                
+
                 <form onSubmit={handleTOTPSubmit} className="space-y-6">
                   <div>
-                    <Label className="text-gray-700 font-light">Enter TOTP Code</Label>
+                    <Label className="text-gray-700 font-light">
+                      Enter TOTP Code
+                    </Label>
                     <div className="mt-4">
                       <OTPInput value={totpCode} onChange={setTotpCode} />
                     </div>
                   </div>
-                  
+
                   <div className="flex space-x-3">
-                    <Button 
+                    <Button
                       type="button"
                       onClick={resetForm}
                       variant="outline"
@@ -259,8 +277,8 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                     >
                       Back
                     </Button>
-                    <Button 
-                      type="submit" 
+                    <Button
+                      type="submit"
                       className="flex-1 bg-green-600 hover:bg-green-700 text-white font-light"
                       disabled={isLoading || totpCode.length !== 6}
                     >
@@ -271,10 +289,12 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
               </div>
             )}
 
-            {step === 'totp' && (
+            {step === "totp" && (
               <form onSubmit={handleTOTPSubmit} className="space-y-6">
                 <div>
-                  <Label className="text-gray-700 font-light">Enter TOTP Code</Label>
+                  <Label className="text-gray-700 font-light">
+                    Enter TOTP Code
+                  </Label>
                   <div className="mt-4">
                     <OTPInput value={totpCode} onChange={setTotpCode} />
                   </div>
@@ -282,9 +302,9 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                     Enter the 6-digit code from your authenticator app
                   </p>
                 </div>
-                
+
                 <div className="flex space-x-3">
-                  <Button 
+                  <Button
                     type="button"
                     onClick={resetForm}
                     variant="outline"
@@ -292,8 +312,8 @@ const LoginForm = ({ onLogin, onBackToLanding, isSignup = false }: LoginFormProp
                   >
                     Back
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="flex-1 bg-black hover:bg-gray-800 text-white font-light"
                     disabled={isLoading || totpCode.length !== 6}
                   >

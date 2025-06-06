@@ -49,7 +49,7 @@ const CountryCodeSelect = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Detect outside click
+  // Detect outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (

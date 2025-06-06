@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trade } from "@/types/trading";
 import { Clock } from "lucide-react";
@@ -39,9 +38,11 @@ const TradeHistory = ({ trades }: TradeHistoryProps) => {
                   className="grid grid-cols-4 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
                 >
                   <div className="space-y-1">
-                    <div className={`font-normal ${
-                      trade.type === 'buy' ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <div
+                      className={`font-normal ${
+                        trade.type === "BUY" ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
                       {trade.type.toUpperCase()}
                     </div>
                     <div className="text-gray-500 text-xs font-light">
