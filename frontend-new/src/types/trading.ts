@@ -1,17 +1,16 @@
-
 export interface Order {
   id: string;
-  type: 'buy' | 'sell';
+  type: "BUY" | "SELL";
   price: number;
   quantity: number;
   total: number;
   timestamp: Date;
-  status: 'pending' | 'filled' | 'cancelled';
+  status: "PENDING" | "FILLED" | "CANCELLED";
 }
 
 export interface Trade {
   id: string;
-  type: 'buy' | 'sell';
+  type: "BUY" | "SELL";
   price: number;
   quantity: number;
   total: number;
