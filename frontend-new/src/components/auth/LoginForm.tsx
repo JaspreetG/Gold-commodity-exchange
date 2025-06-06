@@ -358,6 +358,7 @@ import { useNavigate } from "react-router-dom";
 type AuthStep = "phone" | "totp";
 
 const LoginForm = () => {
+
   const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
   const [totpCode, setTotpCode] = useState("");
@@ -379,8 +380,9 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    const userExists = Math.random() > 0.3;
+    await login(phone);
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    // const userExists = Math.random() > 0.3;
 
     if (userExists) {
       toast({
