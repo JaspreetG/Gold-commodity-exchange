@@ -1,5 +1,6 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "gold-commodity-exchange",
   "private": true,
   "version": "0.0.0",
   "type": "module",
