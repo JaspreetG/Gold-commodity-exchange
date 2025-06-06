@@ -5,8 +5,23 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import LandingPage from "./components/landing/LandingPage";
+import Dashboard from "./components/dashboard/Dashboard";
+import LoginForm from "./components/auth/LoginForm";
+import SignUpPage from "./components/auth/SignUpPage";
 
 const queryClient = new QueryClient();
+
+const user = {  id: "123",
+  phone: "1234567890",
+  name: "John Doe",
+  balances: {
+    usd: 1000,
+    gold: 50,
+  },
+};
+
+const logout=()=>{}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -15,7 +30,17 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<Dashboard user={null} onLogout={logout} />} />
+          <Route path="/login" element={<LoginForm/>} />
+          <Route path="/signUp" element={<SignUpPage/>} />
+
+
+
+
+          {/* TODO:  */}
+
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

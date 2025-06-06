@@ -71,24 +71,24 @@ const Index = () => {
     );
   }
 
-  if (appState === "landing") {
-    return (
-      <LandingPage
-        onLoginClick={handleLoginClick}
-        onSignupClick={handleSignupClick}
-      />
-    );
-  }
+  // if (appState === "landing") {
+  //   return (
+  //     <LandingPage
+  //       onLoginClick={handleLoginClick}
+  //       onSignupClick={handleSignupClick}
+  //     />
+  //   );
+  // }
 
-  if (appState === "login" || appState === "signup") {
-    return (
-      <LoginForm
-        onLogin={handleLogin} // 👈 will call fetchUser after login
-        onBackToLanding={handleBackToLanding}
-        isSignup={appState === "signup"}
-      />
-    );
-  }
+  // if (appState === "login" || appState === "signup") {
+  //   return (
+  //     <LoginForm
+  //       onLogin={handleLogin} // 👈 will call fetchUser after login
+  //       onBackToLanding={handleBackToLanding}
+  //       isSignup={appState === "signup"}
+  //     />
+  //   );
+  // }
 
   return <Dashboard user={user!} onLogout={handleLogout} />;
 };
