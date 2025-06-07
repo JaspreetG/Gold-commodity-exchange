@@ -275,7 +275,7 @@ const TradingForm = ({
                 </span>
               </div>
               <div className="text-xs text-gray-500">
-                Available: ${userBalances.usd.toLocaleString()}
+                Available: ${(userBalances?.usd ?? 0).toLocaleString()}
               </div>
             </div>
 
@@ -396,7 +396,7 @@ const TradingForm = ({
                 </span>
               </div>
               <div className="text-xs text-gray-500">
-                Available: {userBalances.gold.toFixed(3)} oz
+                Available: {(userBalances?.gold ?? 0).toFixed(3)} oz
               </div>
             </div>
 

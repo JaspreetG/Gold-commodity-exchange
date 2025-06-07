@@ -64,17 +64,13 @@ const LoginForm = () => {
     }
 
     try {
-      // const FingerprintJS = await import("@fingerprintjs/fingerprintjs");
-      // const fp = await FingerprintJS.load();
-      // const result = await fp.get();
-      // const deviceFingerprint = result.visitorId;
-      const deviceFingerprint = "hello world";
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs");
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const deviceFingerprint = result.visitorId;
 
-      await verifyTOTP(
-        phone,
-        totp,
-        deviceFingerprint
-      );
+      await verifyTOTP(phone, totp, deviceFingerprint);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Verification error:", error);
     } finally {

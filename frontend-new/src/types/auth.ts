@@ -1,8 +1,6 @@
-
 export interface User {
-  id: string;
-  phone: string;
-  name: string;
+  userName: string;
+  phoneNumber: string;
   balances: {
     usd: number;
     gold: number;
