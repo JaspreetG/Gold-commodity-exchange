@@ -50,6 +50,11 @@ interface AuthStore {
     navigate: ReturnType<typeof useNavigate>
   ) => Promise<void>;
   logout: () => Promise<void>;
+  verifyTOTP: (
+    phoneNumber: string,
+    totp: string,
+    deviceFingerprint: string
+  ) => Promise<void>;
   //   connectSocket?: () => void;
   //   disconnectSocket?: () => void;
 }
@@ -146,6 +151,40 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
     } finally {
       set({ isLoggingIn: false });
+    }
+  },
+
+  verifyTOTP: async (phoneNumber, totp, deviceFingerprint) => {
+    try {
+      const response = await authApi.post("/verify", {
+        phoneNumber,
+        totp,
+        deviceFingerprint,
+      });
+
+      const data = response.data;
+      set({ authUser: data });
+
+      get().addToast({
+        title: "Success",
+        description: "Verification successful",
+      });
+    } catch (error) {
+      const err = error as AxiosError;
+      let msg = "Verification failed";
+      if (
+        err.response?.data &&
+        typeof err.response.data === "object" &&
+        "error" in err.response.data
+      ) {
+        msg = (err.response.data as { error?: string }).error || msg;
+      }
+
+      get().addToast({
+        title: "Verification Failed",
+        description: msg,
+        variant: "destructive",
+      });
     }
   },
 
