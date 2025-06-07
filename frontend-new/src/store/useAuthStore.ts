@@ -158,6 +158,29 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
 
       set({ authUser: res.data });
+
+      const walletApi = axiosInstance("wallet");
+      const walletRes = await walletApi.get("/getWallet", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+
+      const walletData = walletRes.data;
+      set({
+        authUser: {
+          ...res.data,
+          balances: {
+            usd: walletData.balance,
+            gold: walletData.gold,
+          },
+        },
+      });
+
+
+
+
+
       console.log(get().authUser);
     } catch (error) {
       console.error("Failed to fetch user:", error);
@@ -401,7 +424,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const walletApi = axiosInstance("wallet");
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
-      await walletApi.post(
+      const res=await walletApi.post(
         "/withdrawMoney",
         { amount },
         {
@@ -424,9 +447,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: `Successfully withdrew $${amount.toFixed(2)}`,
       });
     } catch (error) {
+        console.log(error)
       get().addToast({
         title: "Error",
-        description: "Failed to withdraw USD funds",
+        description: error.response.data.error,
         variant: "destructive",
       });
     } finally {

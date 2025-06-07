@@ -9,6 +9,7 @@ import LoginForm from "./components/auth/LoginForm";
 import SignUpPage from "./components/auth/SignUpPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
+import { Loader } from "lucide-react";
 
 const queryClient = new QueryClient();
 // const logout = () => { };
@@ -25,7 +26,17 @@ const App = () => {
   }, [getUser]);
 
 
-  return (
+    if (isGettingUser && !authUser) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-black"></div>
+      </div>
+    );
+  }
+
+
+
+  return (  
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
