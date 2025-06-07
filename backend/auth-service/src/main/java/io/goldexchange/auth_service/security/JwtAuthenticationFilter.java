@@ -1,6 +1,5 @@
 package io.goldexchange.auth_service.security;
 
-
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,19 +23,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Only filter /api/auth/getUser
         String path = request.getServletPath();
-        return !("/api/auth/getUser".equals(path) || "/api/auth/logout".equals(path));
+        return path.startsWith("/api/auth/") && !path.equals("/api/auth/getUser") && !path.equals("/api/auth/logout");
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-    
-        
         String jwtToken = null;
 
         // Read JWT from cookies
@@ -89,6 +84,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-
-   
 }
