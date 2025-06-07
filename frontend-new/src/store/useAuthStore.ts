@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.ts";
 
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
+
 type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
@@ -34,6 +36,9 @@ interface AuthStore {
   authUser: User | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
+  isAddingUSD: boolean;
+  isAddingGold: boolean;
+  isWithdrawingUSD: boolean;
   toasts: ToasterToast[];
   addToast: (toast: Omit<ToasterToast, "id">) => string;
   dismissToast: (id: string) => void;
@@ -49,6 +54,9 @@ interface AuthStore {
     totp: string,
     deviceFingerprint: string
   ) => Promise<void>;
+  addMoney: (amount: number) => Promise<void>;
+  addGold: (quantity: number) => Promise<void>;
+  withdrawMoney: (amount: number) => Promise<void>;
 }
 
 const authApi = axiosInstance("auth");
@@ -57,6 +65,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
+  isAddingUSD: false,
+  isAddingGold: false,
+  isWithdrawingUSD: false,
 
   toasts: [],
 
@@ -266,6 +277,123 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           variant: "destructive",
         });
       }
+    }
+  },
+
+  addMoney: async (amount) => {
+    set({ isAddingUSD: true });
+    try {
+      const walletApi = axiosInstance("wallet");
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      await walletApi.post(
+        "/addMoney",
+        { amount },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+      set((state) => ({
+        authUser: {
+          ...state.authUser!,
+          balances: {
+            ...state.authUser!.balances,
+            usd: state.authUser!.balances.usd + amount,
+          },
+        },
+      }));
+      get().addToast({
+        title: "USD Funds Added",
+        description: `Successfully added $${amount.toFixed(2)}`,
+      });
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: "Failed to add USD funds",
+        variant: "destructive",
+      });
+    } finally {
+      set({ isAddingUSD: false });
+    }
+  },
+
+  addGold: async (quantity) => {
+    set({ isAddingGold: true });
+    try {
+      const walletApi = axiosInstance("wallet");
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      await walletApi.post(
+        "/addGold",
+        { quantity },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+      set((state) => ({
+        authUser: {
+          ...state.authUser!,
+          balances: {
+            ...state.authUser!.balances,
+            gold: state.authUser!.balances.gold + quantity,
+          },
+        },
+      }));
+      get().addToast({
+        title: "Gold Added",
+        description: `Successfully added ${quantity.toFixed(3)} oz`,
+      });
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: "Failed to add gold",
+        variant: "destructive",
+      });
+    } finally {
+      set({ isAddingGold: false });
+    }
+  },
+
+  withdrawMoney: async (amount) => {
+    set({ isWithdrawingUSD: true });
+    try {
+      const walletApi = axiosInstance("wallet");
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      await walletApi.post(
+        "/withdrawMoney",
+        { amount },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+      set((state) => ({
+        authUser: {
+          ...state.authUser!,
+          balances: {
+            ...state.authUser!.balances,
+            usd: state.authUser!.balances.usd - amount,
+          },
+        },
+      }));
+      get().addToast({
+        title: "USD Withdrawn",
+        description: `Successfully withdrew $${amount.toFixed(2)}`,
+      });
+    } catch (error) {
+      get().addToast({
+        title: "Error",
+        description: "Failed to withdraw USD funds",
+        variant: "destructive",
+      });
+    } finally {
+      set({ isWithdrawingUSD: false });
     }
   },
 }));
