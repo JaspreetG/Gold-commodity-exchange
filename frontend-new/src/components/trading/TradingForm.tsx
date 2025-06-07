@@ -1,3 +1,4 @@
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Trade } from "@/types/trading";
 import { TrendingUp } from "lucide-react";
+import { axiosInstance } from "@/lib/axios";
 
 interface TradingFormProps {
   userBalances: {
@@ -35,41 +37,45 @@ const TradingForm = ({
   const handleBuy = async () => {
     const quantity = parseFloat(buyQuantity);
     if (!quantity || quantity <= 0) {
-      // toast({
-      //   title: "Invalid Quantity",
-      //   description: "Please enter a valid quantity",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     const price =
       buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
     if (buyOrderType === "limit" && (!price || price <= 0)) {
-      // toast({
-      //   title: "Invalid Price",
-      //   description: "Please enter a valid price",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     const total = quantity * price;
 
     if (total > userBalances.usd) {
-      // toast({
-      //   title: "Insufficient Funds",
-      //   description: "You don't have enough USD to complete this trade",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    updateBalance("usd", -total);
-    updateBalance("gold", quantity);
+    try {
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      await axiosInstance("trade").post(
+        "/createOrder",
+        {
+          quantity,
+          price,
+          side: "BUY",
+          type: buyOrderType === "limit" ? "LIMIT" : "MARKET",
+        },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+    } catch (error) {
+      // Optionally handle error here
+    }
+
+    updateBalance();
 
     onTrade({
       type: "BUY",
@@ -82,48 +88,48 @@ const TradingForm = ({
     setBuyQuantity("");
     setBuyPrice("");
     setIsLoading(false);
-
-    // toast({
-    //   title: "Buy Order Executed",
-    //   description: `Successfully bought ${quantity} oz of gold for $${total.toLocaleString()}`,
-    // });
   };
 
   const handleSell = async () => {
     const quantity = parseFloat(sellQuantity);
     if (!quantity || quantity <= 0) {
-      // toast({
-      //   title: "Invalid Quantity",
-      //   description: "Please enter a valid quantity",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     if (quantity > userBalances.gold) {
-      // toast({
-      //   title: "Insufficient Gold",
-      //   description: "You don't have enough gold to complete this trade",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     const price =
       sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
     if (sellOrderType === "limit" && (!price || price <= 0)) {
-      // toast({
-      //   title: "Invalid Price",
-      //   description: "Please enter a valid price",
-      //   variant: "destructive",
-      // });
       return;
     }
 
     const total = quantity * price;
 
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    try {
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      await axiosInstance("trade").post(
+        "/createOrder",
+        {
+          quantity,
+          price,
+          side: "SELL",
+          type: sellOrderType === "limit" ? "LIMIT" : "MARKET",
+        },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+    } catch (error) {
+      // Optionally handle error here
+    }
 
     updateBalance("gold", -quantity);
     updateBalance("usd", total);
@@ -139,11 +145,6 @@ const TradingForm = ({
     setSellQuantity("");
     setSellPrice("");
     setIsLoading(false);
-
-    // toast({
-    //   title: "Sell Order Executed",
-    //   description: `Successfully sold ${quantity} oz of gold for $${total.toLocaleString()}`,
-    // });
   };
 
   return (

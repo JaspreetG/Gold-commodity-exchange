@@ -57,6 +57,7 @@ interface AuthStore {
   addMoney: (amount: number) => Promise<void>;
   addGold: (quantity: number) => Promise<void>;
   withdrawMoney: (amount: number) => Promise<void>;
+  getWallet: () => Promise<{ usd: number; gold: number } | null>;
 }
 
 const authApi = axiosInstance("auth");
@@ -394,6 +395,36 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
     } finally {
       set({ isWithdrawingUSD: false });
+    }
+  },
+
+  getWallet: async () => {
+    try {
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      const walletApi = axiosInstance("wallet");
+      const walletRes = await walletApi.get("/getWallet", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+      const walletData = walletRes.data;
+      set((state) => ({
+        authUser: {
+          ...state.authUser!,
+          balances: {
+            usd: walletData.balance,
+            gold: walletData.gold,
+          },
+        },
+      }));
+      return {
+        usd: walletData.balance,
+        gold: walletData.gold,
+      };
+    } catch (error) {
+      console.error("Failed to fetch wallet:", error);
+      return null;
     }
   },
 }));

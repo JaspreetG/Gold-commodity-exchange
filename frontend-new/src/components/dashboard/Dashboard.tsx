@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import Portfolio from "./Portfolio";
 import TradingInterface from "../trading/TradingInterface";
 import WalletManager from "./WalletManager";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface DashboardProps {
   user: User;
@@ -18,11 +19,17 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
     setUserBalances(user.balances ?? { usd: 0, gold: 0 });
   }, [user.balances]);
 
-  const updateBalance = (type: "usd" | "gold", amount: number) => {
-    setUserBalances((prev) => ({
-      ...prev,
-      [type]: prev[type] + amount,
+  const updateBalance = (usd: number, gold: number) => {
+    useAuthStore.setState((state) => ({
+      authUser: {
+        ...state.authUser!,
+        balances: {
+          usd,
+          gold,
+        },
+      },
     }));
+    setUserBalances({ usd, gold });
   };
 
   return (
