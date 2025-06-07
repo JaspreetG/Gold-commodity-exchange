@@ -14,21 +14,16 @@ import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 type AuthStep = "register" | "register-qr";
 
-// const onLogin = (user: User) => {
-//     console.log("User logged in:", user);
-//     // Handle user login logic here, e.g., redirect to dashboard
-// }
-
 const SignupForm = () => {
   const [step, setStep] = useState<AuthStep>("register");
   const [phone, setPhone] = useState("");
   const [username, setUsername] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "US",
-    name: "United States",
-    flag: "🇺🇸",
-    dialCode: "+1",
+    code: "IND",
+    name: "India",
+    flag: "🇮🇳",
+    dialCode: "+91",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [secretCopied, setSecretCopied] = useState(false);
@@ -40,11 +35,16 @@ const SignupForm = () => {
   const authUser = useAuthStore((state) => state.authUser);
 
   const onBackToLanding = () => {
-    console.log("Back to landing page");
     navigate("/");
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const getDeviceFingerprint = async () => {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    return result.visitorId;
+  };
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -54,26 +54,20 @@ const SignupForm = () => {
     setIsLoading(false);
   };
 
-  const handleVerifyTOTP = async (e: React.FormEvent) => {
+  const handleVerifyTOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     if (totpCode.length !== 6) {
-      // toast({
-      //     title: "Invalid TOTP Code",
-      //     description: "Please enter a 6-digit TOTP code",
-      //     variant: "destructive",
-      // });
       setIsLoading(false);
       return;
     }
 
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    const deviceFingerprint = result.visitorId;
+    const deviceFingerprint = await getDeviceFingerprint();
 
+    const sanitizedPhone = phone.replace(/\D/g, "");
     await verifyTOTP(
-      `${selectedCountry.dialCode}${phone}`,
+      `${selectedCountry.dialCode}${sanitizedPhone}`,
       totpCode,
       deviceFingerprint
     );
@@ -82,13 +76,10 @@ const SignupForm = () => {
   };
 
   const copySecret = async () => {
-    if (authUser?.secretKey) {
-      await navigator.clipboard.writeText(authUser.secretKey);
+    const secret = authUser?.secretKey ?? "";
+    if (secret) {
+      await navigator.clipboard.writeText(secret);
       setSecretCopied(true);
-      // toast({
-      //     title: "Secret copied",
-      //     description: "Secret key copied to clipboard",
-      // });
       setTimeout(() => setSecretCopied(false), 2000);
     }
   };

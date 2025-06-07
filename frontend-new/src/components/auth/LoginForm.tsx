@@ -12,7 +12,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 type AuthStep = "phone" | "totp";
 
 const LoginForm = () => {
-  const { login, isLoggingIn, verifyTOTP } = useAuthStore();
+  const { login, verifyTOTP } = useAuthStore();
   const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
   const [totp, setTotp] = useState("");
@@ -36,20 +36,6 @@ const LoginForm = () => {
 
     await login({ phone }, navigate);
     setStep("totp");
-
-    // if (userExists) {
-    //   toast({
-    //     title: "Phone verified",
-    //     description: "Please enter your TOTP code",
-    //   });
-    //   setStep("totp");
-    // } else {
-    //   toast({
-    //     title: "Account not found",
-    //     description: "Please sign up first",
-    //     variant: "destructive",
-    //   });
-    // }
 
     setIsLoading(false);
   };
