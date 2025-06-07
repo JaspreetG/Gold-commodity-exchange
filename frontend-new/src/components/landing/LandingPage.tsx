@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Coins, Shield, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,27 +7,17 @@ interface LandingPageProps {
   onSignupClick: () => void;
 }
 
-
-
-
-
 const LandingPage = () => {
-
   const navigate = useNavigate();
-
 
   const onLoginClick = () => {
     console.log("Login clicked");
     navigate("/login");
-  }
+  };
   const onSignupClick = () => {
     console.log("Signup clicked");
     navigate("/signUp");
-  }
-
-
-
-
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -67,8 +56,9 @@ const LandingPage = () => {
             Professional Gold Trading Platform
           </h1>
           <p className="text-xl text-gray-600 font-light mb-12 max-w-3xl mx-auto">
-            Trade gold with institutional-grade tools, real-time market data, and secure TOTP authentication.
-            Experience the future of precious metals trading.
+            Trade gold with institutional-grade tools, real-time market data,
+            and secure TOTP authentication. Experience the future of precious
+            metals trading.
           </p>
           <Button
             onClick={onLoginClick}
@@ -92,9 +82,12 @@ const LandingPage = () => {
               <div className="bg-white p-6 rounded-lg shadow-minimal mb-6 w-20 h-20 mx-auto flex items-center justify-center">
                 <Shield className="h-10 w-10 text-black" />
               </div>
-              <h3 className="text-xl font-normal text-black mb-4">Secure Authentication</h3>
+              <h3 className="text-xl font-normal text-black mb-4">
+                Secure Authentication
+              </h3>
               <p className="text-gray-600 font-light">
-                TOTP-based two-factor authentication ensures your account stays protected with military-grade security.
+                TOTP-based two-factor authentication ensures your account stays
+                protected with military-grade security.
               </p>
             </div>
 
@@ -102,9 +95,12 @@ const LandingPage = () => {
               <div className="bg-white p-6 rounded-lg shadow-minimal mb-6 w-20 h-20 mx-auto flex items-center justify-center">
                 <TrendingUp className="h-10 w-10 text-black" />
               </div>
-              <h3 className="text-xl font-normal text-black mb-4">Real-Time Trading</h3>
+              <h3 className="text-xl font-normal text-black mb-4">
+                Real-Time Trading
+              </h3>
               <p className="text-gray-600 font-light">
-                Access live gold prices, advanced order books, and execute trades instantly with professional tools.
+                Access live gold prices, advanced order books, and execute
+                trades instantly with professional tools.
               </p>
             </div>
 
@@ -112,9 +108,12 @@ const LandingPage = () => {
               <div className="bg-white p-6 rounded-lg shadow-minimal mb-6 w-20 h-20 mx-auto flex items-center justify-center">
                 <Users className="h-10 w-10 text-black" />
               </div>
-              <h3 className="text-xl font-normal text-black mb-4">Trusted Platform</h3>
+              <h3 className="text-xl font-normal text-black mb-4">
+                Trusted Platform
+              </h3>
               <p className="text-gray-600 font-light">
-                Join thousands of traders who trust GoldEx for their precious metals investment needs.
+                Join thousands of traders who trust GoldEx for their precious
+                metals investment needs.
               </p>
             </div>
           </div>

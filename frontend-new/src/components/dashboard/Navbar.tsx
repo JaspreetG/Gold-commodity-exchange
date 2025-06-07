@@ -5,10 +5,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 interface NavbarProps {
   user: User;
+  onLogout: () => void;
 }
 
 const Navbar = ({ user }: NavbarProps) => {
-  const logout = useAuthStore((state) => state.logout);
+  const onLogout = useAuthStore((state) => state.logout);
 
   return (
     <nav className="bg-white border-b border-gray-200">
@@ -37,7 +38,7 @@ const Navbar = ({ user }: NavbarProps) => {
             </div>
 
             <Button
-              onClick={logout}
+              onClick={onLogout}
               variant="outline"
               size="sm"
               className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"

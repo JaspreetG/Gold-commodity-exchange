@@ -10,9 +10,9 @@ interface Country {
 }
 
 const countries: Country[] = [
+  { code: "IN", name: "India", flag: "🇮🇳", dialCode: "+91" },
   { code: "US", name: "United States", flag: "🇺🇸", dialCode: "+1" },
   { code: "CN", name: "China", flag: "🇨🇳", dialCode: "+86" },
-  { code: "IN", name: "India", flag: "🇮🇳", dialCode: "+91" },
   { code: "JP", name: "Japan", flag: "🇯🇵", dialCode: "+81" },
   { code: "DE", name: "Germany", flag: "🇩🇪", dialCode: "+49" },
   { code: "GB", name: "United Kingdom", flag: "🇬🇧", dialCode: "+44" },

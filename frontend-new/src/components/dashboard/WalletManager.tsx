@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,7 @@ interface WalletManagerProps {
     usd: number;
     gold: number;
   };
-  updateBalance: (type: 'usd' | 'gold', amount: number) => void;
+  updateBalance: (type: "usd" | "gold", amount: number) => void;
 }
 
 const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
@@ -19,54 +18,20 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
   const [goldAmount, setGoldAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAddUSD = async () => {
-    const amount = parseFloat(usdAmount);
-    if (!amount || amount <= 0) {
-      // toast({
-      //   title: "Invalid Amount",
-      //   description: "Please enter a valid USD amount",
-      //   variant: "destructive"
-      // });
-      return;
-    }
+  // Helper to handle both USD and Gold addition
+  const processAddition = async (
+    type: "usd" | "gold",
+    amountStr: string,
+    setAmount: (v: string) => void
+  ) => {
+    const amount = parseFloat(amountStr);
+    if (!amount || amount <= 0) return;
 
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    updateBalance('usd', amount);
-    setUsdAmount("");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    updateBalance(type, amount);
+    setAmount("");
     setIsLoading(false);
-    
-    // toast({
-    //   title: "Funds Added",
-    //   description: `$${amount.toLocaleString()} has been added to your account`
-    // });
-  };
-
-  const handleAddGold = async () => {
-    const amount = parseFloat(goldAmount);
-    if (!amount || amount <= 0) {
-      // toast({
-      //   title: "Invalid Amount",
-      //   description: "Please enter a valid gold amount",
-      //   variant: "destructive"
-      // });
-      return;
-    }
-
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    updateBalance('gold', amount);
-    setGoldAmount("");
-    setIsLoading(false);
-    
-    // toast({
-    //   title: "Gold Added",
-    //   description: `${amount} oz of gold has been added to your account`
-    // });
   };
 
   return (
@@ -80,7 +45,9 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="usd-amount" className="text-gray-600 font-light">Amount (USD)</Label>
+            <Label htmlFor="usd-amount" className="text-gray-600 font-light">
+              Amount (USD)
+            </Label>
             <Input
               id="usd-amount"
               type="number"
@@ -96,7 +63,7 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
             Current Balance: ${balances.usd.toLocaleString()}
           </div>
           <Button
-            onClick={handleAddUSD}
+            onClick={() => processAddition("usd", usdAmount, setUsdAmount)}
             disabled={isLoading || !usdAmount}
             className="w-full bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm font-light"
           >
@@ -115,7 +82,9 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="gold-amount" className="text-gray-600 font-light">Amount (oz)</Label>
+            <Label htmlFor="gold-amount" className="text-gray-600 font-light">
+              Amount (oz)
+            </Label>
             <Input
               id="gold-amount"
               type="number"
@@ -131,7 +100,7 @@ const WalletManager = ({ balances, updateBalance }: WalletManagerProps) => {
             Current Holdings: {balances.gold.toFixed(3)} oz
           </div>
           <Button
-            onClick={handleAddGold}
+            onClick={() => processAddition("gold", goldAmount, setGoldAmount)}
             disabled={isLoading || !goldAmount}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white border-0 shadow-sm font-light"
           >
