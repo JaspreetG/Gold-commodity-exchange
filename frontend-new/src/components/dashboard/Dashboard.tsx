@@ -11,13 +11,19 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
-const Dashboard = ({ user, onLogout }: DashboardProps) => {
+
+
+const Dashboard = () => {
+
+  const{authUser,logout} = useAuthStore();
+
+
   const [activeTab, setActiveTab] = useState<"trading" | "wallet">("trading");
-  const [userBalances, setUserBalances] = useState(user.balances);
+  const [userBalances, setUserBalances] = useState(authUser.balances);
 
   useEffect(() => {
-    setUserBalances(user.balances ?? { usd: 0, gold: 0 });
-  }, [user.balances]);
+    setUserBalances(authUser.balances ?? { usd: 0, gold: 0 });
+  }, [authUser.balances]);
 
   const updateBalance = (usd: number, gold: number) => {
     useAuthStore.setState((state) => ({
@@ -34,7 +40,7 @@ const Dashboard = ({ user, onLogout }: DashboardProps) => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar user={{ ...user, balances: userBalances }} onLogout={onLogout} />
+      <Navbar user={{ ...authUser, balances: userBalances }} onLogout={logout} />
 
       <div className="container mx-auto px-6 py-8">
         <Portfolio balances={userBalances} />

@@ -8,13 +8,22 @@ import Dashboard from "./components/dashboard/Dashboard";
 import LoginForm from "./components/auth/LoginForm";
 import SignUpPage from "./components/auth/SignUpPage";
 import { useAuthStore } from "./store/useAuthStore";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
+// const logout = () => { };
 
-const logout = () => {};
+
+
+
 
 const App = () => {
-  const authUser = useAuthStore((state) => state.authUser);
+  const { authUser, getUser,isGettingUser} = useAuthStore();
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -22,19 +31,10 @@ const App = () => {
         <Toaster />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route
-              path="/dashboard"
-              element={
-                authUser ? (
-                  <Dashboard user={authUser} onLogout={logout} />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/signUp" element={<SignUpPage />} />
+            <Route path="/" element={!authUser?<LandingPage />:<Navigate to="/dashboard"/>} />
+            <Route path="/login" element={!authUser ? <LoginForm /> : <Navigate to="/dashboard" />} />
+            <Route path="/signUp" element={!authUser ? <SignUpPage /> : <Navigate to="/dashboard" />}/>
+            <Route path="/dashboard" element={authUser ? (<Dashboard/>) : (<Navigate to="/login" replace />)}/>
 
             {/* TODO:  */}
 
