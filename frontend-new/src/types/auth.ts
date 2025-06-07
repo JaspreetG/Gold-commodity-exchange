@@ -8,16 +8,15 @@ export interface User {
 }
 
 export interface PhoneCredentials {
-  phone: string;
+  phoneNumber: string;
 }
 
 export interface TOTPCredentials {
-  phone: string;
+  phoneNumber: string;
   totpCode: string;
 }
 
 export interface RegistrationData {
-  phone: string;
-  qrCode: string;
-  secret: string;
+  phoneNumber: string;
+  userName: string;
 }

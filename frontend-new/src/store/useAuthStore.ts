@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.ts";
 import type { ToastProps } from "@/components/ui/toast";
-import { AxiosError } from "axios";
+import { AxiosError, isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
 
 // const navigate = useNavigate();
@@ -22,14 +22,13 @@ interface User {
     usd: number;
     gold: number;
   };
+  qrCode?: string;
+  secretKey?: string;
 }
 
 interface SignupData {
-  // TODO: Define the fields required for signup
-  name: string;
-  email: string;
-  password: string;
-  // Add any other fields required by the backend
+  phoneNumber: string;
+  userName: string;
 }
 
 interface LoginData {
@@ -92,17 +91,41 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await authApi.post("/signup", data);
-      set({ authUser: res.data });
+      const res = await authApi.post("/register", {
+        phoneNumber: data.phoneNumber,
+        userName: data.userName,
+      });
+
+      const result = res.data;
+
+      set({
+        authUser: {
+          userName: data.userName,
+          phoneNumber: data.phoneNumber,
+          balances: { usd: 0, gold: 0 },
+          qrCode: result.qrCode,
+          secretKey: result.secretKey,
+        },
+      });
+
       get().addToast({
         title: "Success",
-        description: "Account created successfully",
+        description: "Account created. Set up TOTP.",
       });
-    } catch (error) {
-      get().addToast({
-        title: "Error",
-        description: error.response.data.message,
-      });
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        get().addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Signup failed",
+          variant: "destructive",
+        });
+      } else {
+        get().addToast({
+          title: "Error",
+          description: "An unexpected error occurred during signup",
+          variant: "destructive",
+        });
+      }
     } finally {
       set({ isSigningUp: false });
     }
@@ -154,9 +177,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   },
 
   verifyTOTP: async (phoneNumber, totp, deviceFingerprint) => {
+    // Format phoneNumber to 10 digits only
+    const formattedPhoneNumber = phoneNumber.replace(/\D/g, "").slice(-10);
     try {
       const response = await authApi.post("/verify", {
-        phoneNumber,
+        phoneNumber: formattedPhoneNumber,
         totp,
         deviceFingerprint,
       });
@@ -178,7 +203,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
 
       const walletData = walletRes.data;
-      console.log("Wallet response", walletData);
       set({
         authUser: {
           ...userInfo,
@@ -214,17 +238,42 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   logout: async () => {
     try {
-      await authApi.post("/logout");
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
+        (m) => m.default
+      );
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      await authApi.post(
+        "/logout",
+        {},
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+
       set({ authUser: null });
+
       get().addToast({
         title: "Success",
         description: "Logged out successfully",
       });
-    } catch (error) {
-      get().addToast({
-        title: "Error",
-        description: error.response.data.message,
-      });
+    } catch (error: unknown) {
+      if (isAxiosError(error)) {
+        get().addToast({
+          title: "Error",
+          description: error.response?.data?.message || "Logout failed",
+          variant: "destructive",
+        });
+      } else {
+        get().addToast({
+          title: "Error",
+          description: "An unexpected error occurred during logout",
+          variant: "destructive",
+        });
+      }
     }
   },
 }));

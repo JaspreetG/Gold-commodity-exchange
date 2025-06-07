@@ -1,13 +1,15 @@
 import { User } from "@/types/auth";
 import { Button } from "@/components/ui/button";
 import { Coins, LogOut } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface NavbarProps {
   user: User;
-  onLogout: () => void;
 }
 
-const Navbar = ({ user, onLogout }: NavbarProps) => {
+const Navbar = ({ user }: NavbarProps) => {
+  const logout = useAuthStore((state) => state.logout);
+
   return (
     <nav className="bg-white border-b border-gray-200">
       <div className="container mx-auto px-6">
@@ -19,8 +21,10 @@ const Navbar = ({ user, onLogout }: NavbarProps) => {
 
           <div className="flex items-center space-x-8">
             <div className="text-sm text-gray-600 font-light">
-              <span className="font-normal text-black">{user.userName}</span>
-              <span className="ml-2">({user.phoneNumber})</span>
+              <span className="font-normal text-black">
+                {user?.userName ?? ""}
+              </span>
+              <span className="ml-2">({user?.phoneNumber ?? ""})</span>
             </div>
 
             <div className="flex items-center space-x-4 text-sm font-light">
@@ -33,7 +37,7 @@ const Navbar = ({ user, onLogout }: NavbarProps) => {
             </div>
 
             <Button
-              onClick={onLogout}
+              onClick={logout}
               variant="outline"
               size="sm"
               className="border-gray-200 text-gray-600 hover:bg-gray-50 font-light"
