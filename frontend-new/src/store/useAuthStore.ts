@@ -16,11 +16,12 @@ type ToasterToast = ToastProps & {
 };
 
 interface User {
-  id: string;
-  phone: string;
-  name: string;
-  email: string;
-  // Add other user fields as needed
+  userName: string;
+  phoneNumber: string;
+  balances: {
+    usd: number;
+    gold: number;
+  };
 }
 
 interface SignupData {
@@ -161,7 +162,32 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
 
       const data = response.data;
-      set({ authUser: data });
+
+      const userInfoRes = await authApi.get("/getUser", {
+        headers: {
+          "X-Device-Fingerprint": deviceFingerprint,
+        },
+      });
+      const userInfo = userInfoRes.data;
+
+      const walletApi = axiosInstance("wallet");
+      const walletRes = await walletApi.get("/getWallet", {
+        headers: {
+          "X-Device-Fingerprint": deviceFingerprint,
+        },
+      });
+
+      const walletData = walletRes.data;
+      console.log("Wallet response", walletData);
+      set({
+        authUser: {
+          ...userInfo,
+          balances: {
+            usd: walletData.balance,
+            gold: walletData.gold,
+          },
+        },
+      });
 
       get().addToast({
         title: "Success",
