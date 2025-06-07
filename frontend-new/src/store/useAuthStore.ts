@@ -55,8 +55,6 @@ interface AuthStore {
     totp: string,
     deviceFingerprint: string
   ) => Promise<void>;
-  //   connectSocket?: () => void;
-  //   disconnectSocket?: () => void;
 }
 
 const authApi = axiosInstance("auth");
@@ -93,7 +91,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signup: async (data) => {
     set({ isSigningUp: true });
     try {
-      const res = await authApi.post("/auth/signup", data);
+      const res = await authApi.post("/signup", data);
       set({ authUser: res.data });
       get().addToast({
         title: "Success",
@@ -113,7 +111,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const payload = { phoneNumber: phone };
-      const res = await authApi.post("/auth/login", payload);
+      const res = await authApi.post("/login", payload);
       const data = res.data;
 
       if (data.redirect === "register") {
@@ -190,7 +188,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
   logout: async () => {
     try {
-      await authApi.post("/auth/logout");
+      await authApi.post("/logout");
       set({ authUser: null });
       get().addToast({
         title: "Success",
