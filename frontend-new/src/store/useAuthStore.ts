@@ -162,6 +162,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     } catch (error) {
       console.error("Failed to fetch user:", error);
       set({ authUser: null });
+      console.log(get().authUser);
     } finally {
       set({ isGettingUser: false });
     }   
@@ -172,6 +173,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   login: async ({ phone }: LoginData, navigate) => {
     set({ isLoggingIn: true });
     try {
+        console.log("in login")
       const payload = { phoneNumber: phone };
       const res = await authApi.post("/login", payload);
       const data = res.data;
@@ -191,9 +193,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: "User found, proceed with TOTP verification.",
       });
 
-      set({ authUser: data });
+    //   set({ authUser: data });
+      console.log(get().authUser)
     } catch (error) {
       const err = error as AxiosError;
+      console.log("in login error")
       console.log(err);
       let msg = "Something went wrong";
       if (
