@@ -39,6 +39,7 @@ interface AuthStore {
   isAddingUSD: boolean;
   isAddingGold: boolean;
   isWithdrawingUSD: boolean;
+  isGettingUser: boolean;
   toasts: ToasterToast[];
   addToast: (toast: Omit<ToasterToast, "id">) => string;
   dismissToast: (id: string) => void;
@@ -58,6 +59,7 @@ interface AuthStore {
   addGold: (quantity: number) => Promise<void>;
   withdrawMoney: (amount: number) => Promise<void>;
   getWallet: () => Promise<{ usd: number; gold: number } | null>;
+  getUser: () => Promise<void>;
 }
 
 const authApi = axiosInstance("auth");
@@ -69,6 +71,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isAddingUSD: false,
   isAddingGold: false,
   isWithdrawingUSD: false,
+  isGettingUser: false,
 
   toasts: [],
 
@@ -136,6 +139,35 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       set({ isSigningUp: false });
     }
   },
+
+
+  getUser: async () => {
+    set({ isGettingUser: true });
+    try {
+        console.log("in getUser")
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
+        (m) => m.default
+      );
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      const res = await authApi.get("/getUser", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+
+      set({ authUser: res.data });
+      console.log(get().authUser);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      set({ authUser: null });
+    } finally {
+      set({ isGettingUser: false });
+    }   
+  },
+
+  
 
   login: async ({ phone }: LoginData, navigate) => {
     set({ isLoggingIn: true });

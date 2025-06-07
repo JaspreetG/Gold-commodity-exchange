@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coins, Phone, Shield } from "lucide-react";
+import { CloudDownload, Coins, Phone, Shield } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
 import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,7 @@ const LoginForm = () => {
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    console.log("in handlePhoneSubmit");
 
     await login({ phone }, navigate);
     setStep("totp");
