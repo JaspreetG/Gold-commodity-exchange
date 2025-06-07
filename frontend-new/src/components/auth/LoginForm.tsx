@@ -15,7 +15,7 @@ const LoginForm = () => {
   const { login, isLoggingIn, verifyTOTP } = useAuthStore();
   const [step, setStep] = useState<AuthStep>("phone");
   const [phone, setPhone] = useState("");
-  const [totpCode, setTotpCode] = useState("");
+  const [totp, setTotp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>({
     code: "US",
@@ -58,20 +58,21 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (totpCode.length !== 6) {
+    if (totp.length !== 6) {
       setIsLoading(false);
       return;
     }
 
     try {
-      const FingerprintJS = await import("@fingerprintjs/fingerprintjs");
-      const fp = await FingerprintJS.load();
-      const result = await fp.get();
-      const deviceFingerprint = result.visitorId;
+      // const FingerprintJS = await import("@fingerprintjs/fingerprintjs");
+      // const fp = await FingerprintJS.load();
+      // const result = await fp.get();
+      // const deviceFingerprint = result.visitorId;
+      const deviceFingerprint = "hello world";
 
       await verifyTOTP(
-        `${selectedCountry.dialCode}${phone}`,
-        totpCode,
+        phone,
+        totp,
         deviceFingerprint
       );
     } catch (error) {
@@ -156,7 +157,7 @@ const LoginForm = () => {
                     Enter TOTP Code
                   </Label>
                   <div className="mt-4">
-                    <OTPInput value={totpCode} onChange={setTotpCode} />
+                    <OTPInput value={totp} onChange={setTotp} />
                   </div>
                   <p className="text-xs text-gray-500 mt-2 font-light text-center">
                     Enter the 6-digit code from your authenticator app
@@ -175,7 +176,7 @@ const LoginForm = () => {
                   <Button
                     type="submit"
                     className="flex-1 bg-black hover:bg-gray-800 text-white font-light"
-                    disabled={isLoading || totpCode.length !== 6}
+                    disabled={isLoading || totp.length !== 6}
                   >
                     {isLoading ? "Authenticating..." : "Login"}
                   </Button>
