@@ -58,7 +58,7 @@ const Index = () => {
     );
   }
 
-  return <Dashboard user={user!} onLogout={handleLogout} />;
+  // return <Dashboard user={user!} onLogout={handleLogout} />;
 };
 
 export default Index;
