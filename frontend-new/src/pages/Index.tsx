@@ -1,9 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
-import LoginForm from "@/components/auth/LoginForm";
 import Dashboard from "@/components/dashboard/Dashboard";
-import LandingPage from "@/components/landing/LandingPage";
 import { User } from "@/types/auth";
 
 type AppState = "landing" | "login" | "signup" | "dashboard";
@@ -47,21 +45,10 @@ const Index = () => {
   }, [fetchUser]);
 
   // 🔄 After login/signup, fetch from backend
-  const handleLogin = () => {
-    setIsLoading(true);
-    fetchUser();
-    // setUser(data);
-    setAppState("dashboard");
-  };
-
   const handleLogout = () => {
     setUser(null);
     setAppState("landing");
   };
-
-  const handleLoginClick = () => setAppState("login");
-  const handleSignupClick = () => setAppState("signup");
-  const handleBackToLanding = () => setAppState("landing");
 
   if (isLoading) {
     return (
@@ -70,25 +57,6 @@ const Index = () => {
       </div>
     );
   }
-
-  // if (appState === "landing") {
-  //   return (
-  //     <LandingPage
-  //       onLoginClick={handleLoginClick}
-  //       onSignupClick={handleSignupClick}
-  //     />
-  //   );
-  // }
-
-  // if (appState === "login" || appState === "signup") {
-  //   return (
-  //     <LoginForm
-  //       onLogin={handleLogin} // 👈 will call fetchUser after login
-  //       onBackToLanding={handleBackToLanding}
-  //       isSignup={appState === "signup"}
-  //     />
-  //   );
-  // }
 
   return <Dashboard user={user!} onLogout={handleLogout} />;
 };

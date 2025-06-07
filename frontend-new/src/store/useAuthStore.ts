@@ -1,13 +1,8 @@
-import { create } from "zustand";
-import { axiosInstance } from "../lib/axios.ts";
 import type { ToastProps } from "@/components/ui/toast";
 import { AxiosError, isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-
-// const navigate = useNavigate();
-// const login = useAuthStore((s) => s.login);
-
-// login({ phone: "9876543210" }, navigate);
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios.ts";
 
 type ToasterToast = ToastProps & {
   id: string;
@@ -32,7 +27,6 @@ interface SignupData {
 }
 
 interface LoginData {
-  //TODO: Define the fields required for login
   phone: string;
 }
 
@@ -185,8 +179,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         totp,
         deviceFingerprint,
       });
-
-      const data = response.data;
 
       const userInfoRes = await authApi.get("/getUser", {
         headers: {

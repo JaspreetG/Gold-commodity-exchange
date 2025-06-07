@@ -15,7 +15,6 @@ import io.goldexchange.trade_service.repository.TradeRepository;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.query.Order;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,7 +57,7 @@ public class TradeService {
     public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
 
         try {
-            
+
             // buy side
             Trade tradeBuyerSide = new Trade();
             tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
@@ -79,8 +78,6 @@ public class TradeService {
 
             // wallet update
             updateWallets(tradeConsumerDTO);
-    
-
 
         } catch (Exception e) {
             throw new RuntimeException("Error saving trade: " + e.getMessage(), e);
@@ -89,12 +86,12 @@ public class TradeService {
 
     public void updateWallets(TradeConsumerDTO tradeConsumerDTO) {
         try {
-            String url = walletServiceUrl+"internal/updateWallets"; // ensure this is the correct endpoint
+            String url = walletServiceUrl + "internal/updateWallets"; // ensure this is the correct endpoint
             HttpHeaders headers = new HttpHeaders();
             headers.set("X-Internal-Secret", "mySecretToken"); // Use a secure token for internal calls
             headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
 
-            HttpEntity<TradeConsumerDTO> requestEntity = new HttpEntity<>(tradeConsumerDTO,headers);
+            HttpEntity<TradeConsumerDTO> requestEntity = new HttpEntity<>(tradeConsumerDTO, headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(
                     url,
@@ -137,16 +134,15 @@ public class TradeService {
         return pastTrades;
     }
 
-
     public WalletDTO getWallet() {
         WalletDTO walletDTO = null;
 
         try {
-            String url = walletServiceUrl+"getWallet"; // ensure this is the correct endpoint
+            String url = walletServiceUrl + "getWallet"; // ensure this is the correct endpoint
             AuthCredentials creds = (AuthCredentials) SecurityContextHolder.getContext().getAuthentication()
                     .getCredentials();
             String deviceFingerprint = creds.getFingerprint();
-            String jwt = creds.getJwt(); 
+            String jwt = creds.getJwt();
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
@@ -161,7 +157,7 @@ public class TradeService {
                     requestEntity,
                     WalletDTO.class);
 
-                System.out.println(response.getBody());
+            System.out.println(response.getBody());
             if (response.getStatusCode().is2xxSuccessful()) {
                 System.out.println("Wallet fetched successfully.");
                 walletDTO = (WalletDTO) response.getBody();
@@ -190,5 +186,4 @@ public class TradeService {
         return false;
     }
 
-   
 }
