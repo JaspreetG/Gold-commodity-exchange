@@ -31,6 +31,15 @@
       "projectName": "wallet-service",
       "args": "",
       "envFile": "${workspaceFolder}/.env"
+    },
+
+    {
+      "name": "React: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000", // Change this to match your dev server port
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMaps": true
     }
   ]
 }
