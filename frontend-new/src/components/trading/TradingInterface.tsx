@@ -30,7 +30,7 @@ const TradingInterface = ({
       const asks = [];
 
       // Generate bid orders (buy orders)
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 7; i++) {
         const price = currentPrice - (i + 1) * Math.random() * 5;
         const quantity = Math.random() * 2 + 0.1;
         bids.push({
@@ -41,7 +41,7 @@ const TradingInterface = ({
       }
 
       // Generate ask orders (sell orders)
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 7; i++) {
         const price = currentPrice + (i + 1) * Math.random() * 5;
         const quantity = Math.random() * 2 + 0.1;
         asks.push({
