@@ -171,19 +171,53 @@ public class TradeService {
         return walletDTO;
     }
 
-    public boolean checkWallet(OrderRequest orderRequest) {
-        WalletDTO walletDTO = getWallet();
-        if (walletDTO == null) {
-            return false;
-        }
+    // public boolean checkWallet(OrderRequest orderRequest) {
+    //     WalletDTO walletDTO = getWallet();
+    //     if (walletDTO == null) {
+    //         return false;
+    //     }
 
-        // Check if the user has enough balance
-        if (orderRequest.getSide().equals("BUY")) {
-            return walletDTO.getBalance() >= orderRequest.getPrice();
-        } else if (orderRequest.getSide().equals("SELL")) {
-            return walletDTO.getGold() >= orderRequest.getQuantity();
-        }
+    //     // Check if the user has enough balance
+    //     if (orderRequest.getSide().equals("BUY")) {
+    //         return walletDTO.getBalance() >= orderRequest.getPrice()*orderRequest.getQuantity();
+    //     } else if (orderRequest.getSide().equals("SELL")) {
+    //         return walletDTO.getGold() >= orderRequest.getQuantity();
+    //     }
+    //     return false;
+    // }
+
+    public boolean checkWallet(OrderRequest orderRequest) {
+    WalletDTO walletDTO = getWallet();
+    if (walletDTO == null) {
         return false;
     }
+
+    String side = orderRequest.getSide();
+    String type = orderRequest.getType();
+
+    if ("BUY".equals(side)) {
+        if ("LIMIT".equals(type)) {
+            // For limit buy: user pays price * quantity
+            double cost = orderRequest.getPrice() * orderRequest.getQuantity();
+            return walletDTO.getBalance() >= cost;
+        } else if ("MARKET".equals(type)) {
+            
+            // For market buy: you don't know exact price, so:
+            // Option 1: Assume a max slippage or fetch current lowest ask
+            // double estimatedPrice = fetchLTPOrBestAsk(); // Implement this
+            // double estimatedCost = estimatedPrice * orderRequest.getQuantity();
+            // return walletDTO.getBalance() >= estimatedCost;
+            
+            // Option 2: Assume a fixed price for market orders
+            return true;   // Assuming user has enough balance for market buy, as price is not known
+        }
+    } else if ("SELL".equals(side)) {
+        // For both limit and market sell, quantity of gold must be available
+        return walletDTO.getGold() >= orderRequest.getQuantity();
+    }
+
+    return false;
+}
+
 
 }

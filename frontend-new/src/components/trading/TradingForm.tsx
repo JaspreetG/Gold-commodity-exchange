@@ -9,6 +9,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Trade } from "@/types/trading";
 import { TrendingUp } from "lucide-react";
 import { axiosInstance } from "@/lib/axios";
+import { create } from "domain";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface TradingFormProps {
   userBalances: {
@@ -20,22 +22,20 @@ interface TradingFormProps {
   onTrade: (trade: Omit<Trade, "id" | "timestamp">) => void;
 }
 
-const TradingForm = ({
-  userBalances,
-  updateBalance,
-  currentPrice,
-  onTrade,
-}: TradingFormProps) => {
-  const [buyQuantity, setBuyQuantity] = useState("");
-  const [sellQuantity, setSellQuantity] = useState("");
+const TradingForm = ({ userBalances, updateBalance, currentPrice, onTrade }: TradingFormProps) => {
+
+  const{createOrder,isCreatingOrder} = useAuthStore();
+
+
+  const [buyQuantity, setBuyQuantity] = useState(0);
+  const [sellQuantity, setSellQuantity] = useState(0);
   const [buyOrderType, setBuyOrderType] = useState("market");
   const [sellOrderType, setSellOrderType] = useState("market");
   const [buyPrice, setBuyPrice] = useState("");
   const [sellPrice, setSellPrice] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleBuy = async () => {
-    const quantity = parseFloat(buyQuantity);
+    const quantity = buyQuantity;
     if (!quantity || quantity <= 0) {
       return;
     }
@@ -48,50 +48,30 @@ const TradingForm = ({
 
     const total = quantity * price;
 
-    if (total > userBalances.usd) {
-      return;
-    }
+    // if (total > userBalances.usd) {
+    //   return;
+    // }
 
-    setIsLoading(true);
+    const side="BUY";
+    const type = buyOrderType === "limit" ? "LIMIT" : "MARKET";
 
-    try {
-      const fp = await FingerprintJS.load();
-      const { visitorId } = await fp.get();
-      await axiosInstance("trade").post(
-        "/createOrder",
-        {
-          quantity,
-          price,
-          side: "BUY",
-          type: buyOrderType === "limit" ? "LIMIT" : "MARKET",
-        },
-        {
-          headers: {
-            "X-Device-Fingerprint": visitorId,
-          },
-        }
-      );
-    } catch (error) {
-      // Optionally handle error here
-    }
+    createOrder(quantity,price,side,type);
 
-    updateBalance();
+    // updateBalance();
+    // onTrade({
+    //   type: "BUY",
+    //   price,
+    //   quantity,
+    //   total,
+    //   fee: 0,
+    // });
 
-    onTrade({
-      type: "BUY",
-      price,
-      quantity,
-      total,
-      fee: 0,
-    });
-
-    setBuyQuantity("");
+    setBuyQuantity(0);
     setBuyPrice("");
-    setIsLoading(false);
   };
 
   const handleSell = async () => {
-    const quantity = parseFloat(sellQuantity);
+    const quantity = sellQuantity;
     if (!quantity || quantity <= 0) {
       return;
     }
@@ -108,7 +88,7 @@ const TradingForm = ({
 
     const total = quantity * price;
 
-    setIsLoading(true);
+    
 
     try {
       const fp = await FingerprintJS.load();
@@ -144,7 +124,7 @@ const TradingForm = ({
 
     setSellQuantity("");
     setSellPrice("");
-    setIsLoading(false);
+    setisCreatingOrder(false);
   };
 
   return (
@@ -243,12 +223,17 @@ const TradingForm = ({
                 id="buy-quantity"
                 type="number"
                 value={buyQuantity}
-                onChange={(e) => setBuyQuantity(e.target.value)}
-                className="bg-white border-gray-300 text-black focus:border-green-500 focus:ring-green-500"
-                placeholder="0.000"
-                min="0"
-                step="0.001"
-              />
+                // onChange={(e) => setBuyQuantity(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) {
+                    setBuyQuantity(value);
+                  }}}
+                  className = "bg-white border-gray-300 text-black focus:border-green-500 focus:ring-green-500"
+                  placeholder = "0"
+                  min = "0"
+                  step = "1"
+                    />
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
@@ -267,11 +252,11 @@ const TradingForm = ({
                   $
                   {buyQuantity
                     ? (
-                        parseFloat(buyQuantity) *
-                        (buyOrderType === "limit"
-                          ? parseFloat(buyPrice) || currentPrice
-                          : currentPrice)
-                      ).toFixed(2)
+                      parseFloat(buyQuantity) *
+                      (buyOrderType === "limit"
+                        ? parseFloat(buyPrice) || currentPrice
+                        : currentPrice)
+                    ).toFixed(2)
                     : "0.00"}
                 </span>
               </div>
@@ -283,13 +268,13 @@ const TradingForm = ({
             <Button
               onClick={handleBuy}
               disabled={
-                isLoading ||
+                isCreatingOrder ||
                 !buyQuantity ||
                 (buyOrderType === "limit" && !buyPrice)
               }
               className="w-full bg-green-600 hover:bg-green-700 text-white font-light h-11"
             >
-              {isLoading ? "Executing..." : "Buy Gold"}
+              {isCreatingOrder ? "Executing..." : "Buy Gold"}
             </Button>
           </TabsContent>
 
@@ -364,11 +349,16 @@ const TradingForm = ({
                 id="sell-quantity"
                 type="number"
                 value={sellQuantity}
-                onChange={(e) => setSellQuantity(e.target.value)}
+                // onChange={(e) => setSellQuantity(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d*$/.test(value)) {
+                    setSellQuantity(value);
+                  }}}
                 className="bg-white border-gray-300 text-black focus:border-red-500 focus:ring-red-500"
                 placeholder="0.000"
                 min="0"
-                step="0.001"
+                step="1"
               />
             </div>
 
@@ -388,11 +378,11 @@ const TradingForm = ({
                   $
                   {sellQuantity
                     ? (
-                        parseFloat(sellQuantity) *
-                        (sellOrderType === "limit"
-                          ? parseFloat(sellPrice) || currentPrice
-                          : currentPrice)
-                      ).toFixed(2)
+                      parseFloat(sellQuantity) *
+                      (sellOrderType === "limit"
+                        ? parseFloat(sellPrice) || currentPrice
+                        : currentPrice)
+                    ).toFixed(2)
                     : "0.00"}
                 </span>
               </div>
@@ -404,13 +394,13 @@ const TradingForm = ({
             <Button
               onClick={handleSell}
               disabled={
-                isLoading ||
+                isCreatingOrder ||
                 !sellQuantity ||
                 (sellOrderType === "limit" && !sellPrice)
               }
               className="w-full bg-red-600 hover:bg-red-700 text-white font-light h-11"
             >
-              {isLoading ? "Executing..." : "Sell Gold"}
+              {isCreatingOrder ? "Executing..." : "Sell Gold"}
             </Button>
           </TabsContent>
         </Tabs>

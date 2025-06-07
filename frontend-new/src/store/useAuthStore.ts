@@ -40,6 +40,7 @@ interface AuthStore {
   isAddingGold: boolean;
   isWithdrawingUSD: boolean;
   isGettingUser: boolean;
+  isCreatingOrder: boolean;
   toasts: ToasterToast[];
   addToast: (toast: Omit<ToasterToast, "id">) => string;
   dismissToast: (id: string) => void;
@@ -60,6 +61,7 @@ interface AuthStore {
   withdrawMoney: (amount: number) => Promise<void>;
   getWallet: () => Promise<{ usd: number; gold: number } | null>;
   getUser: () => Promise<void>;
+  createOrder:(quantity:number,price:number,side:string,type:string)=> Promise<void>;
 }
 
 const authApi = axiosInstance("auth");
@@ -72,6 +74,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isAddingGold: false,
   isWithdrawingUSD: false,
   isGettingUser: false,
+  isCreatingOrder: false,
 
   toasts: [],
 
@@ -485,6 +488,37 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     } catch (error) {
       console.error("Failed to fetch wallet:", error);
       return null;
+    }
+  },
+  createOrder: async (quantity, price, side, type) => {
+    set({ isCreatingOrder: true });
+    try {
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+      const tradeApi = axiosInstance("trade");
+      await tradeApi.post(
+        "/createOrder",
+        { quantity, price, side, type },
+        {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
+          },
+        }
+      );
+      get().addToast({
+        title: "Order Created",
+        description: `Successfully created ${side} order for ${quantity} at $${price}`,
+      });
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      get().addToast({
+        title: "Error",
+        description: "Failed to create order",
+        variant: "destructive",
+      });
+    }
+    finally {
+      set({ isCreatingOrder: false });
     }
   },
 }));
