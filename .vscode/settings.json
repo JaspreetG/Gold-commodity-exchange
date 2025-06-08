@@ -64,7 +64,10 @@
     "streambuf": "cpp",
     "string_view": "cpp",
     "unordered_map": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "bit": "cpp",
+    "ranges": "cpp",
+    "text_encoding": "cpp"
   },
   "java.compile.nullAnalysis.mode": "automatic",
   "java.configuration.updateBuildConfiguration": "automatic"
