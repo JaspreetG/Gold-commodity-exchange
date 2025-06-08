@@ -13,7 +13,8 @@ namespace core
     class Order
     {
     private:
-        std::string id_;
+        std::string order_id_;
+        std::string user_id_;
         int quantity_;
         double price_;
         dto::Side side_;
@@ -24,7 +25,8 @@ namespace core
         Order(const dto::OrderData &dto,
               std::shared_ptr<IMatchingStrategy> strat);
 
-        const std::string &id() const;
+        const std::string &order_id() const;
+        const std::string &user_id() const;
         int quantity() const;
         double price() const;
         dto::Side side() const;

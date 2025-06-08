@@ -30,7 +30,7 @@ namespace core
             int tradeQty = std::min(qty, bestAsk.quantity());
             double price = bestAsk.price();
 
-            trades.emplace_back(incoming.id(), bestAsk.id(),
+            trades.emplace_back(incoming.user_id(), bestAsk.user_id(),
                                 price, tradeQty,
                                 std::chrono::system_clock::now());
 
@@ -40,16 +40,16 @@ namespace core
             if (bestAsk.quantity() == 0)
                 book.removeOrder(bestAsk);
         }
-
+        IMatchingStrategy::statusProducer.publish(
+            models::Status(incoming.order_id(), incoming.user_id(),
+                           incoming.quantity() - qty,
+                           std::chrono::system_clock::now()));
         incoming.setQuantity(qty);
         if (!trades.empty())
             book.updateLTP(trades.back().price());
         if (incoming.quantity() > 0)
             book.addOrder(incoming);
 
-        // After processing buy limit, process any pending sell market orders
-        std::vector<models::Trade> marketTrades = core::SellMarketStrategy::processQueue(book);
-        trades.insert(trades.end(), marketTrades.begin(), marketTrades.end());
         return trades;
     }
 

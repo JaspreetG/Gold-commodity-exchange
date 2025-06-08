@@ -7,49 +7,33 @@
 
 namespace core
 {
-    std::deque<Order> SellMarketStrategy::sellMarketQueue;
-
     SellMarketStrategy::SellMarketStrategy() {}
 
     std::vector<models::Trade> SellMarketStrategy::match(Order &incoming, OrderBook &book)
     {
-        sellMarketQueue.push_back(incoming);
-        return processQueue(book);
-    }
-
-    std::vector<models::Trade> SellMarketStrategy::processQueue(OrderBook &book)
-    {
-        std::vector<models::Trade> allTrades;
-        while (!sellMarketQueue.empty())
+        int qty = incoming.quantity();
+        std::vector<models::Trade> trades;
+        while (qty > 0)
         {
-            Order &frontOrder = sellMarketQueue.front();
-            int qty = frontOrder.quantity();
-            std::vector<models::Trade> trades;
-            while (qty > 0)
-            {
-                Order *bestBidPtr = book.getBestBid();
-                if (!bestBidPtr)
-                    break;
-                Order &bestBid = *bestBidPtr;
-                int tradeQty = std::min(qty, bestBid.quantity());
-                double price = bestBid.price();
-                trades.emplace_back(bestBid.id(), frontOrder.id(), price, tradeQty, std::chrono::system_clock::now());
-                qty -= tradeQty;
-                bestBid.setQuantity(bestBid.quantity() - tradeQty);
-                if (bestBid.quantity() == 0)
-                    book.removeOrder(bestBid);
-            }
-            frontOrder.setQuantity(qty);
-            if (!trades.empty())
-                book.updateLTP(trades.back().price());
-            allTrades.insert(allTrades.end(), trades.begin(), trades.end());
-            if (qty > 0)
-                // Not fully filled, keep at front and break
+            Order *bestBidPtr = book.getBestBid();
+            if (!bestBidPtr)
                 break;
-            // Fully filled, pop from queue
-            sellMarketQueue.pop_front();
+            Order &bestBid = *bestBidPtr;
+            int tradeQty = std::min(qty, bestBid.quantity());
+            double price = bestBid.price();
+            trades.emplace_back(bestBid.user_id(), incoming.user_id(), price, tradeQty, std::chrono::system_clock::now());
+            qty -= tradeQty;
+            bestBid.setQuantity(bestBid.quantity() - tradeQty);
+            if (bestBid.quantity() == 0)
+                book.removeOrder(bestBid);
         }
-        return allTrades;
+        IMatchingStrategy::statusProducer.publish(
+            models::Status(incoming.order_id(), incoming.user_id(),
+                           incoming.quantity() - qty,
+                           std::chrono::system_clock::now()));
+        if (!trades.empty())
+            book.updateLTP(trades.back().price());
+        return trades;
     }
 
     SellMarketStrategy::~SellMarketStrategy() {}

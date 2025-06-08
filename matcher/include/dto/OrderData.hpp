@@ -18,9 +18,10 @@ namespace dto
 
     struct OrderData
     {
-        std::string id;
-        int quantity; // integer quantity
-        double price; // ignored for MARKET orders
+        std::string order_id;
+        std::string user_id; // user ID
+        int quantity;        // integer quantity
+        double price;        // ignored for MARKET orders
         dto::Side side;
         dto::OrderType type;
     };

@@ -37,12 +37,14 @@ namespace kafka
                     if (!payload.empty())
                     {
                         nlohmann::json j = nlohmann::json::parse(payload);
-                        std::string user_id = j.at("userId");
-                        int quantity = j.at("quantity");
-                        double price = j.at("price");
-                        std::string side = j.at("side");
-                        std::string type = j.at("type");
+                        std::string order_id = j.at("orderId").get<std::string>();
+                        std::string user_id = j.at("userId").get<std::string>();
+                        int quantity = j.at("quantity").get<int>();
+                        double price = j.at("price").get<double>();
+                        std::string side = j.at("side").get<std::string>();
+                        std::string type = j.at("type").get<std::string>();
                         dto::OrderData orderData = {
+                            order_id,
                             user_id,
                             quantity,
                             price,

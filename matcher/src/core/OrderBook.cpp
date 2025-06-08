@@ -29,7 +29,7 @@ namespace core
             if (it == bids_.end())
                 return;
             it->second.remove_if([&](const Order &ord)
-                                 { return ord.id() == o.id(); });
+                                 { return ord.order_id() == o.order_id(); });
             if (it->second.empty())
                 bids_.erase(it);
         }
@@ -39,7 +39,7 @@ namespace core
             if (it == asks_.end())
                 return;
             it->second.remove_if([&](const Order &ord)
-                                 { return ord.id() == o.id(); });
+                                 { return ord.order_id() == o.order_id(); });
             if (it->second.empty())
                 asks_.erase(it);
         }
