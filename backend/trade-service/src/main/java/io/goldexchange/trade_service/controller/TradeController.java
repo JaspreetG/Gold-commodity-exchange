@@ -63,7 +63,7 @@ public class TradeController {
             Long userId = (Long) authentication.getPrincipal();
 
             List<PastTradeDTO> pastTrades = tradeService.pastTrades(userId);
-            if (pastTrades.isEmpty()) {
+            if (pastTrades==null || pastTrades.isEmpty()) {
                 return ResponseEntity.ok(java.util.Map.of("message", "No past trades found"));
             }
 
@@ -81,15 +81,17 @@ public class TradeController {
                         .body(java.util.Map.of("error", "Unauthorized: User not authenticated"));
             }
             Long userId = (Long) authentication.getPrincipal();
+            System.out.println("in get order Controller");
+                
 
             List<OrderDTO> orders = tradeService.getOrders(userId);
-            if (orders.isEmpty()) {
+            if (orders==null || orders.isEmpty()) {
                 return ResponseEntity.ok(java.util.Map.of("message", "No orders found"));
             }
 
             return ResponseEntity.ok(java.util.Map.of("status", "Orders sent successfully", "orders", orders));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send orders"));
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send orders"+e.getMessage()));
         }
     }
 

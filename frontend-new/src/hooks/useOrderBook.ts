@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-interface LtpData {
+interface OrderLevel {
   price: number;
-  timestamp: number;
+  volume: number;
 }
 
-export const useLtp = () => {
+interface OrderBook {
+  asks: OrderLevel[];
+  bids: OrderLevel[];
+}
 
-  const [ltp, setLtp] = useState<LtpData | null>(() => {
-    // Initialize from localStorage if available
-    const stored = localStorage.getItem('ltp');
+export const useOrderBook = () => {
+  const [orderBook, setOrderBook] = useState<OrderBook | null>(() => {
+    const stored = localStorage.getItem('orderBook');
     return stored ? JSON.parse(stored) : null;
   });
 
@@ -22,11 +25,11 @@ export const useLtp = () => {
       debug: (str) => console.log('[STOMP]', str),
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('Connected to WebSocket topic-ltp');
-        client.subscribe('/topic/ltp', (message) => {
-          const body: LtpData = JSON.parse(message.body);
-          setLtp(body);
-          localStorage.setItem('ltp', JSON.stringify(body)); // ✅ Store in localStorage
+        console.log('Connected to WebSocket topic-orderbook');
+        client.subscribe('/topic/orderbook', (message) => {
+          const body: OrderBook = JSON.parse(message.body);
+          setOrderBook(body);
+          localStorage.setItem('orderBook', JSON.stringify(body));
         });
       },
     });
@@ -38,5 +41,5 @@ export const useLtp = () => {
     };
   }, []);
 
-  return ltp;
+  return orderBook;
 };

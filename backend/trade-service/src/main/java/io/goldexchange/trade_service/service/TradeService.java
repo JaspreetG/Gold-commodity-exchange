@@ -151,6 +151,7 @@ public class TradeService {
                     pastTradeDTO.setQuantity(trade.getQuantity());
                     pastTradeDTO.setSide(trade.getSide());
                     pastTradeDTO.setCreatedAt(trade.getCreatedAt());
+                    // pastTradeDTO.setType(trade.getType());
                     return pastTradeDTO;
                 })
                 .toList();
@@ -247,6 +248,7 @@ public class TradeService {
     public void updateOrder(StatusConsumerDTO statusConsumerDTO) {
         try {
             // Fetch the order by orderId
+            System.out.println("\u001B[32mThis is green text in updateorder service\u001B[0m");
             Long orderId = Long.parseLong(statusConsumerDTO.getOrderId());
             Order order = orderRepository.findById(orderId)
                     .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
@@ -257,30 +259,27 @@ public class TradeService {
 
             int quantity_status = statusConsumerDTO.getQuantity();
 
-            if (side.equals("MARKET")) {
+            if (type.equals("MARKET")) {
                 if (quantity_status == 0) {
-                    //TODO: handle market order cancellation
+                    // TODO: handle market order cancellation
 
-                }
-                else if (quantity_status == quantity_order) {
-                    //TODO: handle market order complete
-                }
-                 else if (quantity_status < quantity_order) {
-                    //partial filled ki web socket chalani h TODO:
+                } else if (quantity_status == quantity_order) {
+                    // TODO: handle market order complete
+                } else if (quantity_status < quantity_order) {
+                    // partial filled ki web socket chalani h TODO:
                 }
                 orderRepository.delete(order);
             }
 
-            if(side.equals("LIMIT")) {
-                if(quantity_status == quantity_order){
+            if (type.equals("LIMIT")) {
+                if (quantity_status == quantity_order) {
                     orderRepository.delete(order);
-                    //TODO:filled ki web socket chalani h
-                }
-                else if (quantity_status < quantity_order) {
+                    // TODO:filled ki web socket chalani h
+                } else if (quantity_status < quantity_order) {
                     // Partial fill, update the order with remaining quantity
                     order.setQuantity(quantity_order - quantity_status);
                     orderRepository.save(order);
-                    //TODO:
+                    // TODO:
                 } else {
                     // If quantity_status > quantity_order, this is an error case
                     throw new RuntimeException("Quantity status cannot be greater than order quantity");
@@ -293,10 +292,14 @@ public class TradeService {
     }
 
     public List<OrderDTO> getOrders(Long userId) {
+
         // Fetch orders for the user
+        System.out.println("in get orderService");
         List<Order> orders = orderRepository.findByUserId(userId);
 
         if (orders == null || orders.isEmpty()) {
+            System.out.println("order is null");
+            
             return null;
         }
 
@@ -310,6 +313,7 @@ public class TradeService {
                 .toList();
 
         return orderDTOs;
+
     }
 
 }
