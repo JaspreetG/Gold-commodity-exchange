@@ -40,6 +40,7 @@ public class TradeController {
             System.out.println("checking wallet done");
 
             if (isPossible == true) {
+                
                 tradeService.sendOrderToMatcher(orderRequest, userId);
                 return ResponseEntity.ok(java.util.Map.of("status", "Order sent to matcher"));
             }

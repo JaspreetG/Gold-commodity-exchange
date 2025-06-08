@@ -2,14 +2,18 @@ package io.goldexchange.trade_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.goldexchange.trade_service.consumer.StatusConsumer;
 import io.goldexchange.trade_service.dto.AuthCredentials;
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
 import io.goldexchange.trade_service.dto.OrderRequest;
 import io.goldexchange.trade_service.dto.PastTradeDTO;
+import io.goldexchange.trade_service.dto.StatusConsumerDTO;
 import io.goldexchange.trade_service.dto.TradeConsumerDTO;
 import io.goldexchange.trade_service.dto.WalletDTO;
+import io.goldexchange.trade_service.model.Order;
 import io.goldexchange.trade_service.model.Trade;
 import io.goldexchange.trade_service.producer.OrderProducer;
+import io.goldexchange.trade_service.repository.OrderRepository;
 import io.goldexchange.trade_service.repository.TradeRepository;
 
 import java.util.List;
@@ -31,6 +35,7 @@ import org.springframework.web.client.RestTemplate;
 public class TradeService {
     private final TradeRepository tradeRepository;
     private final OrderProducer orderProducer;
+    private final OrderRepository orderRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${wallet.service.url}")
@@ -39,16 +44,32 @@ public class TradeService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository) {
+    public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository, OrderRepository orderRepository) {
         this.tradeRepository = tradeRepository;
         this.orderProducer = orderProducer;
+        this.orderRepository = orderRepository;
     }
 
     public void sendOrderToMatcher(OrderRequest orderRequest, Long userId) throws Exception {
 
+        // Convert OrderRequest to OrderProducerDTO for adding userId to
+        // orderProducerDTO
         OrderProducerDTO orderProducerDTO = new OrderProducerDTO();
         BeanUtils.copyProperties(orderRequest, orderProducerDTO);
         orderProducerDTO.setUserId(userId.toString());
+
+        // save the orderin the orders table
+        Order orderEntity = new Order();
+        orderEntity.setUserId(userId);
+        orderEntity.setPrice(orderRequest.getPrice());
+        orderEntity.setQuantity(orderRequest.getQuantity());
+        orderEntity.setSide(orderRequest.getSide());
+        orderEntity.setType(orderRequest.getType());
+
+        // copy the orderId from saved order into the orderProducerDTO and send it to
+        // the producer
+        orderEntity = orderRepository.save(orderEntity);
+        orderProducerDTO.setOrderId(orderEntity.getOrderId().toString());
 
         String orderJson = objectMapper.writeValueAsString(orderProducerDTO);
         orderProducer.sendOrder(orderJson);
@@ -60,7 +81,8 @@ public class TradeService {
 
             // buy side
             Trade tradeBuyerSide = new Trade();
-            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
+            tradeBuyerSide.setUserId(Long.parseLong(tradeConsumerDTO.getBuyUserId()));
+            tradeBuyerSide.setOrderId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
             tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
             tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
             tradeBuyerSide.setSide("BUY");
@@ -69,14 +91,15 @@ public class TradeService {
 
             // seller side
             Trade tradeSellerSide = new Trade();
-            tradeSellerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellOrderId()));
+            tradeSellerSide.setUserId(Long.parseLong(tradeConsumerDTO.getSellUserId()));
+            tradeSellerSide.setOrderId(Long.parseLong(tradeConsumerDTO.getSellOrderId()));
             tradeSellerSide.setPrice(tradeConsumerDTO.getPrice());
             tradeSellerSide.setQuantity(tradeConsumerDTO.getQuantity());
             tradeSellerSide.setSide("SELL");
 
             tradeRepository.save(tradeSellerSide);
 
-            // wallet update
+            // wallet update for both
             updateWallets(tradeConsumerDTO);
 
         } catch (Exception e) {
@@ -172,52 +195,100 @@ public class TradeService {
     }
 
     // public boolean checkWallet(OrderRequest orderRequest) {
-    //     WalletDTO walletDTO = getWallet();
-    //     if (walletDTO == null) {
-    //         return false;
-    //     }
+    // WalletDTO walletDTO = getWallet();
+    // if (walletDTO == null) {
+    // return false;
+    // }
 
-    //     // Check if the user has enough balance
-    //     if (orderRequest.getSide().equals("BUY")) {
-    //         return walletDTO.getBalance() >= orderRequest.getPrice()*orderRequest.getQuantity();
-    //     } else if (orderRequest.getSide().equals("SELL")) {
-    //         return walletDTO.getGold() >= orderRequest.getQuantity();
-    //     }
-    //     return false;
+    // // Check if the user has enough balance
+    // if (orderRequest.getSide().equals("BUY")) {
+    // return walletDTO.getBalance() >=
+    // orderRequest.getPrice()*orderRequest.getQuantity();
+    // } else if (orderRequest.getSide().equals("SELL")) {
+    // return walletDTO.getGold() >= orderRequest.getQuantity();
+    // }
+    // return false;
     // }
 
     public boolean checkWallet(OrderRequest orderRequest) {
-    WalletDTO walletDTO = getWallet();
-    if (walletDTO == null) {
+        WalletDTO walletDTO = getWallet();
+        if (walletDTO == null) {
+            return false;
+        }
+
+        String side = orderRequest.getSide();
+        String type = orderRequest.getType();
+
+        if ("BUY".equals(side)) {
+            if ("LIMIT".equals(type)) {
+                // For limit buy: user pays price * quantity
+                double cost = orderRequest.getPrice() * orderRequest.getQuantity();
+                return walletDTO.getBalance() >= cost;
+            } else if ("MARKET".equals(type)) {
+
+                // For market buy: you don't know exact price, so:
+                // Option 1: Assume a max slippage or fetch current lowest ask
+                // double estimatedPrice = fetchLTPOrBestAsk(); // Implement this
+                // double estimatedCost = estimatedPrice * orderRequest.getQuantity();
+                // return walletDTO.getBalance() >= estimatedCost;
+
+                // Option 2: Assume a fixed price for market orders
+                return true; // Assuming user has enough balance for market buy, as price is not known
+            }
+        } else if ("SELL".equals(side)) {
+            // For both limit and market sell, quantity of gold must be available
+            return walletDTO.getGold() >= orderRequest.getQuantity();
+        }
+
         return false;
     }
 
-    String side = orderRequest.getSide();
-    String type = orderRequest.getType();
+    public void updateOrder(StatusConsumerDTO statusConsumerDTO) {
+        try {
+            // Fetch the order by orderId
+            Long orderId = Long.parseLong(statusConsumerDTO.getOrderId());
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
 
-    if ("BUY".equals(side)) {
-        if ("LIMIT".equals(type)) {
-            // For limit buy: user pays price * quantity
-            double cost = orderRequest.getPrice() * orderRequest.getQuantity();
-            return walletDTO.getBalance() >= cost;
-        } else if ("MARKET".equals(type)) {
-            
-            // For market buy: you don't know exact price, so:
-            // Option 1: Assume a max slippage or fetch current lowest ask
-            // double estimatedPrice = fetchLTPOrBestAsk(); // Implement this
-            // double estimatedCost = estimatedPrice * orderRequest.getQuantity();
-            // return walletDTO.getBalance() >= estimatedCost;
-            
-            // Option 2: Assume a fixed price for market orders
-            return true;   // Assuming user has enough balance for market buy, as price is not known
+            String type = order.getType();
+            int quantity_order = order.getQuantity();
+            String side = order.getSide();
+
+            int quantity_status = statusConsumerDTO.getQuantity();
+
+            if (side.equals("MARKET")) {
+                if (quantity_status == 0) {
+                    //TODO: handle market order cancellation
+
+                }
+                else if (quantity_status == quantity_order) {
+                    //TODO: handle market order complete
+                }
+                 else if (quantity_status < quantity_order) {
+                    //partial filled ki web socket chalani h TODO:
+                }
+                orderRepository.delete(order);
+            }
+
+            if(side.equals("LIMIT")) {
+                if(quantity_status == quantity_order){
+                    orderRepository.delete(order);
+                    //TODO:filled ki web socket chalani h
+                }
+                else if (quantity_status < quantity_order) {
+                    // Partial fill, update the order with remaining quantity
+                    order.setQuantity(quantity_order - quantity_status);
+                    orderRepository.save(order);
+                    //TODO:
+                } else {
+                    // If quantity_status > quantity_order, this is an error case
+                    throw new RuntimeException("Quantity status cannot be greater than order quantity");
+                }
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating order: " + e.getMessage(), e);
         }
-    } else if ("SELL".equals(side)) {
-        // For both limit and market sell, quantity of gold must be available
-        return walletDTO.getGold() >= orderRequest.getQuantity();
     }
-
-    return false;
-}
-
 
 }

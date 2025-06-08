@@ -57,8 +57,8 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public void updateWallets(TradeDTO tradeDTO) {
         // Assuming tradeDTO contains userId and amount for both users involved in the trade
-        Long buyUserId = Long.parseLong(tradeDTO.getBuyOrderId());
-        Long sellUserId = Long.parseLong(tradeDTO.getSellOrderId());
+        Long buyUserId = Long.parseLong(tradeDTO.getBuyUserId());
+        Long sellUserId = Long.parseLong(tradeDTO.getSellUserId());
         Double price = tradeDTO.getPrice();
         int quantity=tradeDTO.getQuantity();
 
