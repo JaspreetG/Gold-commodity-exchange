@@ -21,6 +21,11 @@ public class StatusConsumer {
         try {
             StatusConsumerDTO statusConsumerDTO = objectMapper.readValue(message, StatusConsumerDTO.class);
             tradeService.updateOrder(statusConsumerDTO);
+            System.out.println( " \\u001B[31m This is red text \\u001B[0m" );
+            System.out.println(statusConsumerDTO);
+            
+            
+
         } catch (Exception e) {
             // Log error
             throw new RuntimeException("Failed to process trade message", e);

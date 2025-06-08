@@ -18,6 +18,7 @@ public class PastTradeDTO {
     private int quantity;
     private Timestamp createdAt;
     private String side; // BUY or SELL
+    // private String type;
 
 }
 

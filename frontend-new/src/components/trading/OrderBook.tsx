@@ -5,25 +5,19 @@ import { BookOpen } from "lucide-react";
 // import { connectWebSocket, disconnectWebSocket } from '../../lib/ConnectWebSocket';
 import { useLtp } from '../../hooks/useLtp';
 import { useEffect, useState } from "react";
+import { useOrderBook } from "@/hooks/useOrderBook";
 
 interface OrderBookProps {
   orderBook: OrderBookType;
   currentPrice: number;
 }
 
-const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
 
-  // const [ltp, setLtp] = useState<string>("");
-  // useEffect(() => {
-  //   connectWebSocket((latestPrice) => {
-  //     setLtp(latestPrice);
-  //   });
+const OrderBook = () => {
 
-  //   return () => {
-  //     disconnectWebSocket();
-  //   };
-  // }, []);
+ const currentPrice=4000;
   const ltp = useLtp();
+  const orderBook=useOrderBook();
 
 
 
@@ -46,17 +40,17 @@ const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
 
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
-              <div>Total (USD)</div>
+              <div>Total (INR)</div>
               <div className="text-center">Amount (oz)</div>
               <div className="text-right">Price (USD)</div>
             </div>
 
             {/* Bids - Flipped columns */}
             <div className="space-y-1">
-              {orderBook.bids.map((bid, index) => (
+              {orderBook?.bids?.map((bid, index) => (
                 <div key={index} className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm">
-                  <div className="text-gray-600 font-mono text-sm">{bid.total.toLocaleString()}</div>
-                  <div className="text-center text-black font-mono text-sm">{bid.quantity.toFixed(3)}</div>
+                  {/* <div className="text-gray-600 font-mono text-sm">{bid.total.toLocaleString()}</div> */}
+                  <div className="text-center text-black font-mono text-sm">{bid.volume.toFixed(0)}</div>
                   <div className="text-right text-green-600 font-mono text-sm">{bid.price.toFixed(2)}</div>
                 </div>
               ))}
@@ -71,18 +65,18 @@ const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
 
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
-              <div>Price (USD)</div>
-              <div className="text-center">Amount (oz)</div>
-              <div className="text-right">Total (USD)</div>
+              <div>Price (INR)</div>
+              <div className="text-center">Price (gram)</div>
+              <div className="text-right">Total (INR)</div>
             </div>
 
             {/* Asks - Flipped */}
             <div className="space-y-1">
-              {orderBook.asks.map((ask, index) => (
+              {orderBook?.asks?.map((ask, index) => (
                 <div key={index} className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-red-50 transition-colors rounded-sm">
                   <div className="text-red-600 font-mono text-sm">{ask.price.toFixed(2)}</div>
-                  <div className="text-center text-black font-mono text-sm">{ask.quantity.toFixed(3)}</div>
-                  <div className="text-right text-gray-600 font-mono text-sm">{ask.total.toLocaleString()}</div>
+                  <div className="text-center text-black font-mono text-sm">{ask.volume.toFixed(0)}</div>
+                  <div className="text-right text-gray-600 font-mono text-sm">{ask.price*ask.volume}</div>
                 </div>
               ))}
             </div>

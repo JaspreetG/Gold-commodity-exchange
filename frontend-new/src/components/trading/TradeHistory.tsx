@@ -1,66 +1,83 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trade } from "@/types/trading";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Clock } from "lucide-react";
+import React, { useEffect } from "react";
 
-interface TradeHistoryProps {
-  trades: Trade[];
-}
+// interface pastTradesHistoryProps {
+//   pastTradess: pastTrades[];
+// }
 
-const TradeHistory = ({ trades }: TradeHistoryProps) => {
+const TradeHistory = () => {
+
+  const { getTradeHistory, isGettingTradeHistory,pastTrades } = useAuthStore();
+  
+  useEffect(() => {
+   const intervalId = setInterval(() => {
+     getTradeHistory();
+   }, 5000); // 5000ms = 5 seconds
+ 
+   // Optionally call immediately on mount
+   getTradeHistory();
+ 
+   return () => clearInterval(intervalId); // Cleanup on unmount
+ }, [getTradeHistory]);
+
   return (
     <Card className="border border-gray-100 shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-black font-light flex items-center text-lg">
           <Clock className="h-5 w-5 mr-2" />
-          Trade History
+          pastTrades History
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         <div className="space-y-2">
           {/* Header */}
           <div className="grid grid-cols-4 gap-2 px-6 pt-2 text-xs text-gray-500 font-light">
-            <div>Type</div>
+            <div>Side</div>
+
+            {/* <div className="text-right">CreatedAt</div> */}
             <div className="text-right">Quantity</div>
             <div className="text-right">Price</div>
-            <div className="text-right">Total</div>
+            {/* <div className="text-right">Total</div> */}
           </div>
 
-          {/* Trades */}
+          {/* pastTradess */}
           <div className="max-h-96 overflow-y-auto">
-            {trades.length === 0 ? (
+            {!pastTrades? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
-                No trades yet
+                No pastTradess yet
               </div>
             ) : (
-              trades.map((trade) => (
+              pastTrades?.map((pastTrade) => (
                 <div
-                  key={trade.id}
+                  key={pastTrade.createdAt}
                   className="grid grid-cols-4 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
                 >
                   <div className="space-y-1">
                     <div
                       className={`font-normal ${
-                        trade.type === "BUY" ? "text-green-600" : "text-red-600"
+                        pastTrade.side === "BUY" ? "text-green-600" : "text-red-600"
                       }`}
                     >
-                      {trade.type.toUpperCase()}
+                      {pastTrade.side?.toUpperCase()}
                     </div>
                     <div className="text-gray-500 text-xs font-light">
-                      {trade.timestamp.toLocaleTimeString()}
+                      {new Date(pastTrade.createdAt).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    {trade.quantity.toFixed(3)} oz
+                    {pastTrade.quantity.toFixed(3)} oz
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    ${trade.price.toFixed(2)}
+                    ${pastTrade.price.toFixed(2)}
                   </div>
                   <div className="text-right space-y-1">
                     <div className="text-black font-mono font-light">
-                      ${trade.total.toFixed(2)}
+                      {/* ${pastTrades.total.toFixed(2)} */}
                     </div>
                     <div className="text-gray-500 text-xs font-light">
-                      Fee: ${trade.fee.toFixed(2)}
+                      {/* Fee: ${pastpastTradess.fee.toFixed(2)} */}
                     </div>
                   </div>
                 </div>

@@ -32,6 +32,27 @@ interface LoginData {
   phone: string;
 }
 
+interface Order{
+    orderId: number;
+    userId: number;
+    price: number;
+    quantity: number;
+    side: string;
+    type: string; // "market" or "limit"
+    createdAt: string; // ISO date string
+
+}
+
+interface TradeHistory{
+    orderId: number;
+    userId: number;
+    price: number;
+    quantity: number;
+    side: string;
+    createdAt: string;
+    type:string;
+}
+
 interface AuthStore {
   authUser: User | null;
   isSigningUp: boolean;
@@ -41,6 +62,8 @@ interface AuthStore {
   isWithdrawingUSD: boolean;
   isGettingUser: boolean;
   isCreatingOrder: boolean;
+  isGettingOrder: boolean;
+  isGettingTradeHistory: boolean;
   toasts: ToasterToast[];
   addToast: (toast: Omit<ToasterToast, "id">) => string;
   dismissToast: (id: string) => void;
@@ -62,6 +85,10 @@ interface AuthStore {
   getWallet: () => Promise<{ usd: number; gold: number } | null>;
   getUser: () => Promise<void>;
   createOrder:(quantity:number,price:number,side:string,type:string)=> Promise<void>;
+  getOrders:() => Promise<void>;
+  getTradeHistory:()=> Promise<void>;
+  orders: Order[];
+  pastTrades: TradeHistory[];
 }
 
 const authApi = axiosInstance("auth");
@@ -75,8 +102,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isWithdrawingUSD: false,
   isGettingUser: false,
   isCreatingOrder: false,
-
+  isGettingOrder:false,
+  isGettingTradeHistory:false,
   toasts: [],
+  orders: [],
+  pastTrades:[],
+  
 
   addToast: ({ title, description }) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -520,6 +551,60 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
     finally {
       set({ isCreatingOrder: false });
+    }
+  },
+  getOrders: async () => {
+    set({ isGettingOrder: true });
+    try {
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
+        (m) => m.default
+      );
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      const tradeApi = axiosInstance("trade");
+      const res = await tradeApi.get("/getOrders", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+      set({ orders: res.data.orders });
+      console.log(get().orders);
+    //   return res.data;
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      set({ orders: [] });
+
+    //   return [];
+    } finally {
+      set({ isGettingOrder: false });
+    }
+  },
+  getTradeHistory: async () => {
+    set({ isGettingTradeHistory: true });
+    try {
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
+        (m) => m.default
+      );
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      const tradeApi = axiosInstance("trade");
+      const res = await tradeApi.get("/getPastTrades", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+      set({ pastTrades: res.data.pastTrades });
+      console.log(get().pastTrades);
+
+    //   return res.data;
+    } catch (error) {
+      console.error("Failed to fetch trade history:", error);
+      set({ pastTrades: [] });
+    //   return [];
+    } finally {
+      set({ isGettingTradeHistory: false });
     }
   },
 }));
