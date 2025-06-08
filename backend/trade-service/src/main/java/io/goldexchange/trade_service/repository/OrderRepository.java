@@ -7,6 +7,6 @@ import io.goldexchange.trade_service.model.Order;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    // List<Trade> findByUserId(Long userId);
+    List<Order> findByUserId(Long userId);
 }
 
