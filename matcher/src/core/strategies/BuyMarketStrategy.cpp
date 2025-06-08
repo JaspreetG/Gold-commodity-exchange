@@ -21,18 +21,20 @@ namespace core
             Order &bestAsk = *bestAskPtr;
             int tradeQty = std::min(qty, bestAsk.quantity());
             double price = bestAsk.price();
-            trades.emplace_back(incoming.user_id(), bestAsk.user_id(),
-                                price, tradeQty,
-                                std::chrono::system_clock::now());
+            trades.emplace_back(models::Trade(incoming.order_id(), bestAsk.order_id(), incoming.user_id(), bestAsk.user_id(),
+                                              price, tradeQty,
+                                              std::chrono::system_clock::now()));
+            IMatchingStrategy::statusProducer.publish(
+                models::Status(incoming.order_id(), incoming.user_id(), "BUY",
+                               qty, std::chrono::system_clock::now()));
+            IMatchingStrategy::statusProducer.publish(
+                models::Status(bestAsk.order_id(), bestAsk.user_id(),
+                               "SELL", qty, std::chrono::system_clock::now()));
             qty -= tradeQty;
             bestAsk.setQuantity(bestAsk.quantity() - tradeQty);
             if (bestAsk.quantity() == 0)
                 book.removeOrder(bestAsk);
         }
-        IMatchingStrategy::statusProducer.publish(
-            models::Status(incoming.order_id(), incoming.user_id(),
-                           incoming.quantity() - qty,
-                           std::chrono::system_clock::now()));
         if (!trades.empty())
             book.updateLTP(trades.back().price());
         return trades;

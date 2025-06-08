@@ -29,9 +29,18 @@ namespace core
             int tradeQty = std::min(qty, bestBid.quantity());
             double price = bestBid.price();
 
-            trades.emplace_back(bestBid.user_id(), incoming.user_id(),
-                                price, tradeQty,
-                                std::chrono::system_clock::now());
+            trades.push_back(models::Trade(incoming.order_id(), bestBid.order_id(), incoming.user_id(), bestBid.user_id(),
+                                           price, tradeQty,
+                                           std::chrono::system_clock::now()));
+            ;
+            IMatchingStrategy::statusProducer.publish(
+                models::Status(incoming.order_id(), incoming.user_id(),
+                               "SELL",
+                               qty, std::chrono::system_clock::now()));
+            IMatchingStrategy::statusProducer.publish(
+                models::Status(bestBid.order_id(), bestBid.user_id(),
+                               "BUY",
+                               qty, std::chrono::system_clock::now()));
 
             qty -= tradeQty;
             bestBid.setQuantity(bestBid.quantity() - tradeQty);
@@ -39,10 +48,7 @@ namespace core
             if (bestBid.quantity() == 0)
                 book.removeOrder(bestBid);
         }
-        IMatchingStrategy::statusProducer.publish(
-            models::Status(incoming.order_id(), incoming.user_id(),
-                           incoming.quantity() - qty,
-                           std::chrono::system_clock::now()));
+
         incoming.setQuantity(qty);
         if (!trades.empty())
             book.updateLTP(trades.back().price());

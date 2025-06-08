@@ -17,6 +17,8 @@ namespace kafka
         nlohmann::json j = {
             {"buyOrderId", t.buyOrderId()},
             {"sellOrderId", t.sellOrderId()},
+            {"buyUserId", t.buyUserId()},
+            {"sellUserId", t.sellUserId()},
             {"price", t.price()},
             {"quantity", t.quantity()}};
         std::string payload = j.dump();
