@@ -17,6 +17,7 @@ namespace kafka
         nlohmann::json j = {
             {"orderId", s.orderId()},
             {"userId", s.userId()},
+            {"side", s.side()},
             {"quantity", s.quantity()}};
         std::string payload = j.dump();
         producer.produce(cppkafka::MessageBuilder("status").partition(0).payload(payload));
