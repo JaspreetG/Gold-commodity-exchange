@@ -22,40 +22,51 @@ interface TradingFormProps {
   onTrade: (trade: Omit<Trade, "id" | "timestamp">) => void;
 }
 
-const TradingForm = ({ userBalances, updateBalance, currentPrice, onTrade }: TradingFormProps) => {
+const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps) => {
 
-  const{createOrder,isCreatingOrder} = useAuthStore();
+  const { createOrder, isCreatingOrder } = useAuthStore();
+  const currentPrice=4000;
 
 
-  const [buyQuantity, setBuyQuantity] = useState(0);
-  const [sellQuantity, setSellQuantity] = useState(0);
+  const [buyQuantity, setBuyQuantity] = useState("");
+  const [sellQuantity, setSellQuantity] = useState("");
   const [buyOrderType, setBuyOrderType] = useState("market");
   const [sellOrderType, setSellOrderType] = useState("market");
   const [buyPrice, setBuyPrice] = useState("");
   const [sellPrice, setSellPrice] = useState("");
 
   const handleBuy = async () => {
-    const quantity = buyQuantity;
+
+
+    const quantity = parseInt(buyQuantity);
     if (!quantity || quantity <= 0) {
+      console.log("order failed: quantity must be greater than 0");
+      setBuyQuantity("");
+      setBuyPrice("");
       return;
     }
 
-    const price =
-      buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
+    const price =buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
     if (buyOrderType === "limit" && (!price || price <= 0)) {
+      console.log("order failed: price must be greater than 0 for limit orders");
+      setBuyQuantity("");
+      setBuyPrice("");
       return;
     }
 
     const total = quantity * price;
 
-    // if (total > userBalances.usd) {
-    //   return;
-    // }
+    if (total > userBalances.usd) {
+      console.log("order failed: insufficient funds");
+      setBuyQuantity("");
+      setBuyPrice("");
+      return;
+    }
 
-    const side="BUY";
+    const side = "BUY";
     const type = buyOrderType === "limit" ? "LIMIT" : "MARKET";
 
-    createOrder(quantity,price,side,type);
+    createOrder(quantity, price, side, type);
 
     // updateBalance();
     // onTrade({
@@ -66,65 +77,58 @@ const TradingForm = ({ userBalances, updateBalance, currentPrice, onTrade }: Tra
     //   fee: 0,
     // });
 
-    setBuyQuantity(0);
+    setBuyQuantity("");
     setBuyPrice("");
   };
 
   const handleSell = async () => {
-    const quantity = sellQuantity;
+    console.log("in handle sell");
+
+    const quantity = parseInt(sellQuantity);
     if (!quantity || quantity <= 0) {
+      console.log("order failed: quantity must be greater than 0");
+      setSellQuantity("");
+      setSellPrice("");
       return;
     }
 
     if (quantity > userBalances.gold) {
+      console.log("order failed: insufficient gold");
+      setSellQuantity("");
+      setSellPrice("");
       return;
     }
 
-    const price =
-      sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
+    const price =sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
     if (sellOrderType === "limit" && (!price || price <= 0)) {
+      console.log("order failed: price must be greater than 0 for limit orders");
+      setSellQuantity("");
+      setSellPrice("");
       return;
     }
 
-    const total = quantity * price;
+    // const total = quantity * price;
 
-    
+    const side = "SELL";
+    const type = sellOrderType === "limit" ? "LIMIT" : "MARKET";
 
-    try {
-      const fp = await FingerprintJS.load();
-      const { visitorId } = await fp.get();
-      await axiosInstance("trade").post(
-        "/createOrder",
-        {
-          quantity,
-          price,
-          side: "SELL",
-          type: sellOrderType === "limit" ? "LIMIT" : "MARKET",
-        },
-        {
-          headers: {
-            "X-Device-Fingerprint": visitorId,
-          },
-        }
-      );
-    } catch (error) {
-      // Optionally handle error here
-    }
+    createOrder(quantity, price, side, type);
 
-    updateBalance("gold", -quantity);
-    updateBalance("usd", total);
 
-    onTrade({
-      type: "SELL",
-      price,
-      quantity,
-      total,
-      fee: 0,
-    });
+
+    // updateBalance("gold", -quantity);
+    // updateBalance("usd", total);
+
+    // onTrade({
+    //   type: "SELL",
+    //   price,
+    //   quantity,
+    //   total,
+    //   fee: 0,
+    // });
 
     setSellQuantity("");
     setSellPrice("");
-    setisCreatingOrder(false);
   };
 
   return (
@@ -228,12 +232,13 @@ const TradingForm = ({ userBalances, updateBalance, currentPrice, onTrade }: Tra
                   const value = e.target.value;
                   if (/^\d*$/.test(value)) {
                     setBuyQuantity(value);
-                  }}}
-                  className = "bg-white border-gray-300 text-black focus:border-green-500 focus:ring-green-500"
-                  placeholder = "0"
-                  min = "0"
-                  step = "1"
-                    />
+                  }
+                }}
+                className="bg-white border-gray-300 text-black focus:border-green-500 focus:ring-green-500"
+                placeholder="0"
+                min="0"
+                step="1"
+              />
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
@@ -354,7 +359,8 @@ const TradingForm = ({ userBalances, updateBalance, currentPrice, onTrade }: Tra
                   const value = e.target.value;
                   if (/^\d*$/.test(value)) {
                     setSellQuantity(value);
-                  }}}
+                  }
+                }}
                 className="bg-white border-gray-300 text-black focus:border-red-500 focus:ring-red-500"
                 placeholder="0.000"
                 min="0"

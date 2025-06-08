@@ -493,6 +493,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   createOrder: async (quantity, price, side, type) => {
     set({ isCreatingOrder: true });
     try {
+        console.log("in createOrder")
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
       const tradeApi = axiosInstance("trade");

@@ -10,7 +10,7 @@ interface PortfolioProps {
 
 const Portfolio = ({ balances }: PortfolioProps) => {
   // TODO: Replace with actual API call to fetch current gold price
-  const goldPrice = 2050; // Mock current gold price
+  const goldPrice = 4000; // Mock current gold price
   const totalValue = (balances?.usd ?? 0) + (balances?.gold ?? 0) * goldPrice;
   const goldValue = (balances?.gold ?? 0) * goldPrice;
 
