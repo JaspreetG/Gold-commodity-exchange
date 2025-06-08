@@ -11,6 +11,12 @@ services:
       - db.env
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - db-net
 
 volumes:
   pgdata:
+
+networks:
+  db-net:
+    name: db-net
