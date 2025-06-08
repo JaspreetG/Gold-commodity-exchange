@@ -52,9 +52,14 @@ interface TradeHistory{
     createdAt: string;
     type:string;
 }
+interface tempUser{
+    qrCode:string;
+    secretKey:string;
+}
 
 interface AuthStore {
   authUser: User | null;
+  tempUser:tempUser|null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isAddingUSD: boolean;
@@ -95,6 +100,7 @@ const authApi = axiosInstance("auth");
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: null,
+  tempUser:null,
   isSigningUp: false,
   isLoggingIn: false,
   isAddingUSD: false,
@@ -141,15 +147,22 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
       const result = res.data;
 
-      set({
-        authUser: {
-          userName: data.userName,
-          phoneNumber: data.phoneNumber,
-          balances: { usd: 0, gold: 0 },
-          qrCode: result.qrCode,
-          secretKey: result.secretKey,
-        },
-      });
+    //   set({
+    //     authUser: {
+    //       userName: data.userName,
+    //       phoneNumber: data.phoneNumber,
+    //       balances: { usd: 0, gold: 0 },
+    //       qrCode: result.qrCode,
+    //       secretKey: result.secretKey,
+    //     },
+    //   });
+    set({
+        tempUser:{
+            qrCode:result.qrCode,
+            secretKey: result.secretKey
+        }
+    })
+    console.log(get().tempUser);
 
       get().addToast({
         title: "Success",
@@ -309,6 +322,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           },
         },
       });
+
+      set({tempUser:null});
 
       get().addToast({
         title: "Success",

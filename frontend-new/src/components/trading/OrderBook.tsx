@@ -49,7 +49,7 @@ const OrderBook = () => {
             <div className="space-y-1">
               {orderBook?.bids?.map((bid, index) => (
                 <div key={index} className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm">
-                  {/* <div className="text-gray-600 font-mono text-sm">{bid.total.toLocaleString()}</div> */}
+                  <div className="text-gray-600 font-mono text-sm">{bid.price*bid.volume}</div>
                   <div className="text-center text-black font-mono text-sm">{bid.volume.toFixed(0)}</div>
                   <div className="text-right text-green-600 font-mono text-sm">{bid.price.toFixed(2)}</div>
                 </div>

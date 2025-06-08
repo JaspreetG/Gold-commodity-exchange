@@ -32,7 +32,9 @@ const SignupForm = () => {
 
   const signup = useAuthStore((state) => state.signup);
   const verifyTOTP = useAuthStore((state) => state.verifyTOTP);
-  const authUser = useAuthStore((state) => state.authUser);
+  const tempUser = useAuthStore((state) => state.tempUser);
+
+  // const{}
 
   const onBackToLanding = () => {
     navigate("/");
@@ -76,7 +78,7 @@ const SignupForm = () => {
   };
 
   const copySecret = async () => {
-    const secret = authUser?.secretKey ?? "";
+    const secret = tempUser?.secretKey ?? "";
     if (secret) {
       await navigator.clipboard.writeText(secret);
       setSecretCopied(true);
@@ -158,12 +160,12 @@ const SignupForm = () => {
               </form>
             )}
 
-            {step === "register-qr" && authUser && (
+            {step === "register-qr" && tempUser && (
               <>
                 <div className="text-center mb-6">
                   <div className="bg-white p-6 border border-gray-200 rounded-lg mb-4">
                     <img
-                      src={authUser.qrCode ?? ""}
+                      src={tempUser.qrCode ?? ""}
                       alt="QR Code"
                       className="w-48 h-48 mx-auto"
                     />
@@ -175,7 +177,7 @@ const SignupForm = () => {
                     </Label>
                     <div className="flex items-center mt-2 space-x-2">
                       <Input
-                        value={authUser.secretKey ?? ""}
+                        value={tempUser.secretKey ?? ""}
                         readOnly
                         className="font-mono text-sm border-gray-200 bg-gray-50"
                       />
