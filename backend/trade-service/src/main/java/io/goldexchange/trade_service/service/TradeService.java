@@ -250,8 +250,10 @@ public class TradeService {
             // Fetch the order by orderId
             System.out.println("\u001B[32mThis is green text in updateorder service\u001B[0m");
             Long orderId = Long.parseLong(statusConsumerDTO.getOrderId());
-            Order order = orderRepository.findById(orderId)
-                    .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+            Order order = orderRepository.findById(orderId).orElse(null);
+            if (order == null) {
+                return;
+            }
 
             String type = order.getType();
             int quantity_order = order.getQuantity();
@@ -299,7 +301,7 @@ public class TradeService {
 
         if (orders == null || orders.isEmpty()) {
             System.out.println("order is null");
-            
+
             return null;
         }
 
