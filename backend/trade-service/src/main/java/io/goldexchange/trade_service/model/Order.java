@@ -12,20 +12,19 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "trades")
-public class Trade {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tradeId;                //it is not for unique trade
+    private Long orderId;               
 
-    //added
-    private Long orderId;
     private Long userId;  
     private Double price;
     private int quantity;
-    private Timestamp createdAt;
     private String side; // BUY or SELL
+    private String type; // MARKET or LIMIT
+    private Timestamp createdAt;
 
     @PrePersist
     public void onPrePersist() {

@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 public class PastTradeDTO {
 
     private Long userId;  
+    private Long orderId;
     private Double price;
     private int quantity;
     private Timestamp createdAt;
