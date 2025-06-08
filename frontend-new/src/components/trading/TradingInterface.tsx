@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import OrderBook from "./OrderBook";
 import TradingForm from "./TradingForm";
 import TradeHistory from "./TradeHistory";
+import TradePosition from "./TradePosition";
 import { OrderBook as OrderBookType, Trade } from "@/types/trading";
 
 interface TradingInterfaceProps {
@@ -108,7 +109,30 @@ const TradingInterface = ({
         />
       </div>
 
-      <div className="xl:col-span-2">
+      <TradePosition
+        positions={[
+          {
+            id: "101",
+            type: "BUY",
+            price: 2040.0,
+            quantity: 1.0,
+            total: 2040.0,
+            timestamp: new Date(),
+            fee: 2.0,
+          },
+          {
+            id: "102",
+            type: "SELL",
+            price: 2060.0,
+            quantity: 0.5,
+            total: 1030.0,
+            timestamp: new Date(),
+            fee: 1.0,
+          },
+        ]}
+      />
+
+      <div>
         <TradeHistory trades={trades} />
       </div>
     </div>
