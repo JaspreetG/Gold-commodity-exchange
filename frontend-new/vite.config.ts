@@ -9,6 +9,9 @@ export default defineConfig(() => ({
     port: 3000,
   },
   plugins: [react()],
+  define: {
+    global: 'globalThis',  // 👈 This is key!
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

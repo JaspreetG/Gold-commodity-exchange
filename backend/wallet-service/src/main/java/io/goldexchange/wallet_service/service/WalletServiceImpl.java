@@ -62,12 +62,14 @@ public class WalletServiceImpl implements WalletService {
         Double price = tradeDTO.getPrice();
         int quantity=tradeDTO.getQuantity();
 
+        double totalAmount = price * quantity;
+
         //BuyUser's wallet
-        withdrawMoney(buyUserId, price);
+        withdrawMoney(buyUserId, totalAmount);
         addGold(buyUserId, quantity);   
 
         // SellUser's wallet
-        addMoney(sellUserId, price);
+        addMoney(sellUserId, totalAmount);
         withdrawGold(sellUserId, quantity);
 
     }

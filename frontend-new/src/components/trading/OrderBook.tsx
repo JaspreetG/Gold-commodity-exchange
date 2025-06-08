@@ -2,6 +2,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderBook as OrderBookType } from "@/types/trading";
 import { BookOpen } from "lucide-react";
+// import { connectWebSocket, disconnectWebSocket } from '../../lib/ConnectWebSocket';
+import { useLtp } from '../../hooks/useLtp';
+import { useEffect, useState } from "react";
 
 interface OrderBookProps {
   orderBook: OrderBookType;
@@ -9,6 +12,22 @@ interface OrderBookProps {
 }
 
 const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
+
+  // const [ltp, setLtp] = useState<string>("");
+  // useEffect(() => {
+  //   connectWebSocket((latestPrice) => {
+  //     setLtp(latestPrice);
+  //   });
+
+  //   return () => {
+  //     disconnectWebSocket();
+  //   };
+  // }, []);
+  const ltp = useLtp();
+
+
+
+
   return (
     <Card className="border border-gray-100 shadow-sm">
       <CardHeader className="pb-4">
@@ -24,7 +43,7 @@ const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
             <div className="text-center pb-3 border-b border-gray-100">
               <h3 className="text-sm font-medium text-green-600">BUY ORDERS</h3>
             </div>
-            
+
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
               <div>Total (USD)</div>
@@ -49,7 +68,7 @@ const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
             <div className="text-center pb-3 border-b border-gray-100">
               <h3 className="text-sm font-medium text-red-600">SELL ORDERS</h3>
             </div>
-            
+
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
               <div>Price (USD)</div>
@@ -73,7 +92,8 @@ const OrderBook = ({ orderBook, currentPrice }: OrderBookProps) => {
         {/* Current Price - More sleek styling */}
         <div className="px-6 py-6 bg-gray-50 border-t border-gray-200 mt-6">
           <div className="text-center">
-            <div className="text-black font-normal text-2xl tracking-wide">${currentPrice.toFixed(2)}</div>
+            {/* <div className="text-black font-normal text-2xl tracking-wide">${currentPrice.toFixed(2)}</div> */}
+            <div className="text-black font-normal text-2xl tracking-wide">${ltp?.price}</div>
             <div className="text-xs text-gray-500 font-light mt-1 uppercase tracking-wider">Last Traded Price</div>
           </div>
         </div>
