@@ -31,7 +31,7 @@ export const useOrderBook = () => {
           setOrderBook(body);
           localStorage.setItem('orderBook', JSON.stringify(body));
         });
-      },
+      },  
     });
 
     client.activate();
