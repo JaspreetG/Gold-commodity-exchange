@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.goldexchange.trade_service.consumer.StatusConsumer;
 import io.goldexchange.trade_service.dto.AuthCredentials;
+import io.goldexchange.trade_service.dto.OrderDTO;
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
 import io.goldexchange.trade_service.dto.OrderRequest;
 import io.goldexchange.trade_service.dto.PastTradeDTO;
@@ -289,6 +290,26 @@ public class TradeService {
         } catch (Exception e) {
             throw new RuntimeException("Error updating order: " + e.getMessage(), e);
         }
+    }
+
+    public List<OrderDTO> getOrders(Long userId) {
+        // Fetch orders for the user
+        List<Order> orders = orderRepository.findByUserId(userId);
+
+        if (orders == null || orders.isEmpty()) {
+            return null;
+        }
+
+        List<OrderDTO> orderDTOs = orders.stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .map(order -> {
+                    OrderDTO orderDTO = new OrderDTO();
+                    BeanUtils.copyProperties(order, orderDTO);
+                    return orderDTO;
+                })
+                .toList();
+
+        return orderDTOs;
     }
 
 }

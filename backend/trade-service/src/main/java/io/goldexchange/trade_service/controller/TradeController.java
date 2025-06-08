@@ -1,5 +1,6 @@
 package io.goldexchange.trade_service.controller;
 
+import io.goldexchange.trade_service.dto.OrderDTO;
 import io.goldexchange.trade_service.dto.OrderRequest;
 import io.goldexchange.trade_service.dto.PastTradeDTO;
 import io.goldexchange.trade_service.service.TradeService;
@@ -71,5 +72,26 @@ public class TradeController {
             return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send trades"));
         }
     }
+
+    @GetMapping("/getOrders")
+    public ResponseEntity<?> getOrders(Authentication authentication) {
+        try {
+            if (authentication == null || authentication.getPrincipal() == null) {
+                return ResponseEntity.status(401)
+                        .body(java.util.Map.of("error", "Unauthorized: User not authenticated"));
+            }
+            Long userId = (Long) authentication.getPrincipal();
+
+            List<OrderDTO> orders = tradeService.getOrders(userId);
+            if (orders.isEmpty()) {
+                return ResponseEntity.ok(java.util.Map.of("message", "No orders found"));
+            }
+
+            return ResponseEntity.ok(java.util.Map.of("status", "Orders sent successfully", "orders", orders));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to send orders"));
+        }
+    }
+
 
 }
