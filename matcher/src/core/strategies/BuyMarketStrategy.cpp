@@ -17,7 +17,12 @@ namespace core
         {
             Order *bestAskPtr = book.getBestAsk();
             if (!bestAskPtr)
+            {
+                IMatchingStrategy::statusProducer.publish(
+                    models::Status(incoming.order_id(), incoming.user_id(), "BUY",
+                                   0, std::chrono::system_clock::now()));
                 break;
+            }
             Order &bestAsk = *bestAskPtr;
             int tradeQty = std::min(qty, bestAsk.quantity());
             double price = bestAsk.price();
