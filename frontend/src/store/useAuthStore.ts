@@ -32,34 +32,33 @@ interface LoginData {
   phone: string;
 }
 
-interface Order{
-    orderId: number;
-    userId: number;
-    price: number;
-    quantity: number;
-    side: string;
-    type: string; // "market" or "limit"
-    createdAt: string; // ISO date string
-
+interface Order {
+  orderId: number;
+  userId: number;
+  price: number;
+  quantity: number;
+  side: string;
+  type: string; // "market" or "limit"
+  createdAt: string; // ISO date string
 }
 
-interface TradeHistory{
-    orderId: number;
-    userId: number;
-    price: number;
-    quantity: number;
-    side: string;
-    createdAt: string;
-    type:string;
+interface TradeHistory {
+  orderId: number;
+  userId: number;
+  price: number;
+  quantity: number;
+  side: string;
+  createdAt: string;
+  type: string;
 }
-interface tempUser{
-    qrCode:string;
-    secretKey:string;
+interface tempUser {
+  qrCode: string;
+  secretKey: string;
 }
 
 interface AuthStore {
   authUser: User | null;
-  tempUser:tempUser|null;
+  tempUser: tempUser | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isAddingUSD: boolean;
@@ -89,9 +88,14 @@ interface AuthStore {
   withdrawMoney: (amount: number) => Promise<void>;
   getWallet: () => Promise<{ usd: number; gold: number } | null>;
   getUser: () => Promise<void>;
-  createOrder:(quantity:number,price:number,side:string,type:string)=> Promise<void>;
-  getOrders:() => Promise<void>;
-  getTradeHistory:()=> Promise<void>;
+  createOrder: (
+    quantity: number,
+    price: number,
+    side: string,
+    type: string
+  ) => Promise<void>;
+  getOrders: () => Promise<void>;
+  getTradeHistory: () => Promise<void>;
   orders: Order[];
   pastTrades: TradeHistory[];
 }
@@ -100,7 +104,7 @@ const authApi = axiosInstance("auth");
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: null,
-  tempUser:null,
+  tempUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isAddingUSD: false,
@@ -108,12 +112,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   isWithdrawingUSD: false,
   isGettingUser: false,
   isCreatingOrder: false,
-  isGettingOrder:false,
-  isGettingTradeHistory:false,
+  isGettingOrder: false,
+  isGettingTradeHistory: false,
   toasts: [],
   orders: [],
-  pastTrades:[],
-  
+  pastTrades: [],
 
   addToast: ({ title, description }) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -147,22 +150,22 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
       const result = res.data;
 
-    //   set({
-    //     authUser: {
-    //       userName: data.userName,
-    //       phoneNumber: data.phoneNumber,
-    //       balances: { usd: 0, gold: 0 },
-    //       qrCode: result.qrCode,
-    //       secretKey: result.secretKey,
-    //     },
-    //   });
-    set({
-        tempUser:{
-            qrCode:result.qrCode,
-            secretKey: result.secretKey
-        }
-    })
-    console.log(get().tempUser);
+      //   set({
+      //     authUser: {
+      //       userName: data.userName,
+      //       phoneNumber: data.phoneNumber,
+      //       balances: { usd: 0, gold: 0 },
+      //       qrCode: result.qrCode,
+      //       secretKey: result.secretKey,
+      //     },
+      //   });
+      set({
+        tempUser: {
+          qrCode: result.qrCode,
+          secretKey: result.secretKey,
+        },
+      });
+      console.log(get().tempUser);
 
       get().addToast({
         title: "Success",
@@ -187,11 +190,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-
   getUser: async () => {
     set({ isGettingUser: true });
     try {
-        console.log("in getUser")
+      console.log("in getUser");
       const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
         (m) => m.default
       );
@@ -204,29 +206,27 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         },
       });
 
-      set({ authUser: res.data });
-
-      const walletApi = axiosInstance("wallet");
-      const walletRes = await walletApi.get("/getWallet", {
-        headers: {
-          "X-Device-Fingerprint": visitorId,
-        },
-      });
-
-      const walletData = walletRes.data;
-      set({
-        authUser: {
-          ...res.data,
-          balances: {
-            usd: walletData.balance,
-            gold: walletData.gold,
+      if (res.data && res.data.phoneNumber && res.data.userName) {
+        const walletApi = axiosInstance("wallet");
+        const walletRes = await walletApi.get("/getWallet", {
+          headers: {
+            "X-Device-Fingerprint": visitorId,
           },
-        },
-      });
+        });
 
-
-
-
+        const walletData = walletRes.data;
+        set({
+          authUser: {
+            ...res.data,
+            balances: {
+              usd: walletData.balance,
+              gold: walletData.gold,
+            },
+          },
+        });
+      } else {
+        set({ authUser: null });
+      }
 
       console.log(get().authUser);
     } catch (error) {
@@ -235,15 +235,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       console.log(get().authUser);
     } finally {
       set({ isGettingUser: false });
-    }   
+    }
   },
-
-  
 
   login: async ({ phone }: LoginData, navigate) => {
     set({ isLoggingIn: true });
     try {
-        console.log("in login")
+      console.log("in login");
       const payload = { phoneNumber: phone };
       const res = await authApi.post("/login", payload);
       const data = res.data;
@@ -263,11 +261,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: "User found, proceed with TOTP verification.",
       });
 
-    //   set({ authUser: data });
-      console.log(get().authUser)
+      //   set({ authUser: data });
+      console.log(get().authUser);
     } catch (error) {
       const err = error as AxiosError;
-      console.log("in login error")
+      console.log("in login error");
       console.log(err);
       let msg = "Something went wrong";
       if (
@@ -323,7 +321,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         },
       });
 
-      set({tempUser:null});
+      set({ tempUser: null });
 
       get().addToast({
         title: "Success",
@@ -473,7 +471,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       const walletApi = axiosInstance("wallet");
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
-      const res=await walletApi.post(
+      const res = await walletApi.post(
         "/withdrawMoney",
         { amount },
         {
@@ -496,7 +494,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: `Successfully withdrew $${amount.toFixed(2)}`,
       });
     } catch (error) {
-        console.log(error)
+      console.log(error);
       get().addToast({
         title: "Error",
         description: error.response.data.error,
@@ -539,7 +537,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   createOrder: async (quantity, price, side, type) => {
     set({ isCreatingOrder: true });
     try {
-        console.log("in createOrder")
+      console.log("in createOrder");
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
       const tradeApi = axiosInstance("trade");
@@ -563,8 +561,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: "Failed to create order",
         variant: "destructive",
       });
-    }
-    finally {
+    } finally {
       set({ isCreatingOrder: false });
     }
   },
@@ -585,12 +582,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       });
       set({ orders: res.data.orders });
       console.log(get().orders);
-    //   return res.data;
+      //   return res.data;
     } catch (error) {
       console.error("Failed to fetch orders:", error);
       set({ orders: [] });
 
-    //   return [];
+      //   return [];
     } finally {
       set({ isGettingOrder: false });
     }
@@ -613,11 +610,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       set({ pastTrades: res.data.pastTrades });
       console.log(get().pastTrades);
 
-    //   return res.data;
+      //   return res.data;
     } catch (error) {
       console.error("Failed to fetch trade history:", error);
       set({ pastTrades: [] });
-    //   return [];
+      //   return [];
     } finally {
       set({ isGettingTradeHistory: false });
     }
