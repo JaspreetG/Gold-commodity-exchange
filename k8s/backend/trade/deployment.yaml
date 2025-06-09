@@ -13,7 +13,8 @@ spec:
         app: trade
     spec:
       containers:
-        - name: trade-container
-          image: trade-image:latest
+        - name: trade-service
+          image: backend-trade-service
+          imagePullPolicy: Never
           ports:
             - containerPort: 8082

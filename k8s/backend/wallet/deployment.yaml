@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +15,7 @@ spec:
     spec:
       containers:
         - name: wallet-service
-          image: wallet-service:latest
+          image: backend-wallet-service
+          imagePullPolicy: Never
           ports:
             - containerPort: 8081

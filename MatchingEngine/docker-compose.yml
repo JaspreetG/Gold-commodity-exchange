@@ -1,6 +1,7 @@
 services:
   MatchingEngine:
     build: .
+    image: matching-engine:latest
     container_name: MatchingEngine
     environment:
       - KAFKA_BROKER=kafka:9092
