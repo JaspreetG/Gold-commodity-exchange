@@ -1,6 +1,6 @@
 {
-  "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/matcher",
-  "cmake.buildDirectory": "${workspaceFolder}/matcher/build",
+  "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/MatchingEngine",
+  "cmake.buildDirectory": "${workspaceFolder}/MatchingEngine/build",
   "C_Cpp.errorSquiggles": "enabled",
   "files.associations": {
     "array": "cpp",

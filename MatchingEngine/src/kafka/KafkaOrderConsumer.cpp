@@ -18,7 +18,7 @@ namespace kafka
         std::cout << "Using Kafka broker: " << broker << std::endl;
         cppkafka::Configuration config = {
             {"metadata.broker.list", broker},
-            {"group.id", "matcher-group"},
+            {"group.id", "MatchingEngine-group"},
             {"auto.offset.reset", "earliest"}};
 
         // --- End of Kafka broker selection ---

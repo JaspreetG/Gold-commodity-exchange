@@ -1,14 +1,14 @@
 version: "3"
 # Root orchestrator: Use this file as documentation for how to bring up the stack.
-# Each service (Kafka, matcher, backend, frontend) has its own internal docker-compose file.
+# Each service (Kafka, MatchingEngine, backend, frontend) has its own internal docker-compose file.
 
 # --- Step 1: Start Kafka and Zookeeper ---
 # Go to the kafka folder and run:
 #   cd kafka && docker-compose -f docker-compose.kafka.yml up -d
 
-# --- Step 2: Start the C++ matcher engine ---
-# Go to the matcher folder and run:
-#   cd matcher && docker-compose up -d
+# --- Step 2: Start the C++ matchingEngine ---
+# Go to the MatchingEnginefolder and run:
+#   cd MatchingEngine&& docker-compose up -d
 
 # --- Step 3: Start the backend (Spring Boot) ---
 # Uncomment and use when backend is implemented
@@ -19,5 +19,5 @@ version: "3"
 # cd frontend && docker-compose up -d
 
 # Note:
-# - Do NOT comment out Kafka and matcher instructions above.
+# - Do NOT comment out Kafka and MatchingEngineinstructions above.
 # - All actual service definitions are in their respective folders.

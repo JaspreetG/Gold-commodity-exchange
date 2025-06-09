@@ -66,14 +66,14 @@ trading-system/
 ├── backend/              # Spring Boot backend API
 │   ├── Dockerfile
 │   └── src/main/java/
-├── matcher/              # C++ matching engine
+├── MatchingEngine/              # C++ matching engine
 │   ├── Dockerfile
 │   └── src/
 ├── kafka/                # (Optional) Kafka custom configs
 ├── k8s/                  # Kubernetes manifests
 │   ├── frontend/
 │   ├── backend/
-│   ├── matcher/
+│   ├── MatchingEngine/
 │   └── kafka/
 ├── docker-compose.yml    # Local development config
 ├── LICENSE
@@ -173,7 +173,7 @@ npm test
 **Matcher (if testable):**
 
 ```bash
-cd matcher
+cd MatchingEngine
 make test
 ```
 

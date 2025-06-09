@@ -1,7 +1,7 @@
 services:
-  matcher:
+  MatchingEngine:
     build: .
-    container_name: matcher
+    container_name: MatchingEngine
     environment:
       - KAFKA_BROKER=kafka:9092
     networks:

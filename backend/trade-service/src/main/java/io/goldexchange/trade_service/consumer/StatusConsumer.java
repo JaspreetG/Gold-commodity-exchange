@@ -1,4 +1,5 @@
 package io.goldexchange.trade_service.consumer;
+
 import io.goldexchange.trade_service.dto.StatusConsumerDTO;
 import io.goldexchange.trade_service.dto.TradeConsumerDTO;
 import io.goldexchange.trade_service.service.TradeService;
@@ -16,15 +17,13 @@ public class StatusConsumer {
         this.tradeService = tradeService;
     }
 
-    @KafkaListener(topics = "status", groupId = "matcher-group")
+    @KafkaListener(topics = "status", groupId = "MatchingEngine-group")
     public void listenTrade(String message) {
         try {
             StatusConsumerDTO statusConsumerDTO = objectMapper.readValue(message, StatusConsumerDTO.class);
             tradeService.updateOrder(statusConsumerDTO);
-            System.out.println( " \\u001B[31m This is red text \\u001B[0m" );
+            System.out.println(" \\u001B[31m This is red text \\u001B[0m");
             System.out.println(statusConsumerDTO);
-            
-            
 
         } catch (Exception e) {
             // Log error
@@ -32,4 +31,3 @@ public class StatusConsumer {
         }
     }
 }
-
