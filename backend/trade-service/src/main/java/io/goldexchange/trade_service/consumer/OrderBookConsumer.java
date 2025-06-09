@@ -12,7 +12,7 @@ public class OrderBookConsumer {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @KafkaListener(topics = "orderbook", groupId = "matcher-group")
+    @KafkaListener(topics = "orderbook", groupId = "MatchingEngine-group")
     public void listenOrderBook(String message) {
         // Forward order book to WebSocket clients
         messagingTemplate.convertAndSend("/topic/orderbook", message);

@@ -12,7 +12,7 @@ public class LtpConsumer {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @KafkaListener(topics = "ltp", groupId = "matcher-group")
+    @KafkaListener(topics = "ltp", groupId = "MatchingEngine-group")
     public void listenLtp(String message) {
         // Forward LTP to WebSocket clients
         messagingTemplate.convertAndSend("/topic/ltp", message);

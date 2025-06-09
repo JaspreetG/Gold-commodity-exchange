@@ -3,13 +3,13 @@
 ## Build and Run with Docker Compose
 
 1. **Ensure Docker and Docker Compose are installed.**
-2. From the matcher root, run:
+2. From the MatchingEngineroot, run:
 
 ```sh
 docker-compose up --build
 ```
 
-- This will build and start matcher as defined in the `docker-compose.yml` files.
+- This will build and start MatchingEngineas defined in the `docker-compose.yml` files.
 - To stop the services:
 
 ```sh
@@ -26,20 +26,20 @@ docker-compose down
    - [cppkafka](https://github.com/mfontanini/cppkafka)
    - nlohmann/json (header-only)
 
-2. **Build the matcher engine:**
+2. **Build the matchingEngine:**
 
 ```sh
-cd matcher
+cd MatchingEngine
 make
 ```
 
-- The executable `MatchingEngine` will be created in the `matcher` directory.
+- The executable `MatchingEngine` will be created in the `MatchingEngine` directory.
 
 - **Run Kafka and Zookeeper (if not using Docker Compose):**
 
   - Start Zookeeper and Kafka brokers as required.
 
-- **Run the matcher engine:**
+- **Run the matchingEngine:**
 
 ```sh
 ./MatchingEngine
@@ -174,4 +174,4 @@ classDiagram
 
 ---
 
-- For more details, see the source code in the `matcher` directory.
+- For more details, see the source code in the `MatchingEngine` directory.

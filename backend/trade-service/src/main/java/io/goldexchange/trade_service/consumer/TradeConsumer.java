@@ -15,7 +15,7 @@ public class TradeConsumer {
         this.tradeService = tradeService;
     }
 
-    @KafkaListener(topics = "trade", groupId = "matcher-group")
+    @KafkaListener(topics = "trade", groupId = "MatchingEngine-group")
     public void listenTrade(String message) {
         try {
             TradeConsumerDTO tradeConsumerDTO = objectMapper.readValue(message, TradeConsumerDTO.class);

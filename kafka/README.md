@@ -7,7 +7,7 @@ This folder contains Kafka-specific setup scripts and environment config.
 The following Kafka topics are created:
 
 - `order` – Handles all incoming order data (buy/sell)
-- `trade` – Used by matcher engine to publish matched orders
+- `trade` – Used by matchingEngine to publish matched orders
 - `orderbook` – Used to send orderbook to consumer
 - `ltp` – Used to send Last traded price
 
@@ -84,4 +84,3 @@ docker exec -it kafka kafka-console-consumer \
   --topic status \
   --from-beginning
 ```
-
