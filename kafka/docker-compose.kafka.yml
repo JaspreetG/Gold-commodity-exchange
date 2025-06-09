@@ -39,4 +39,4 @@ services:
 
 networks:
   kafka-net:
-    external: true
+    name: kafka-net
