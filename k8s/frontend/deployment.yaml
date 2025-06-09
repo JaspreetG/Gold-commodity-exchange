@@ -15,6 +15,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: gold-exchange-frontend:latest
+          image: frontend-frontend
+          imagePullPolicy: Never
           ports:
             - containerPort: 80

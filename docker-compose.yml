@@ -1,23 +1,127 @@
-version: "3"
-# Root orchestrator: Use this file as documentation for how to bring up the stack.
-# Each service (Kafka, MatchingEngine, backend, frontend) has its own internal docker-compose file.
+services:
+  auth-service:
+    build:
+      context: ./backend/auth-service
+      dockerfile: Dockerfile
+    image: backend-auth-service
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    networks:
+      - kafka-net
+      - db-net
+    depends_on:
+      - postgres
 
-# --- Step 1: Start Kafka and Zookeeper ---
-# Go to the kafka folder and run:
-#   cd kafka && docker-compose -f docker-compose.kafka.yml up -d
+  wallet-service:
+    build:
+      context: ./backend/wallet-service
+      dockerfile: Dockerfile
+    image: wallet-service
+    container_name: wallet-service
+    ports:
+      - "8081:8081"
+    networks:
+      - kafka-net
+      - db-net
+    depends_on:
+      - postgres
 
-# --- Step 2: Start the C++ matchingEngine ---
-# Go to the MatchingEnginefolder and run:
-#   cd MatchingEngine&& docker-compose up -d
+  trade-service:
+    build:
+      context: ./backend/trade-service
+      dockerfile: Dockerfile
+    image: trade-service
+    container_name: trade-service
+    ports:
+      - "8082:8082"
+    networks:
+      - kafka-net
+      - db-net
+    depends_on:
+      - postgres
+      - kafka
 
-# --- Step 3: Start the backend (Spring Boot) ---
-# Uncomment and use when backend is implemented
-# cd backend && docker-compose up -d
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend-frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    networks:
+      - kafka-net
+      - db-net
 
-# --- Step 4: Start the frontend (React) ---
-# Uncomment and use when frontend is implemented
-# cd frontend && docker-compose up -d
+  matching-engine:
+    build:
+      context: ./MatchingEngine
+      dockerfile: Dockerfile
+    image: matching-engine
+    container_name: matching-engine
+    environment:
+      - KAFKA_BROKER=kafka:9092
+    networks:
+      - kafka-net
+    depends_on:
+      - kafka
 
-# Note:
-# - Do NOT comment out Kafka and MatchingEngineinstructions above.
-# - All actual service definitions are in their respective folders.
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: goldexchange
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - db-net
+
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka-net
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:7.6.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - ./kafka/script.sh:/script.sh
+      - ./kafka/kafka.env:/kafka.env
+    command: >
+      bash -c "
+      /etc/confluent/docker/run &
+      bash /script.sh;
+      wait
+      "
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:
+  db-net:
+
+volumes:
+  pgdata:

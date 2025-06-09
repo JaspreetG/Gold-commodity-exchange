@@ -4,7 +4,7 @@ metadata:
   name: trade-service
 spec:
   selector:
-    app: trade
+    app: trade-service
   ports:
     - protocol: TCP
       port: 8082

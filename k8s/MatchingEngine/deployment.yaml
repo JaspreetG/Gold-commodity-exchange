@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
         - name: matching-engine
-          image: matchingengine:latest
+          image: matching-engine
+          imagePullPolicy: Never
           env:
             - name: KAFKA_BROKER
               value: kafka:9092
