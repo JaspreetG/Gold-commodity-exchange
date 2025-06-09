@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trade-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: trade
+  template:
+    metadata:
+      labels:
+        app: trade
+    spec:
+      containers:
+        - name: trade-container
+          image: trade-image:latest
+          ports:
+            - containerPort: 8082
