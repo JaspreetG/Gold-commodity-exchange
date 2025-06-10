@@ -8,6 +8,7 @@ import { useOrderBook } from "@/hooks/useOrderBook";
 import { useToastSocket } from "@/hooks/useToastSocket";
 import { useAuthStore } from "@/store/useAuthStore";
 
+
 interface OrderBookProps {
   orderBook: OrderBookType;
   currentPrice: number;
@@ -21,10 +22,10 @@ const OrderBook = () => {
       getUserId();
     }, [getUserId]);
 
-  const currentPrice = 4000;
-  const ltp = useLtp();
-  const orderBook = useOrderBook();
-  useToastSocket(userId); 
+    const ltp = useLtp();
+    const orderBook = useOrderBook();
+    useToastSocket(userId); 
+    // const currentPrice = ltp?.price || 0;
 
   return (
     <Card className="border border-gray-100 shadow-sm">
