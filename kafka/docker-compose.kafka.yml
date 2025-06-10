@@ -1,6 +1,6 @@
 services:
   zookeeper:
-    container_name: zookeeper
+    container_name: zookeeper-in-kafka
     image: confluentinc/cp-zookeeper:7.6.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -11,7 +11,7 @@ services:
       - kafka-net
 
   kafka:
-    container_name: kafka
+    container_name: zookeeper-kafka
     image: confluentinc/cp-kafka:7.6.0
     depends_on:
       - zookeeper
