@@ -4,10 +4,10 @@ metadata:
   name: postgres
   namespace: gold-exchange
 spec:
+  clusterIP: None
   selector:
     app: postgres
   ports:
     - protocol: TCP
       port: 5432
       targetPort: 5432
-  type: ClusterIP

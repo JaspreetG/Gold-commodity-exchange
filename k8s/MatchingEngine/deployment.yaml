@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: matching-engine
   namespace: gold-exchange
 spec:
+  serviceName: matching-engine
   replicas: 1
   selector:
     matchLabels:
@@ -17,8 +18,8 @@ spec:
         - name: matching-engine
           image: matching-engine
           imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
           env:
             - name: KAFKA_BROKER
               value: kafka:9092
-          ports:
-            - containerPort: 8080
