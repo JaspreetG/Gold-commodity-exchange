@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Clock } from "lucide-react";
+import { Clock, FileCheck, ShieldCheck } from "lucide-react";
 import React, { useEffect } from "react";
 
 // interface pastTradesHistoryProps {
@@ -25,8 +25,8 @@ const TradeHistory = () => {
     <Card className="border border-gray-100 shadow-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-black font-light flex items-center text-lg">
-          <Clock className="h-5 w-5 mr-2" />
-          pastTrades History
+          <ShieldCheck className="h-5 w-5 mr-2" />
+          Successful Trades
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">

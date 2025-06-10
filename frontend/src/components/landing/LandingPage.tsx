@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Coins, Shield, TrendingUp, Users } from "lucide-react";
+import { Banknote, Coins, Shield, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface LandingPageProps {
@@ -26,7 +26,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Coins className="h-8 w-8 text-black mr-3" />
+              <Banknote className="h-10 w-10 mr-3 text-amber-600" />
               <h1 className="text-xl font-light text-black">GoldEx</h1>
             </div>
 
@@ -154,7 +154,7 @@ const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
-              <Coins className="h-8 w-8 text-black mr-3" />
+              <Banknote className="h-8 w-8 mr-3 text-amber-600" />
               <h3 className="text-xl font-light text-black">GoldEx</h3>
             </div>
             <p className="text-gray-600 font-light mb-6">

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, DollarSign, Coins } from "lucide-react";
+import { TrendingUp, Coins, IndianRupee, Banknote } from "lucide-react";
 
 interface PortfolioProps {
   balances: {
@@ -38,7 +38,7 @@ const Portfolio = ({ balances }: PortfolioProps) => {
           <CardTitle className="text-sm font-normal text-gray-600">
             INR Balance
           </CardTitle>
-          <DollarSign className="h-4 w-4 text-black" />
+          <IndianRupee className="h-5 w-5 mr-2 text-lime-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">
@@ -55,7 +55,7 @@ const Portfolio = ({ balances }: PortfolioProps) => {
           <CardTitle className="text-sm font-normal text-gray-600">
             Gold Holdings
           </CardTitle>
-          <Coins className="h-4 w-4 text-red-600" />
+          <Banknote className="h-6 w-6 mr-3 text-amber-600" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">
@@ -72,7 +72,8 @@ const Portfolio = ({ balances }: PortfolioProps) => {
           <CardTitle className="text-sm font-normal text-gray-600">
             Gold Price
           </CardTitle>
-          <TrendingUp className="h-4 w-4 text-red-600" />
+
+          <TrendingUp className="h-4 w-4 text-yellow-500" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">₹{goldPrice}</div>
