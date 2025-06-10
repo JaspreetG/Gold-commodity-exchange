@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Banknote, CloudDownload, Coins, Phone, Shield } from "lucide-react";
+import { Banknote, Phone, Shield } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
 import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
@@ -18,9 +18,8 @@ const LoginForm = () => {
   const [totp, setTotp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "IND",
+    code: "IN", // correct ISO alpha-2 code
     name: "India",
-    flag: "🇮🇳",
     dialCode: "+91",
   });
 

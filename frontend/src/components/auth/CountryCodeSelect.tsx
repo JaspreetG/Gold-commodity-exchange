@@ -1,40 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
+import Flag from "react-world-flags";
 
 interface Country {
   code: string;
   name: string;
-  flag: string;
   dialCode: string;
 }
 
 const countries: Country[] = [
-  { code: "IN", name: "India", flag: "🇮🇳", dialCode: "+91" },
-  { code: "US", name: "United States", flag: "🇺🇸", dialCode: "+1" },
-  { code: "CN", name: "China", flag: "🇨🇳", dialCode: "+86" },
-  { code: "JP", name: "Japan", flag: "🇯🇵", dialCode: "+81" },
-  { code: "DE", name: "Germany", flag: "🇩🇪", dialCode: "+49" },
-  { code: "GB", name: "United Kingdom", flag: "🇬🇧", dialCode: "+44" },
-  { code: "FR", name: "France", flag: "🇫🇷", dialCode: "+33" },
-  { code: "BR", name: "Brazil", flag: "🇧🇷", dialCode: "+55" },
-  { code: "IT", name: "Italy", flag: "🇮🇹", dialCode: "+39" },
-  { code: "CA", name: "Canada", flag: "🇨🇦", dialCode: "+1" },
-  { code: "RU", name: "Russia", flag: "🇷🇺", dialCode: "+7" },
-  { code: "KR", name: "South Korea", flag: "🇰🇷", dialCode: "+82" },
-  { code: "AU", name: "Australia", flag: "🇦🇺", dialCode: "+61" },
-  { code: "ES", name: "Spain", flag: "🇪🇸", dialCode: "+34" },
-  { code: "MX", name: "Mexico", flag: "🇲🇽", dialCode: "+52" },
-  { code: "ID", name: "Indonesia", flag: "🇮🇩", dialCode: "+62" },
-  { code: "SA", name: "Saudi Arabia", flag: "🇸🇦", dialCode: "+966" },
-  { code: "TR", name: "Turkey", flag: "🇹🇷", dialCode: "+90" },
-  { code: "ZA", name: "South Africa", flag: "🇿🇦", dialCode: "+27" },
-  { code: "AR", name: "Argentina", flag: "🇦🇷", dialCode: "+54" },
-  { code: "SE", name: "Sweden", flag: "🇸🇪", dialCode: "+46" },
-  { code: "CH", name: "Switzerland", flag: "🇨🇭", dialCode: "+41" },
-  { code: "NL", name: "Netherlands", flag: "🇳🇱", dialCode: "+31" },
-  { code: "SG", name: "Singapore", flag: "🇸🇬", dialCode: "+65" },
-  { code: "AE", name: "United Arab Emirates", flag: "🇦🇪", dialCode: "+971" },
+  { code: "IN", name: "India", dialCode: "+91" },
+  { code: "US", name: "United States", dialCode: "+1" },
+  { code: "CN", name: "China", dialCode: "+86" },
+  { code: "JP", name: "Japan", dialCode: "+81" },
+  { code: "DE", name: "Germany", dialCode: "+49" },
+  { code: "GB", name: "United Kingdom", dialCode: "+44" },
+  { code: "FR", name: "France", dialCode: "+33" },
+  { code: "BR", name: "Brazil", dialCode: "+55" },
+  { code: "IT", name: "Italy", dialCode: "+39" },
+  { code: "CA", name: "Canada", dialCode: "+1" },
+  { code: "RU", name: "Russia", dialCode: "+7" },
+  { code: "KR", name: "South Korea", dialCode: "+82" },
+  { code: "AU", name: "Australia", dialCode: "+61" },
+  { code: "ES", name: "Spain", dialCode: "+34" },
+  { code: "MX", name: "Mexico", dialCode: "+52" },
+  { code: "ID", name: "Indonesia", dialCode: "+62" },
+  { code: "SA", name: "Saudi Arabia", dialCode: "+966" },
+  { code: "TR", name: "Turkey", dialCode: "+90" },
+  { code: "ZA", name: "South Africa", dialCode: "+27" },
+  { code: "AR", name: "Argentina", dialCode: "+54" },
+  { code: "SE", name: "Sweden", dialCode: "+46" },
+  { code: "CH", name: "Switzerland", dialCode: "+41" },
+  { code: "NL", name: "Netherlands", dialCode: "+31" },
+  { code: "SG", name: "Singapore", dialCode: "+65" },
+  { code: "AE", name: "United Arab Emirates", dialCode: "+971" },
 ];
 
 interface CountryCodeSelectProps {
@@ -74,7 +74,10 @@ const CountryCodeSelect = ({
         className="w-24 h-10 px-2 border-gray-200 bg-white hover:bg-gray-50 font-light flex items-center justify-between"
       >
         <div className="flex items-center space-x-1">
-          <span className="text-sm">{selectedCountry.flag}</span>
+          <Flag
+            code={selectedCountry.code}
+            style={{ width: 20, height: 14, borderRadius: 2 }}
+          />
           <span className="text-xs">{selectedCountry.dialCode}</span>
         </div>
         <ChevronDown className="h-3 w-3" />
@@ -92,7 +95,10 @@ const CountryCodeSelect = ({
               }}
               className="w-full text-left px-3 py-2 hover:bg-gray-50 flex items-center space-x-3 font-light"
             >
-              <span className="text-lg">{country.flag}</span>
+              <Flag
+                code={country.code}
+                style={{ width: 20, height: 14, borderRadius: 2 }}
+              />
               <span className="text-sm text-gray-600">{country.dialCode}</span>
               <span className="text-sm text-black">{country.name}</span>
             </button>
