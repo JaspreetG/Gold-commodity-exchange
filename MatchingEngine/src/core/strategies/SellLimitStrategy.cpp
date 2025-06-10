@@ -36,11 +36,11 @@ namespace core
             IMatchingStrategy::statusProducer.publish(
                 models::Status(incoming.order_id(), incoming.user_id(),
                                "SELL",
-                               qty, std::chrono::system_clock::now()));
+                               tradeQty, std::chrono::system_clock::now()));
             IMatchingStrategy::statusProducer.publish(
                 models::Status(bestBid.order_id(), bestBid.user_id(),
                                "BUY",
-                               qty, std::chrono::system_clock::now()));
+                               tradeQty, std::chrono::system_clock::now()));
 
             qty -= tradeQty;
             bestBid.setQuantity(bestBid.quantity() - tradeQty);
