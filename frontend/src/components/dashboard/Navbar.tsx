@@ -1,6 +1,13 @@
 import { User } from "@/types/auth";
 import { Button } from "@/components/ui/button";
-import { Coins, LogOut } from "lucide-react";
+import {
+  Banknote,
+  Blocks,
+  Coins,
+  Cuboid,
+  Currency,
+  LogOut,
+} from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface NavbarProps {
@@ -16,7 +23,7 @@ const Navbar = ({ user }: NavbarProps) => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Coins className="h-8 w-8 text-amber-600 mr-3" />
+            <Banknote className="h-8 w-8 mr-3 text-amber-600" />
             <h1 className="text-xl font-light text-amber-600">GoldEx</h1>
           </div>
 

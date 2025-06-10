@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Coins, Phone, QrCode, Copy, Check } from "lucide-react";
+import { Coins, Phone, QrCode, Copy, Check, Banknote } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
 import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
@@ -94,8 +94,8 @@ const SignupForm = () => {
             onClick={onBackToLanding}
             className="flex items-center justify-center mb-6 mx-auto hover:opacity-80 transition-opacity"
           >
-            <Coins className="h-12 w-12 text-black mr-3" />
-            <h1 className="text-4xl font-light text-black">GoldEx</h1>
+            <Banknote className="h-14 w-14 mr-3 text-amber-600" />
+            <h1 className="text-4xl font-light text-black mr-5">GoldEx</h1>
           </button>
           <p className="text-gray-600 font-light">Create your account</p>
         </div>

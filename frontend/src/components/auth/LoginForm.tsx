@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CloudDownload, Coins, Phone, Shield } from "lucide-react";
+import { Banknote, CloudDownload, Coins, Phone, Shield } from "lucide-react";
 import CountryCodeSelect, { Country } from "./CountryCodeSelect";
 import OTPInput from "./OTPInput";
 import { useNavigate } from "react-router-dom";
@@ -18,10 +18,10 @@ const LoginForm = () => {
   const [totp, setTotp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "US",
-    name: "United States",
-    flag: "🇺🇸",
-    dialCode: "+1",
+    code: "IND",
+    name: "India",
+    flag: "🇮🇳",
+    dialCode: "+91",
   });
 
   const navigate = useNavigate();
@@ -73,8 +73,8 @@ const LoginForm = () => {
             onClick={onBackToLanding}
             className="flex items-center justify-center mb-6 mx-auto hover:opacity-80 transition-opacity"
           >
-            <Coins className="h-12 w-12 text-black mr-3" />
-            <h1 className="text-4xl font-light text-black">GoldEx</h1>
+            <Banknote className="h-14 w-14 mr-3 text-amber-600" />
+            <h1 className="text-4xl font-light text-black mr-5">GoldEx</h1>
           </button>
           <p className="text-gray-600 font-light">Welcome back</p>
         </div>

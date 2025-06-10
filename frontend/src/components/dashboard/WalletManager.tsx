@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Plus, DollarSign, Coins } from "lucide-react";
+import { Plus, Coins, IndianRupee, Banknote } from "lucide-react";
 
 interface WalletManagerProps {
   balances: {
@@ -59,7 +59,10 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
       <Card className="border border-gray-100 shadow-sm">
         <CardHeader>
           <CardTitle className="text-black font-light flex items-center text-lg">
-            <DollarSign className="h-5 w-5 mr-2 text-green-600" />
+            <IndianRupee
+              className="h-5 w-5 mr-2 text-lime-500
+"
+            />
             Add INR Funds
           </CardTitle>
         </CardHeader>
@@ -96,7 +99,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
       <Card className="border border-gray-100 shadow-sm">
         <CardHeader>
           <CardTitle className="text-black font-light flex items-center text-lg">
-            <Coins className="h-5 w-5 mr-2 text-amber-600" />
+            <Banknote className="h-6 w-6 mr-3 text-amber-600" />
             Add Gold
           </CardTitle>
         </CardHeader>
@@ -133,7 +136,10 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
       <Card className="border border-gray-100 shadow-sm">
         <CardHeader>
           <CardTitle className="text-black font-light flex items-center text-lg">
-            <DollarSign className="h-5 w-5 mr-2 text-red-600" />
+            <IndianRupee
+              className="h-5 w-5 mr-2 text-lime-500
+"
+            />
             Withdraw INR Funds
           </CardTitle>
         </CardHeader>
