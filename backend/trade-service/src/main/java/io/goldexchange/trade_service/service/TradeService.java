@@ -17,6 +17,7 @@ import io.goldexchange.trade_service.producer.OrderProducer;
 import io.goldexchange.trade_service.repository.OrderRepository;
 import io.goldexchange.trade_service.repository.TradeRepository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -92,7 +93,15 @@ public class TradeService {
             tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
             tradeBuyerSide.setSide("BUY");
 
-            tradeRepository.save(tradeBuyerSide);
+            Trade existingBuyerTrade=tradeRepository.findByOrderId(tradeBuyerSide.getOrderId());
+            if(existingBuyerTrade==null){
+                tradeRepository.save(tradeBuyerSide);
+            }
+            else{
+                existingBuyerTrade.setQuantity(tradeBuyerSide.getQuantity()+existingBuyerTrade.getQuantity());
+                existingBuyerTrade.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                tradeRepository.save(existingBuyerTrade);
+            }
 
             // seller side
             Trade tradeSellerSide = new Trade();
@@ -102,7 +111,16 @@ public class TradeService {
             tradeSellerSide.setQuantity(tradeConsumerDTO.getQuantity());
             tradeSellerSide.setSide("SELL");
 
-            tradeRepository.save(tradeSellerSide);
+            Trade existingSellerTrade=tradeRepository.findByOrderId(tradeSellerSide.getOrderId());
+            if(existingSellerTrade==null){
+                tradeRepository.save(tradeSellerSide);
+            }
+            else{
+                existingSellerTrade.setQuantity(tradeSellerSide.getQuantity()+existingSellerTrade.getQuantity());
+                existingSellerTrade.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+                tradeRepository.save(existingSellerTrade);
+            }
+
 
             // wallet update for both
             updateWallets(tradeConsumerDTO);
