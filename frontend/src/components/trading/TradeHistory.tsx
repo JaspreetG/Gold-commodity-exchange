@@ -64,7 +64,7 @@ const TradeHistory = () => {
                       {pastTrade.side?.toUpperCase()}
                     </div>
                     <div className="text-gray-500 text-xs font-light">
-                      {new Date(pastTrade.createdAt).toLocaleDateString()}
+                      {new Date(pastTrade.createdAt).toLocaleString()}
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">

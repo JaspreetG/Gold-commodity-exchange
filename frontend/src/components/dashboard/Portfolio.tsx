@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, Coins, IndianRupee, Banknote } from "lucide-react";
+import { useLtp } from "../../hooks/useLtp";
+
 
 interface PortfolioProps {
   balances: {
@@ -10,7 +12,8 @@ interface PortfolioProps {
 
 const Portfolio = ({ balances }: PortfolioProps) => {
   // TODO: Replace with actual API call to fetch current gold price
-  const goldPrice = 4000; // Mock current gold price
+  const ltp = useLtp();
+  const goldPrice = ltp?.price || 0;
   const totalValue = (balances?.inr ?? 0) + (balances?.gold ?? 0) * goldPrice;
   const goldValue = (balances?.gold ?? 0) * goldPrice;
 

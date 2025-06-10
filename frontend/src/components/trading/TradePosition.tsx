@@ -61,7 +61,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
                       {order.side.toUpperCase()}
                     </div>
                     <div className="text-gray-500 text-xs font-light">
-                      {new Date(order.createdAt).toLocaleTimeString()}
+                      {new Date(order.createdAt).toLocaleString()}
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">

@@ -8,6 +8,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Trade } from "@/types/trading";
 import { TrendingUp } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLtp } from "../../hooks/useLtp";
+
 
 interface TradingFormProps {
   userBalances: {
@@ -25,7 +27,11 @@ const TradingForm = ({
   onTrade,
 }: TradingFormProps) => {
   const { createOrder, isCreatingOrder, addToast } = useAuthStore();
-  const currentPrice = 4000;
+
+const ltp = useLtp();
+const currentPrice = ltp?.price || 0;
+
+  // const currentPrice = 4000;
 
   const [buyQuantity, setBuyQuantity] = useState("");
   const [sellQuantity, setSellQuantity] = useState("");
