@@ -20,9 +20,8 @@ const SignupForm = () => {
   const [username, setUsername] = useState("");
   const [totpCode, setTotpCode] = useState("");
   const [selectedCountry, setSelectedCountry] = useState<Country>({
-    code: "IND",
+    code: "IN",
     name: "India",
-    flag: "🇮🇳",
     dialCode: "+91",
   });
   const [isLoading, setIsLoading] = useState(false);
