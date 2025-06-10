@@ -24,7 +24,7 @@ docker-compose -f docker-compose.kafka.yml up -d
 ## 🚀 Checking Topics
 
 ```shell
-docker exec -it kafka kafka-topics --bootstrap-server kafka:9092 --list
+docker exec -it zookeeper-kafka kafka-topics --bootstrap-server kafka:9092 --list
 ```
 
 ## 🧪 Test produce/consume
@@ -32,7 +32,7 @@ docker exec -it kafka kafka-topics --bootstrap-server kafka:9092 --list
 Produce a message:
 
 ```shell
-docker exec -it kafka kafka-console-producer \
+docker exec -it zookeeper-kafka kafka-console-producer \
   --broker-list localhost:9092 \
   --topic order
 ```
@@ -51,35 +51,35 @@ Then type messages like (all in one line, copy-paste ready):
 Consume messages:
 
 ```shell
-docker exec -it kafka kafka-console-consumer \
+docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic order \
   --from-beginning
 ```
 
 ```shell
-docker exec -it kafka kafka-console-consumer \
+docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic orderbook \
   --from-beginning
 ```
 
 ```shell
-docker exec -it kafka kafka-console-consumer \
+docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic ltp \
   --from-beginning
 ```
 
 ```shell
-docker exec -it kafka kafka-console-consumer \
+docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic trade \
   --from-beginning
 ```
 
 ```shell
-docker exec -it kafka kafka-console-consumer \
+docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic status \
   --from-beginning
