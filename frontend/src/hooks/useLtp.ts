@@ -9,11 +9,14 @@ interface LtpData {
 
 export const useLtp = () => {
 
-  const [ltp, setLtp] = useState<LtpData | null>(() => {
-    // Initialize from localStorage if available
-    const stored = localStorage.getItem('ltp');
-    return stored ? JSON.parse(stored) : null;
-  });
+   const [ltp, setLtp] = useState<LtpData | null>();
+
+
+  // const [ltp, setLtp] = useState<LtpData | null>(() => {
+  //   // Initialize from localStorage if available
+  //   const stored = localStorage.getItem('ltp');
+  //   return stored ? JSON.parse(stored) : null;
+  // });
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8082/ws');
@@ -26,7 +29,7 @@ export const useLtp = () => {
         client.subscribe('/topic/ltp', (message) => {
           const body: LtpData = JSON.parse(message.body);
           setLtp(body);
-          localStorage.setItem('ltp', JSON.stringify(body)); // ✅ Store in localStorage
+          // localStorage.setItem('ltp', JSON.stringify(body)); // ✅ Store in localStorage
         });
       },
     });

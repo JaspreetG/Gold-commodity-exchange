@@ -272,13 +272,10 @@ public class TradeService {
 
             if (type.equals("MARKET")) {
                 if (quantity_status == 0) {
-                    // TODO: handle market order cancellation
                     sendToast(userId, "Market order cancelled.");
                 } else if (quantity_status == quantity_order) {
-                    // TODO: handle market order complete
                     sendToast(userId, "Market order fully filled."+quantity_status);
                 } else if (quantity_status < quantity_order) {
-                    // partial filled ki web socket chalani h TODO:
                     int q=quantity_order-quantity_status;
                     sendToast(userId, "Market order partially filled."+q);
                 }
@@ -288,17 +285,13 @@ public class TradeService {
             if (type.equals("LIMIT")) {
                 if (quantity_status == quantity_order) {
                     orderRepository.delete(order);
-                    // TODO:filled ki web socket chalani h
                     sendToast(userId, "Limit order fully filled."+quantity_status);
                 } else if (quantity_status < quantity_order) {
-                    // Partial fill, update the order with remaining quantity
-                    int q=quantity_order - quantity_status;
                     order.setQuantity(quantity_order - quantity_status);
                     orderRepository.save(order);
+                    int q=quantity_order - quantity_status;
                     sendToast(userId, "Limit order partially filled."+q);
-                    // TODO: 
                 } else {
-                    // If quantity_status > quantity_order, this is an error case
                     throw new RuntimeException("Quantity status cannot be greater than order quantity");
                 }
             }
