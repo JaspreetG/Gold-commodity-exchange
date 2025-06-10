@@ -30,10 +30,10 @@ const Navbar = ({ user }: NavbarProps) => {
 
             <div className="flex items-center space-x-4 text-sm font-light">
               <div className="bg-green-50 text-green-700 px-4 py-2 rounded-md border border-green-200">
-                ${user.balances?.usd?.toLocaleString() ?? "0.00"}
+                ₹{user.balances?.inr?.toLocaleString() ?? "0.00"}
               </div>
               <div className="bg-amber-50 text-amber-700 px-4 py-2 rounded-md border border-amber-200">
-                {user.balances?.gold?.toFixed(3) ?? "0.000"} oz
+                {user.balances?.gold?.toFixed(3) ?? "0.000"} gram
               </div>
             </div>
 

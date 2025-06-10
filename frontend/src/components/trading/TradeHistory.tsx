@@ -8,19 +8,18 @@ import React, { useEffect } from "react";
 // }
 
 const TradeHistory = () => {
+  const { getTradeHistory, isGettingTradeHistory, pastTrades } = useAuthStore();
 
-  const { getTradeHistory, isGettingTradeHistory,pastTrades } = useAuthStore();
-  
   useEffect(() => {
-   const intervalId = setInterval(() => {
-     getTradeHistory();
-   }, 5000); // 5000ms = 5 seconds
- 
-   // Optionally call immediately on mount
-   getTradeHistory();
- 
-   return () => clearInterval(intervalId); // Cleanup on unmount
- }, [getTradeHistory]);
+    const intervalId = setInterval(() => {
+      getTradeHistory();
+    }, 5000); // 5000ms = 5 seconds
+
+    // Optionally call immediately on mount
+    getTradeHistory();
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [getTradeHistory]);
 
   return (
     <Card className="border border-gray-100 shadow-sm">
@@ -44,7 +43,7 @@ const TradeHistory = () => {
 
           {/* pastTradess */}
           <div className="max-h-96 overflow-y-auto">
-            {!pastTrades? (
+            {!pastTrades ? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
                 No pastTradess yet
               </div>
@@ -57,7 +56,9 @@ const TradeHistory = () => {
                   <div className="space-y-1">
                     <div
                       className={`font-normal ${
-                        pastTrade.side === "BUY" ? "text-green-600" : "text-red-600"
+                        pastTrade.side === "BUY"
+                          ? "text-green-600"
+                          : "text-red-600"
                       }`}
                     >
                       {pastTrade.side?.toUpperCase()}
@@ -67,10 +68,10 @@ const TradeHistory = () => {
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    {pastTrade.quantity.toFixed(3)} oz
+                    {pastTrade.quantity.toFixed(3)} gram
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    ${pastTrade.price.toFixed(2)}
+                    ₹{pastTrade.price.toFixed(2)}
                   </div>
                   <div className="text-right space-y-1">
                     <div className="text-black font-mono font-light">

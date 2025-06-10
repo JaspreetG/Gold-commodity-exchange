@@ -16,7 +16,7 @@ interface User {
   userName: string;
   phoneNumber: string;
   balances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
   qrCode?: string;
@@ -86,7 +86,7 @@ interface AuthStore {
   addMoney: (amount: number) => Promise<void>;
   addGold: (quantity: number) => Promise<void>;
   withdrawMoney: (amount: number) => Promise<void>;
-  getWallet: () => Promise<{ usd: number; gold: number } | null>;
+  getWallet: () => Promise<{ inr: number; gold: number } | null>;
   getUser: () => Promise<void>;
   createOrder: (
     quantity: number,
@@ -154,7 +154,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       //     authUser: {
       //       userName: data.userName,
       //       phoneNumber: data.phoneNumber,
-      //       balances: { usd: 0, gold: 0 },
+      //       balances: { inr: 0, gold: 0 },
       //       qrCode: result.qrCode,
       //       secretKey: result.secretKey,
       //     },
@@ -219,7 +219,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           authUser: {
             ...res.data,
             balances: {
-              usd: walletData.balance,
+              inr: walletData.balance,
               gold: walletData.gold,
             },
           },
@@ -315,7 +315,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         authUser: {
           ...userInfo,
           balances: {
-            usd: walletData.balance,
+            inr: walletData.balance,
             gold: walletData.gold,
           },
         },
@@ -407,18 +407,18 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           ...state.authUser!,
           balances: {
             ...state.authUser!.balances,
-            usd: state.authUser!.balances.usd + amount,
+            inr: state.authUser!.balances.inr + amount,
           },
         },
       }));
       get().addToast({
-        title: "USD Funds Added",
-        description: `Successfully added $${amount.toFixed(2)}`,
+        title: "INR Funds Added",
+        description: `Successfully added ₹${amount.toFixed(2)}`,
       });
     } catch (error) {
       get().addToast({
         title: "Error",
-        description: "Failed to add USD funds",
+        description: "Failed to add INR funds",
         variant: "destructive",
       });
     } finally {
@@ -452,7 +452,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       }));
       get().addToast({
         title: "Gold Added",
-        description: `Successfully added ${quantity.toFixed(3)} oz`,
+        description: `Successfully added ₹{quantity.toFixed(3)} gram`,
       });
     } catch (error) {
       get().addToast({
@@ -485,13 +485,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           ...state.authUser!,
           balances: {
             ...state.authUser!.balances,
-            usd: state.authUser!.balances.usd - amount,
+            inr: state.authUser!.balances.inr - amount,
           },
         },
       }));
       get().addToast({
-        title: "USD Withdrawn",
-        description: `Successfully withdrew $${amount.toFixed(2)}`,
+        title: "INR Withdrawn",
+        description: `Successfully withdrew ₹${amount.toFixed(2)}`,
       });
     } catch (error) {
       console.log(error);
@@ -520,13 +520,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         authUser: {
           ...state.authUser!,
           balances: {
-            usd: walletData.balance,
+            inr: walletData.balance,
             gold: walletData.gold,
           },
         },
       }));
       return {
-        usd: walletData.balance,
+        inr: walletData.balance,
         gold: walletData.gold,
       };
     } catch (error) {
@@ -552,7 +552,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       );
       get().addToast({
         title: "Order Created",
-        description: `Successfully created ${side} order for ${quantity} at $${price}`,
+        description: `Successfully created ${side} order for ${quantity} at ₹${price}`,
       });
     } catch (error) {
       console.error("Failed to create order:", error);

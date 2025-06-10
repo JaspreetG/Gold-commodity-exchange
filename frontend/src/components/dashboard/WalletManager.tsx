@@ -8,7 +8,7 @@ import { Plus, DollarSign, Coins } from "lucide-react";
 
 interface WalletManagerProps {
   balances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
 }
@@ -22,16 +22,16 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
   const [isAddingGold, setIsAddingGold] = useState(false);
   const [isWithdrawingUSD, setIsWithdrawingUSD] = useState(false);
 
-  // Helper to handle both USD and Gold addition
+  // Helper to handle both INR and Gold addition
   const processAddition = async (
-    type: "usd" | "gold",
+    type: "inr" | "gold",
     amountStr: string,
     setAmount: (v: string) => void
   ) => {
     const amount = parseFloat(amountStr);
     if (!amount || amount <= 0) return;
 
-    if (type === "usd") {
+    if (type === "inr") {
       setIsAddingUSD(true);
       await authStore.addMoney(amount);
       setIsAddingUSD(false);
@@ -60,16 +60,16 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
         <CardHeader>
           <CardTitle className="text-black font-light flex items-center text-lg">
             <DollarSign className="h-5 w-5 mr-2 text-green-600" />
-            Add USD Funds
+            Add INR Funds
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="usd-amount" className="text-gray-600 font-light">
-              Amount (USD)
+            <Label htmlFor="inr-amount" className="text-gray-600 font-light">
+              Amount (INR)
             </Label>
             <Input
-              id="usd-amount"
+              id="inr-amount"
               type="number"
               value={usdAmount}
               onChange={(e) => setUsdAmount(e.target.value)}
@@ -80,10 +80,10 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
             />
           </div>
           <div className="text-sm text-gray-500 font-light">
-            Current Balance: ${balances.usd.toLocaleString()}
+            Current Balance:₹{balances.inr.toLocaleString()}
           </div>
           <Button
-            onClick={() => processAddition("usd", usdAmount, setUsdAmount)}
+            onClick={() => processAddition("inr", usdAmount, setUsdAmount)}
             disabled={isAddingUSD || !usdAmount}
             className="w-full bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm font-light"
           >
@@ -103,7 +103,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="gold-amount" className="text-gray-600 font-light">
-              Amount (oz)
+              Amount (gram)
             </Label>
             <Input
               id="gold-amount"
@@ -117,7 +117,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
             />
           </div>
           <div className="text-sm text-gray-500 font-light">
-            Current Holdings: {balances.gold.toFixed(3)} oz
+            Current Holdings: {balances.gold.toFixed(3)} gram
           </div>
           <Button
             onClick={() => processAddition("gold", goldAmount, setGoldAmount)}
@@ -134,7 +134,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
         <CardHeader>
           <CardTitle className="text-black font-light flex items-center text-lg">
             <DollarSign className="h-5 w-5 mr-2 text-red-600" />
-            Withdraw USD Funds
+            Withdraw INR Funds
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -143,7 +143,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
               htmlFor="withdraw-amount"
               className="text-gray-600 font-light"
             >
-              Amount (USD)
+              Amount (INR)
             </Label>
             <Input
               id="withdraw-amount"
@@ -157,7 +157,7 @@ const WalletManager = ({ balances }: WalletManagerProps) => {
             />
           </div>
           <div className="text-sm text-gray-500 font-light">
-            Current Balance: ${balances.usd.toLocaleString()}
+            Current Balance: ₹{balances.inr.toLocaleString()}
           </div>
           <Button
             onClick={processWithdrawal}
