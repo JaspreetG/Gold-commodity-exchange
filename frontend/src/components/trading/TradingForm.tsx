@@ -1,4 +1,3 @@
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,8 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Trade } from "@/types/trading";
 import { TrendingUp } from "lucide-react";
-import { axiosInstance } from "@/lib/axios";
-import { create } from "domain";
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface TradingFormProps {
@@ -27,7 +24,7 @@ const TradingForm = ({
   updateBalance,
   onTrade,
 }: TradingFormProps) => {
-  const { createOrder, isCreatingOrder } = useAuthStore();
+  const { createOrder, isCreatingOrder, addToast } = useAuthStore();
   const currentPrice = 4000;
 
   const [buyQuantity, setBuyQuantity] = useState("");
@@ -40,7 +37,10 @@ const TradingForm = ({
   const handleBuy = async () => {
     const quantity = parseInt(buyQuantity);
     if (!quantity || quantity <= 0) {
-      console.log("order failed: quantity must be greater than 0");
+      addToast({
+        title: "Order Failed",
+        description: "Quantity must be greater than 0",
+      });
       setBuyQuantity("");
       setBuyPrice("");
       return;
@@ -49,9 +49,10 @@ const TradingForm = ({
     const price =
       buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
     if (buyOrderType === "limit" && (!price || price <= 0)) {
-      console.log(
-        "order failed: price must be greater than 0 for limit orders"
-      );
+      addToast({
+        title: "Order Failed",
+        description: "Price must be greater than 0 for limit orders",
+      });
       setBuyQuantity("");
       setBuyPrice("");
       return;
@@ -60,7 +61,10 @@ const TradingForm = ({
     const total = quantity * price;
 
     if (total > userBalances.inr) {
-      console.log("order failed: insufficient funds");
+      addToast({
+        title: "Order Failed",
+        description: "Insufficient funds",
+      });
       setBuyQuantity("");
       setBuyPrice("");
       return;
@@ -89,14 +93,20 @@ const TradingForm = ({
 
     const quantity = parseInt(sellQuantity);
     if (!quantity || quantity <= 0) {
-      console.log("order failed: quantity must be greater than 0");
+      addToast({
+        title: "Order Failed",
+        description: "Quantity must be greater than 0",
+      });
       setSellQuantity("");
       setSellPrice("");
       return;
     }
 
     if (quantity > userBalances.gold) {
-      console.log("order failed: insufficient gold");
+      addToast({
+        title: "Order Failed",
+        description: "Insufficient gold",
+      });
       setSellQuantity("");
       setSellPrice("");
       return;
@@ -105,9 +115,10 @@ const TradingForm = ({
     const price =
       sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
     if (sellOrderType === "limit" && (!price || price <= 0)) {
-      console.log(
-        "order failed: price must be greater than 0 for limit orders"
-      );
+      addToast({
+        title: "Order Failed",
+        description: "Price must be greater than 0 for limit orders",
+      });
       setSellQuantity("");
       setSellPrice("");
       return;
