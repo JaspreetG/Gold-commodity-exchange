@@ -28,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +38,7 @@ public class TradeService {
     private final TradeRepository tradeRepository;
     private final OrderProducer orderProducer;
     private final OrderRepository orderRepository;
+    private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${wallet.service.url}")
@@ -45,10 +47,12 @@ public class TradeService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository, OrderRepository orderRepository) {
+    public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository, OrderRepository orderRepository,
+            SimpMessagingTemplate messagingTemplate) {
         this.tradeRepository = tradeRepository;
         this.orderProducer = orderProducer;
         this.orderRepository = orderRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     public void sendOrderToMatcher(OrderRequest orderRequest, Long userId) throws Exception {
@@ -245,6 +249,10 @@ public class TradeService {
         return false;
     }
 
+    private void sendToast(Long userId, String message) {
+        messagingTemplate.convertAndSend("/topic/toast/" + userId, message);
+    }
+
     public void updateOrder(StatusConsumerDTO statusConsumerDTO) {
         try {
             // Fetch the order by orderId
@@ -255,20 +263,24 @@ public class TradeService {
                 return;
             }
 
-            String type = order.getType();
+            Long userId=Long.parseLong(statusConsumerDTO.getUserId());
+            String type = order.getType();   // MARKET/TYPE
             int quantity_order = order.getQuantity();
-            String side = order.getSide();
+            String side = order.getSide();    // BUY/SELL
 
             int quantity_status = statusConsumerDTO.getQuantity();
 
             if (type.equals("MARKET")) {
                 if (quantity_status == 0) {
                     // TODO: handle market order cancellation
-
+                    sendToast(userId, "Market order cancelled.");
                 } else if (quantity_status == quantity_order) {
                     // TODO: handle market order complete
+                    sendToast(userId, "Market order fully filled."+quantity_status);
                 } else if (quantity_status < quantity_order) {
                     // partial filled ki web socket chalani h TODO:
+                    int q=quantity_order-quantity_status;
+                    sendToast(userId, "Market order partially filled."+q);
                 }
                 orderRepository.delete(order);
             }
@@ -277,11 +289,14 @@ public class TradeService {
                 if (quantity_status == quantity_order) {
                     orderRepository.delete(order);
                     // TODO:filled ki web socket chalani h
+                    sendToast(userId, "Limit order fully filled."+quantity_status);
                 } else if (quantity_status < quantity_order) {
                     // Partial fill, update the order with remaining quantity
+                    int q=quantity_order - quantity_status;
                     order.setQuantity(quantity_order - quantity_status);
                     orderRepository.save(order);
-                    // TODO:
+                    sendToast(userId, "Limit order partially filled."+q);
+                    // TODO: 
                 } else {
                     // If quantity_status > quantity_order, this is an error case
                     throw new RuntimeException("Quantity status cannot be greater than order quantity");
