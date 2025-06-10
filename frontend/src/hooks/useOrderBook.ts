@@ -13,10 +13,13 @@ interface OrderBook {
 }
 
 export const useOrderBook = () => {
-  const [orderBook, setOrderBook] = useState<OrderBook | null>(() => {
-    const stored = localStorage.getItem('orderBook');
-    return stored ? JSON.parse(stored) : null;
-  });
+
+  const [orderBook, setOrderBook] = useState<OrderBook | null>();
+  
+  // const [orderBook, setOrderBook] = useState<OrderBook | null>(() => {
+  //   const stored = localStorage.getItem('orderBook');
+  //   return stored ? JSON.parse(stored) : null;
+  // });
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8082/ws');
@@ -29,7 +32,7 @@ export const useOrderBook = () => {
         client.subscribe('/topic/orderbook', (message) => {
           const body: OrderBook = JSON.parse(message.body);
           setOrderBook(body);
-          localStorage.setItem('orderBook', JSON.stringify(body));
+          // localStorage.setItem('orderBook', JSON.stringify(body));
         });
       },  
     });
