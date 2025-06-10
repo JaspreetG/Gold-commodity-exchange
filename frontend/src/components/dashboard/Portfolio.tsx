@@ -27,8 +27,8 @@ const Portfolio = ({ balances }: PortfolioProps) => {
           <div className="text-2xl font-light text-black">
             ₹{(totalValue ?? 0).toLocaleString()}
           </div>
-          <p className="text-xs text-green-600 mt-1 font-light">
-            +2.4% from yesterday
+          <p className="text-xs text-slate-600 mt-1 font-light">
+            Total value of your account holding
           </p>
         </CardContent>
       </Card>
@@ -75,8 +75,10 @@ const Portfolio = ({ balances }: PortfolioProps) => {
           <TrendingUp className="h-4 w-4 text-red-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-light text-black">${goldPrice}</div>
-          <p className="text-xs text-red-600 mt-1 font-light">+1.2% today</p>
+          <div className="text-2xl font-light text-black">₹{goldPrice}</div>
+          <p className="text-xs text-slate-600 mt-1 font-light">
+            Based on last traded price
+          </p>
         </CardContent>
       </Card>
     </div>
