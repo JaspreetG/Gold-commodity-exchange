@@ -68,7 +68,9 @@ const TradePosition = ({ positions }: TradePositionProps) => {
                     {order.quantity.toFixed(3)} gram
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    ₹{order.price.toFixed(2)}
+                    {order.type === "LIMIT"
+                      ? `₹${order.price.toFixed(2)}`
+                      : "Market Price"}
                   </div>
                   <div className="text-right space-y-1">
                     <div className="text-black font-mono font-light">
