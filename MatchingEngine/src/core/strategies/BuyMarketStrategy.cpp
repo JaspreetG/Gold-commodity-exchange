@@ -31,10 +31,10 @@ namespace core
                                               std::chrono::system_clock::now()));
             IMatchingStrategy::statusProducer.publish(
                 models::Status(incoming.order_id(), incoming.user_id(), "BUY",
-                               qty, std::chrono::system_clock::now()));
+                               tradeQty, std::chrono::system_clock::now()));
             IMatchingStrategy::statusProducer.publish(
                 models::Status(bestAsk.order_id(), bestAsk.user_id(),
-                               "SELL", qty, std::chrono::system_clock::now()));
+                               "SELL", tradeQty, std::chrono::system_clock::now()));
             qty -= tradeQty;
             bestAsk.setQuantity(bestAsk.quantity() - tradeQty);
             if (bestAsk.quantity() == 0)
