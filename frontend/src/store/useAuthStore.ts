@@ -59,6 +59,7 @@ interface tempUser {
 interface AuthStore {
   authUser: User | null;
   tempUser: tempUser | null;
+  userId:string;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isAddingUSD: boolean;
@@ -88,6 +89,7 @@ interface AuthStore {
   withdrawMoney: (amount: number) => Promise<void>;
   getWallet: () => Promise<{ inr: number; gold: number } | null>;
   getUser: () => Promise<void>;
+  getUserId:()=>Promise<void>;
   createOrder: (
     quantity: number,
     price: number,
@@ -105,6 +107,7 @@ const authApi = axiosInstance("auth");
 export const useAuthStore = create<AuthStore>((set, get) => ({
   authUser: null,
   tempUser: null,
+  userId:null,
   isSigningUp: false,
   isLoggingIn: false,
   isAddingUSD: false,
@@ -235,6 +238,31 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       console.log(get().authUser);
     } finally {
       set({ isGettingUser: false });
+    }
+  },
+  getUserId: async () => {
+    try {
+      console.log("in getUserId");
+      const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
+        (m) => m.default
+      );
+      const fp = await FingerprintJS.load();
+      const { visitorId } = await fp.get();
+
+      const res = await authApi.get("/getUserId", {
+        headers: {
+          "X-Device-Fingerprint": visitorId,
+        },
+      });
+      console.log("getUserId",res.data);
+      set({userId:res.data})
+
+
+    } catch (error) {
+      console.error("Failed to fetch userId:", error);
+      set({userId:null})
+      // console.log(get().authUser);
+    } finally {
     }
   },
 

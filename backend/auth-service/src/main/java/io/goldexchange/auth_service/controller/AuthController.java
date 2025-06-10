@@ -140,4 +140,21 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
+    @GetMapping("/getUserId")
+     public ResponseEntity<?> getUserId(Authentication authentication) {
+        System.out.println("in get UserId");
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
+        }
+        // The principal is userId (Long) set by JwtAuthenticationFilter
+        Long userId = (Long) authentication.getPrincipal();
+        // UserDTO userDTO = authService.getUserById(userId);
+        // System.out.println(userDTO);
+        // if (userDTO == null) {
+        //     return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+        // }
+        return ResponseEntity.ok(userId);
+    }
+
+
 }

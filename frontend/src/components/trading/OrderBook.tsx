@@ -5,6 +5,8 @@ import { BookOpen } from "lucide-react";
 import { useLtp } from "../../hooks/useLtp";
 import { useEffect, useState } from "react";
 import { useOrderBook } from "@/hooks/useOrderBook";
+import { useToastSocket } from "@/hooks/useToastSocket";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface OrderBookProps {
   orderBook: OrderBookType;
@@ -12,9 +14,17 @@ interface OrderBookProps {
 }
 
 const OrderBook = () => {
+
+  const {getUserId,userId}=useAuthStore();
+
+  useEffect(() => {
+      getUserId();
+    }, [getUserId]);
+
   const currentPrice = 4000;
   const ltp = useLtp();
   const orderBook = useOrderBook();
+  useToastSocket(userId); 
 
   return (
     <Card className="border border-gray-100 shadow-sm">
