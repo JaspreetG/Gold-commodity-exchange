@@ -14,19 +14,21 @@ import { useAuthStore } from "@/store/useAuthStore";
 
 interface TradingFormProps {
   userBalances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
-  updateBalance: (type: "usd" | "gold", amount: number) => void;
+  updateBalance: (type: "inr" | "gold", amount: number) => void;
   currentPrice: number;
   onTrade: (trade: Omit<Trade, "id" | "timestamp">) => void;
 }
 
-const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps) => {
-
+const TradingForm = ({
+  userBalances,
+  updateBalance,
+  onTrade,
+}: TradingFormProps) => {
   const { createOrder, isCreatingOrder } = useAuthStore();
-  const currentPrice=4000;
-
+  const currentPrice = 4000;
 
   const [buyQuantity, setBuyQuantity] = useState("");
   const [sellQuantity, setSellQuantity] = useState("");
@@ -36,8 +38,6 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
   const [sellPrice, setSellPrice] = useState("");
 
   const handleBuy = async () => {
-
-
     const quantity = parseInt(buyQuantity);
     if (!quantity || quantity <= 0) {
       console.log("order failed: quantity must be greater than 0");
@@ -46,9 +46,12 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
       return;
     }
 
-    const price =buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
+    const price =
+      buyOrderType === "limit" ? parseFloat(buyPrice) : currentPrice;
     if (buyOrderType === "limit" && (!price || price <= 0)) {
-      console.log("order failed: price must be greater than 0 for limit orders");
+      console.log(
+        "order failed: price must be greater than 0 for limit orders"
+      );
       setBuyQuantity("");
       setBuyPrice("");
       return;
@@ -56,7 +59,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
 
     const total = quantity * price;
 
-    if (total > userBalances.usd) {
+    if (total > userBalances.inr) {
       console.log("order failed: insufficient funds");
       setBuyQuantity("");
       setBuyPrice("");
@@ -99,9 +102,12 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
       return;
     }
 
-    const price =sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
+    const price =
+      sellOrderType === "limit" ? parseFloat(sellPrice) : currentPrice;
     if (sellOrderType === "limit" && (!price || price <= 0)) {
-      console.log("order failed: price must be greater than 0 for limit orders");
+      console.log(
+        "order failed: price must be greater than 0 for limit orders"
+      );
       setSellQuantity("");
       setSellPrice("");
       return;
@@ -114,10 +120,8 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
 
     createOrder(quantity, price, side, type);
 
-
-
     // updateBalance("gold", -quantity);
-    // updateBalance("usd", total);
+    // updateBalance("inr", total);
 
     // onTrade({
     //   type: "SELL",
@@ -201,7 +205,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
                   htmlFor="buy-price"
                   className="text-gray-700 font-light text-sm"
                 >
-                  Price (USD)
+                  Price (INR)
                 </Label>
                 <Input
                   id="buy-price"
@@ -221,7 +225,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
                 htmlFor="buy-quantity"
                 className="text-gray-700 font-light text-sm"
               >
-                Quantity (oz)
+                Quantity (gram)
               </Label>
               <Input
                 id="buy-quantity"
@@ -245,7 +249,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
               <div className="flex justify-between text-gray-600">
                 <span>Price:</span>
                 <span className="text-black font-mono">
-                  $
+                  ₹
                   {buyOrderType === "limit"
                     ? buyPrice || currentPrice.toFixed(2)
                     : currentPrice.toFixed(2)}
@@ -254,19 +258,19 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
               <div className="flex justify-between text-gray-600 border-t border-gray-200 pt-3">
                 <span>Total:</span>
                 <span className="text-black font-mono font-medium">
-                  $
+                  ₹
                   {buyQuantity
                     ? (
-                      parseFloat(buyQuantity) *
-                      (buyOrderType === "limit"
-                        ? parseFloat(buyPrice) || currentPrice
-                        : currentPrice)
-                    ).toFixed(2)
+                        parseFloat(buyQuantity) *
+                        (buyOrderType === "limit"
+                          ? parseFloat(buyPrice) || currentPrice
+                          : currentPrice)
+                      ).toFixed(2)
                     : "0.00"}
                 </span>
               </div>
               <div className="text-xs text-gray-500">
-                Available: ${(userBalances?.usd ?? 0).toLocaleString()}
+                Available:₹{(userBalances?.inr ?? 0).toLocaleString()}
               </div>
             </div>
 
@@ -328,7 +332,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
                   htmlFor="sell-price"
                   className="text-gray-700 font-light text-sm"
                 >
-                  Price (USD)
+                  Price (INR)
                 </Label>
                 <Input
                   id="sell-price"
@@ -348,7 +352,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
                 htmlFor="sell-quantity"
                 className="text-gray-700 font-light text-sm"
               >
-                Quantity (oz)
+                Quantity (gram)
               </Label>
               <Input
                 id="sell-quantity"
@@ -372,7 +376,7 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
               <div className="flex justify-between text-gray-600">
                 <span>Price:</span>
                 <span className="text-black font-mono">
-                  $
+                  ₹
                   {sellOrderType === "limit"
                     ? sellPrice || currentPrice.toFixed(2)
                     : currentPrice.toFixed(2)}
@@ -381,19 +385,19 @@ const TradingForm = ({ userBalances, updateBalance, onTrade }: TradingFormProps)
               <div className="flex justify-between text-gray-600 border-t border-gray-200 pt-3">
                 <span>Total:</span>
                 <span className="text-black font-mono font-medium">
-                  $
+                  ₹
                   {sellQuantity
                     ? (
-                      parseFloat(sellQuantity) *
-                      (sellOrderType === "limit"
-                        ? parseFloat(sellPrice) || currentPrice
-                        : currentPrice)
-                    ).toFixed(2)
+                        parseFloat(sellQuantity) *
+                        (sellOrderType === "limit"
+                          ? parseFloat(sellPrice) || currentPrice
+                          : currentPrice)
+                      ).toFixed(2)
                     : "0.00"}
                 </span>
               </div>
               <div className="text-xs text-gray-500">
-                Available: {(userBalances?.gold ?? 0).toFixed(3)} oz
+                Available: {(userBalances?.gold ?? 0).toFixed(3)} gram
               </div>
             </div>
 

@@ -3,7 +3,7 @@ import { TrendingUp, DollarSign, Coins } from "lucide-react";
 
 interface PortfolioProps {
   balances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
 }
@@ -11,7 +11,7 @@ interface PortfolioProps {
 const Portfolio = ({ balances }: PortfolioProps) => {
   // TODO: Replace with actual API call to fetch current gold price
   const goldPrice = 4000; // Mock current gold price
-  const totalValue = (balances?.usd ?? 0) + (balances?.gold ?? 0) * goldPrice;
+  const totalValue = (balances?.inr ?? 0) + (balances?.gold ?? 0) * goldPrice;
   const goldValue = (balances?.gold ?? 0) * goldPrice;
 
   return (
@@ -25,7 +25,7 @@ const Portfolio = ({ balances }: PortfolioProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">
-            ${(totalValue ?? 0).toLocaleString()}
+            ₹{(totalValue ?? 0).toLocaleString()}
           </div>
           <p className="text-xs text-green-600 mt-1 font-light">
             +2.4% from yesterday
@@ -36,13 +36,13 @@ const Portfolio = ({ balances }: PortfolioProps) => {
       <Card className="border border-gray-100 shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-normal text-gray-600">
-            USD Balance
+            INR Balance
           </CardTitle>
           <DollarSign className="h-4 w-4 text-black" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">
-            ${(balances?.usd ?? 0).toLocaleString()}
+            ₹{(balances?.inr ?? 0).toLocaleString()}
           </div>
           <p className="text-xs text-gray-500 mt-1 font-light">
             Available for trading
@@ -59,10 +59,10 @@ const Portfolio = ({ balances }: PortfolioProps) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-light text-black">
-            {(balances?.gold ?? 0).toFixed(3)} oz
+            {(balances?.gold ?? 0).toFixed(3)} gram
           </div>
           <p className="text-xs text-gray-500 mt-1 font-light">
-            ${(goldValue ?? 0).toLocaleString()} value
+            ₹{(goldValue ?? 0).toLocaleString()} value
           </p>
         </CardContent>
       </Card>

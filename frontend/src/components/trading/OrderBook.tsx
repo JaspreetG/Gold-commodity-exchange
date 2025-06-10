@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderBook as OrderBookType } from "@/types/trading";
 import { BookOpen } from "lucide-react";
 // import { connectWebSocket, disconnectWebSocket } from '../../lib/ConnectWebSocket';
-import { useLtp } from '../../hooks/useLtp';
+import { useLtp } from "../../hooks/useLtp";
 import { useEffect, useState } from "react";
 import { useOrderBook } from "@/hooks/useOrderBook";
 
@@ -12,15 +11,10 @@ interface OrderBookProps {
   currentPrice: number;
 }
 
-
 const OrderBook = () => {
-
- const currentPrice=4000;
+  const currentPrice = 4000;
   const ltp = useLtp();
-  const orderBook=useOrderBook();
-
-
-
+  const orderBook = useOrderBook();
 
   return (
     <Card className="border border-gray-100 shadow-sm">
@@ -41,17 +35,26 @@ const OrderBook = () => {
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
               <div>Total (INR)</div>
-              <div className="text-center">Amount (oz)</div>
-              <div className="text-right">Price (USD)</div>
+              <div className="text-center">Amount (gram)</div>
+              <div className="text-right">Price (INR)</div>
             </div>
 
             {/* Bids - Flipped columns */}
             <div className="space-y-1">
               {orderBook?.bids?.map((bid, index) => (
-                <div key={index} className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm">
-                  <div className="text-gray-600 font-mono text-sm">{bid.price*bid.volume}</div>
-                  <div className="text-center text-black font-mono text-sm">{bid.volume.toFixed(0)}</div>
-                  <div className="text-right text-green-600 font-mono text-sm">{bid.price.toFixed(2)}</div>
+                <div
+                  key={index}
+                  className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm"
+                >
+                  <div className="text-gray-600 font-mono text-sm">
+                    {bid.price * bid.volume}
+                  </div>
+                  <div className="text-center text-black font-mono text-sm">
+                    {bid.volume.toFixed(0)}
+                  </div>
+                  <div className="text-right text-green-600 font-mono text-sm">
+                    {bid.price.toFixed(2)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -73,10 +76,19 @@ const OrderBook = () => {
             {/* Asks - Flipped */}
             <div className="space-y-1">
               {orderBook?.asks?.map((ask, index) => (
-                <div key={index} className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-red-50 transition-colors rounded-sm">
-                  <div className="text-red-600 font-mono text-sm">{ask.price.toFixed(2)}</div>
-                  <div className="text-center text-black font-mono text-sm">{ask.volume.toFixed(0)}</div>
-                  <div className="text-right text-gray-600 font-mono text-sm">{ask.price*ask.volume}</div>
+                <div
+                  key={index}
+                  className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-red-50 transition-colors rounded-sm"
+                >
+                  <div className="text-red-600 font-mono text-sm">
+                    {ask.price.toFixed(2)}
+                  </div>
+                  <div className="text-center text-black font-mono text-sm">
+                    {ask.volume.toFixed(0)}
+                  </div>
+                  <div className="text-right text-gray-600 font-mono text-sm">
+                    {ask.price * ask.volume}
+                  </div>
                 </div>
               ))}
             </div>
@@ -87,8 +99,12 @@ const OrderBook = () => {
         <div className="px-6 py-6 bg-gray-50 border-t border-gray-200 mt-6">
           <div className="text-center">
             {/* <div className="text-black font-normal text-2xl tracking-wide">${currentPrice.toFixed(2)}</div> */}
-            <div className="text-black font-normal text-2xl tracking-wide">${ltp?.price}</div>
-            <div className="text-xs text-gray-500 font-light mt-1 uppercase tracking-wider">Last Traded Price</div>
+            <div className="text-black font-normal text-2xl tracking-wide">
+              ₹{ltp?.price}
+            </div>
+            <div className="text-xs text-gray-500 font-light mt-1 uppercase tracking-wider">
+              Last Traded Price
+            </div>
           </div>
         </div>
       </CardContent>

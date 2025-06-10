@@ -9,22 +9,18 @@ interface TradePositionProps {
 }
 
 const TradePosition = ({ positions }: TradePositionProps) => {
-  const { getOrders, isGettingOrder,orders } = useAuthStore();
+  const { getOrders, isGettingOrder, orders } = useAuthStore();
 
   useEffect(() => {
-  const intervalId = setInterval(() => {
+    const intervalId = setInterval(() => {
+      getOrders();
+    }, 5000); // 5000ms = 5 seconds
+
+    // Optionally call immediately on mount
     getOrders();
-  }, 5000); // 5000ms = 5 seconds
 
-  // Optionally call immediately on mount
-  getOrders();
-
-  return () => clearInterval(intervalId); // Cleanup on unmount
-}, [getOrders]);
-
-
-
-
+    return () => clearInterval(intervalId); // Cleanup on unmount
+  }, [getOrders]);
 
   return (
     <Card className="border border-gray-100 shadow-sm">
@@ -46,7 +42,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
 
           {/* Positions */}
           <div className="max-h-96 overflow-y-auto">
-            {!orders? (
+            {!orders ? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
                 No open positions
               </div>
@@ -58,10 +54,9 @@ const TradePosition = ({ positions }: TradePositionProps) => {
                 >
                   <div className="space-y-1">
                     <div
-                      className={`font-normal ${order.side === "BUY"
-                          ? "text-green-600"
-                          : "text-red-600"
-                        }`}
+                      className={`font-normal ${
+                        order.side === "BUY" ? "text-green-600" : "text-red-600"
+                      }`}
                     >
                       {order.side.toUpperCase()}
                     </div>
@@ -70,10 +65,10 @@ const TradePosition = ({ positions }: TradePositionProps) => {
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    {order.quantity.toFixed(3)} oz
+                    {order.quantity.toFixed(3)} gram
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    ${order.price.toFixed(2)}
+                    ₹{order.price.toFixed(2)}
                   </div>
                   <div className="text-right space-y-1">
                     <div className="text-black font-mono font-light">

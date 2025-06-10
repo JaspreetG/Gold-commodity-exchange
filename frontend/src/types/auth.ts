@@ -2,7 +2,7 @@ export interface User {
   userName: string;
   phoneNumber: string;
   balances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
 }

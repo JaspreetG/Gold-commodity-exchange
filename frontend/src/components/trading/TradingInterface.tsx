@@ -7,10 +7,10 @@ import { OrderBook as OrderBookType, Trade } from "@/types/trading";
 
 interface TradingInterfaceProps {
   userBalances: {
-    usd: number;
+    inr: number;
     gold: number;
   };
-  updateBalance: (type: "usd" | "gold", amount: number) => void;
+  updateBalance: (type: "inr" | "gold", amount: number) => void;
 }
 
 const TradingInterface = ({
