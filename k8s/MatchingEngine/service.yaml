@@ -4,10 +4,10 @@ metadata:
   name: matching-engine
   namespace: gold-exchange
 spec:
+  clusterIP: None # Headless service
   selector:
     app: matching-engine
   ports:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  type: ClusterIP
