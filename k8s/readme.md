@@ -43,6 +43,7 @@ kubectl get nodes
 ### 3. Apply All Kubernetes Resources
 
 ```bash
+kubectl apply -f k8s/namespace.yaml
 kubectl apply -f k8s/ --recursive
 ```
 

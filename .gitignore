@@ -155,7 +155,7 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 .clangd/
-MatchingEngine/cppkafka/
+# MatchingEngine/cppkafka/
 
 # --- Kafka / Zookeeper ---
 kafka-logs/
