@@ -26,8 +26,8 @@ public class SecurityConfig {
         http.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(requests -> requests
-                        // .requestMatchers( "/topic/**", "/app/**").permitAll()
-                        .requestMatchers("/ws/**","/api/trade/**").authenticated()
+                        .requestMatchers( "/ws/**","/topic/**", "/app/**").permitAll()
+                        .requestMatchers("/api/trade/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

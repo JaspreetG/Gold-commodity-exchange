@@ -42,14 +42,23 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                             Long userId = claims.get("userId", Long.class);
                             String deviceFingerprint = claims.get("deviceFingerprint", String.class);
 
-                            String requestFingerprint = req.getHeader("X-Device-Fingerprint");
+                            System.out.println("*********IN INTERCEPTOR****************");
+                            System.out.println(userId);
+                            System.out.println("JwtWalaFingerPrint:"+deviceFingerprint);
+
+                            // String requestFingerprint = req.getHeader("X-Device-Fingerprint");
+                            String requestFingerprint = req.getParameter("fingerprint");
+
+                            System.out.println("queryParamWalaFingerPrint:"+requestFingerprint);
                             if (requestFingerprint == null || !requestFingerprint.equals(deviceFingerprint)) {
                                 if (response instanceof org.springframework.http.server.ServletServerHttpResponse servletResponse) {
                                     servletResponse.getServletResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                     servletResponse.getServletResponse().getWriter().write("Unauthorized: Device fingerprint mismatch");
+                                    System.out.println("****************FINGER PRINT MISMATCH OR NULL*********");
                                 }
                                 return false;
                             }
+                            System.out.println("*******TRUE RETURN HUA **********");
                             return true;
                         } catch (JwtException e) {
                             response.setStatusCode(HttpStatus.UNAUTHORIZED);

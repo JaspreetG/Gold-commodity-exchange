@@ -10,7 +10,6 @@ import { TrendingUp } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLtp } from "../../hooks/useLtp";
 
-
 interface TradingFormProps {
   userBalances: {
     inr: number;
@@ -28,8 +27,8 @@ const TradingForm = ({
 }: TradingFormProps) => {
   const { createOrder, isCreatingOrder, addToast } = useAuthStore();
 
-const ltp = useLtp();
-const currentPrice = ltp?.price || 0;
+  const ltp = useLtp();
+  const currentPrice = ltp?.price || 1;
 
   // const currentPrice = 4000;
 
