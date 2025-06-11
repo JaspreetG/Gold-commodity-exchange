@@ -17,7 +17,10 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfig {
 
-    @Value("${KAFKA_BROKER:127.0.0.1:29092}")
+    // TODO: Update the Kafka broker address as needed.
+    // Uncomment the line below to use a different broker address.
+    // @Value("${KAFKA_BROKER:127.0.0.1:29092}")
+    @Value("${KAFKA_BROKER:kafka:9092}")
     private String bootstrapServers;
 
     @Bean
