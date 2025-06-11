@@ -50,6 +50,10 @@ services:
     container_name: frontend
     ports:
       - "3000:80"
+    depends_on:
+    - auth-service
+    - wallet-service
+    - trade-service
     networks:
       - kafka-net
       - db-net
