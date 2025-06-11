@@ -1,0 +1,74 @@
+package io.goldexchange.trade_service.webSocket;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
+
+import io.jsonwebtoken.*;
+import jakarta.servlet.http.*;
+
+
+@Component
+public class JwtHandshakeInterceptor implements HandshakeInterceptor {
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    @Override
+    public boolean beforeHandshake(ServerHttpRequest request,ServerHttpResponse response,WebSocketHandler wsHandler,Map<String, Object> attributes) throws Exception {
+        if (request instanceof ServletServerHttpRequest servletRequest) {
+            HttpServletRequest req = servletRequest.getServletRequest();
+            Cookie[] cookies = req.getCookies();
+
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("jwt".equals(cookie.getName())) {
+                        String jwtToken = cookie.getValue();
+
+                        try {
+                            Claims claims = Jwts.parser()
+                                    .setSigningKey(jwtSecret.getBytes(StandardCharsets.UTF_8))
+                                    .parseClaimsJws(jwtToken)
+                                    .getBody();
+
+                            Long userId = claims.get("userId", Long.class);
+                            String deviceFingerprint = claims.get("deviceFingerprint", String.class);
+
+                            String requestFingerprint = req.getHeader("X-Device-Fingerprint");
+                            if (requestFingerprint == null || !requestFingerprint.equals(deviceFingerprint)) {
+                                if (response instanceof org.springframework.http.server.ServletServerHttpResponse servletResponse) {
+                                    servletResponse.getServletResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    servletResponse.getServletResponse().getWriter().write("Unauthorized: Device fingerprint mismatch");
+                                }
+                                return false;
+                            }
+                            return true;
+                        } catch (JwtException e) {
+                            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        return false;
+    }
+
+    @Override
+    public void afterHandshake(ServerHttpRequest request,
+                               ServerHttpResponse response,
+                               WebSocketHandler wsHandler,
+                               Exception exception) {
+        // No implementation needed for now
+    }
+}

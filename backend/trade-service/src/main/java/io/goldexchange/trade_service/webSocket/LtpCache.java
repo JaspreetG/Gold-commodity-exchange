@@ -1,4 +1,4 @@
-package io.goldexchange.trade_service.consumer;
+package io.goldexchange.trade_service.webSocket;
 
 import org.springframework.stereotype.Component;
 
