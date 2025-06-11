@@ -5,22 +5,22 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ---
 
-## 🧭 Table of Contents
+## Table of Contents
 
-- [Architecture Overview](#-architecture-overview)
-- [Technologies Used](#-technologies-used)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Local Development](#-local-development-with-docker-compose)
-- [Kubernetes Deployment](#️-kubernetes-deployment)
-- [Deployment Diagram](#-deployment-diagram)
-- [Spring Boot UML Diagrams](#-spring-boot-uml-diagrams)
-- [Matching Engine UML Diagrams](#-matching-engine-uml-diagrams)
-- [License](#-license)
+- [🧱 Architecture Overview](#architecture-overview)
+- [🚀 Technologies Used](#technologies-used)
+- [⚙️ Prerequisites](#prerequisites)
+- [🛠️ Getting Started](#getting-started)
+- [🧪 Local Development with Docker Compose](#local-development-with-docker-compose)
+- [☸️ Kubernetes Deployment](#kubernetes-deployment)
+- [🖥️ Deployment Diagram](#deployment-diagram)
+- [🧩 Spring Boot UML Diagrams](#spring-boot-uml-diagrams)
+- [🔧 Matching Engine UML Diagrams](#matching-engine-uml-diagrams)
+- [📄 License](#license)
 
 ---
 
-## 🧱 Architecture Overview
+## Architecture Overview
 
 - 🖥️ **Frontend** (ReactJS)  
   User interface for placing and tracking trades.
@@ -44,7 +44,7 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ---
 
-## 🚀 Technologies Used
+## Technologies Used
 
 | Layer              | Technology        |
 | ------------------ | ----------------- |
@@ -60,7 +60,7 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ---
 
-## ⚙️ Prerequisites
+## Prerequisites
 
 - Docker ≥ 20.10
 - Docker Compose ≥ 1.29
@@ -72,7 +72,7 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 Clone the repository:
 
@@ -83,7 +83,7 @@ cd Gold-commodity-exchange
 
 ---
 
-## 🧪 Local Development with Docker Compose
+## Local Development with Docker Compose
 
 To build and start all services for local development:
 
@@ -99,7 +99,7 @@ docker-compose down
 
 ---
 
-## ☸️ Kubernetes Deployment
+## Kubernetes Deployment
 
 Deploy all services to your Kubernetes cluster:
 
@@ -111,7 +111,7 @@ Ensure Kafka, Zookeeper, and other services are properly set up and the cluster 
 
 ---
 
-## 🖥️ Deployment Diagram
+## Deployment Diagram
 
 This section shows how the system is deployed across containers, services, and infrastructure — highlighting interactions between Kafka, backend services, and other components.
 
@@ -180,13 +180,13 @@ flowchart LR
 
 ---
 
-## 🧩 Spring Boot UML Diagrams
+## Spring Boot UML Diagrams
 
 This section visualizes the internal architecture and flow of the Spring Boot services using various UML diagrams.
 
 ---
 
-🎯 Use Case Diagram
+### 🎯 Use Case Diagram
 
 High-level representation of how different users (like Admin, Trader) interact with the system.
 
@@ -234,7 +234,7 @@ flowchart TD
 
 ---
 
-📘 Class Diagram
+### 📘 Class Diagram
 
 Structure of key Spring Boot components: controllers, services, repositories, models.
 
@@ -337,7 +337,7 @@ TradeRepository ..> Trade
 
 ---
 
-🔁 Sequence Diagram
+### 🔁 Sequence Diagram
 
 ```mermaid
 sequenceDiagram
@@ -403,7 +403,7 @@ sequenceDiagram
 
 ---
 
-🔄 Activity Diagram
+### 🔄 Activity Diagram
 
 Visualizes logic flow (e.g., registration, order handling, etc.).
 
@@ -454,11 +454,11 @@ flowchart TD
 
 ---
 
-## 🔧 Matching Engine UML Diagrams
+## Matching Engine UML Diagrams
 
 This section provides visual representation of the matching engine internals using UML diagrams to help understand design structure, interactions, and order lifecycle.
 
-### 📘 Class Diagram
+### Class Diagram
 
 Structure of core classes in the matching engine.
 
@@ -599,7 +599,7 @@ classDiagram
 
 ---
 
-### 🔁 Sequence Diagram
+### Sequence Diagram
 
 Flow of order processing from Kafka input to trade publication.
 
@@ -634,7 +634,7 @@ sequenceDiagram
 
 ---
 
-🔄 Activity Diagram
+### Activity Diagram
 
 Visual flow of logic during order processing.
 
@@ -662,7 +662,7 @@ flowchart TD
 
 ---
 
-🔀 State Transition Diagram
+### State Transition Diagram
 
 Lifecycle states of an order during processing.
 
@@ -692,7 +692,7 @@ stateDiagram-v2
     Acknowledged --> [*]
 ```
 
-## 📄 License
+## License
 
 Licensed under the [MIT License](./LICENSE).
 
