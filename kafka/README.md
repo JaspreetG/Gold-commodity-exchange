@@ -1,15 +1,16 @@
 # 🧩 Kafka Setup
 
-This folder contains Kafka-specific setup scripts and environment config.
+This folder contains Kafka-specific setup scripts.
 
 ## 📦 Topics
 
 The following Kafka topics are created:
 
 - `order` – Handles all incoming order data (buy/sell)
-- `trade` – Used by matchingEngine to publish matched orders
-- `orderbook` – Used to send orderbook to consumer
-- `ltp` – Used to send Last traded price
+- `trade` – Publishes matched orders from the matching engine
+- `orderbook` – Broadcasts the current state of the order book to consumers
+- `ltp` – Sends the last traded price
+- `status` – Used for publishing live status of order
 
 ## Run this to start kafka
 
@@ -23,21 +24,23 @@ docker-compose -f docker-compose.kafka.yml up -d
 
 ## 🚀 Checking Topics
 
-```shell
+List all Kafka topics:
+
+```bash
 docker exec -it zookeeper-kafka kafka-topics --bootstrap-server kafka:9092 --list
 ```
 
-## 🧪 Test produce/consume
+## 🧪 Test Produce/Consume
 
-Produce a message:
+### Produce messages to the `order` topic:
 
-```shell
+```bash
 docker exec -it zookeeper-kafka kafka-console-producer \
   --broker-list localhost:9092 \
   --topic order
 ```
 
-Then type messages like (all in one line, copy-paste ready):
+Then paste the following (all on one line per message):
 
 ```json
 {"user_id":"order-1","quantity":10,"price":1950.5,"side":"BUY","type":"LIMIT"}
@@ -46,39 +49,49 @@ Then type messages like (all in one line, copy-paste ready):
 {"user_id":"order-2","quantity":100,"price":1900.0,"side":"SELL","type":"LIMIT"}
 ```
 
-(Press Ctrl+C to stop)
+(Press `Ctrl+C` to stop the producer)
 
-Consume messages:
+### Consume messages from each topic:
 
-```shell
+**Order:**
+
+```bash
 docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic order \
   --from-beginning
 ```
 
-```shell
+**Orderbook:**
+
+```bash
 docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic orderbook \
   --from-beginning
 ```
 
-```shell
+**LTP:**
+
+```bash
 docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic ltp \
   --from-beginning
 ```
 
-```shell
+**Trade:**
+
+```bash
 docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic trade \
   --from-beginning
 ```
 
-```shell
+**Status:**
+
+```bash
 docker exec -it zookeeper-kafka kafka-console-consumer \
   --bootstrap-server localhost:9092 \
   --topic status \
