@@ -114,7 +114,11 @@ export const useLtp = () => {
       const deviceFingerprint = result.visitorId;
 
       // Create raw WebSocket with fingerprint in query params
-      const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
+
+      //TODO: Use environment variable for WebSocket URL
+      // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
+      const wsUrl = `ws://trade-service:8082/ws?fingerprint=${deviceFingerprint}`;
+
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
         debug: (str) => console.log("[STOMP]", str),
