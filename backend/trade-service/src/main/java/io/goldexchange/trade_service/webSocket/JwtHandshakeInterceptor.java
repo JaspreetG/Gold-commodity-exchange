@@ -50,9 +50,11 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                                 if (response instanceof org.springframework.http.server.ServletServerHttpResponse servletResponse) {
                                     servletResponse.getServletResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                     servletResponse.getServletResponse().getWriter().write("Unauthorized: Device fingerprint mismatch");
+                                    System.out.println("****************FINGER PRINT MISMATCH OR NULL*********");
                                 }
                                 return false;
                             }
+                            System.out.println("*******TRUE RETURN HUA **********");
                             return true;
                         } catch (JwtException e) {
                             response.setStatusCode(HttpStatus.UNAUTHORIZED);
