@@ -7,22 +7,20 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## 🧭 Table of Contents
 
-- [Architecture Overview](#architecture-overview)
-- [Technologies Used](#technologies-used)
-- [Prerequisites](#prerequisites)
-- [Getting Started](#getting-started)
-- [Local Development with Docker Compose](#local-development-with-docker-compose)
-- [Kubernetes Deployment](#kubernetes-deployment)
-- [Deployment Diagram](#deployment-diagram)
-- [Spring Boot UML Diagrams](#spring-boot-uml-diagrams)
-- [Matching Engine UML Diagrams](#matching-engine-uml-diagrams)
-- [License](#license)
+- [Architecture Overview](#-architecture-overview)
+- [Technologies Used](#-technologies-used)
+- [Prerequisites](#-prerequisites)
+- [Getting Started](#-getting-started)
+- [Local Development](#-local-development-with-docker-compose)
+- [Kubernetes Deployment](#️-kubernetes-deployment)
+- [Deployment Diagram](#-deployment-diagram)
+- [Spring Boot UML Diagrams](#-spring-boot-uml-diagrams)
+- [Matching Engine UML Diagrams](#-matching-engine-uml-diagrams)
+- [License](#-license)
 
 ---
 
 ## 🧱 Architecture Overview
-
-<a name="architecture-overview"></a>
 
 - 🖥️ **Frontend** (ReactJS)  
   User interface for placing and tracking trades.
@@ -48,8 +46,6 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## 🚀 Technologies Used
 
-<a name="technologies-used"></a>
-
 | Layer              | Technology        |
 | ------------------ | ----------------- |
 | 🖼️ Frontend        | ReactJS, NGINX    |
@@ -66,8 +62,6 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## ⚙️ Prerequisites
 
-<a name="prerequisites"></a>
-
 - Docker ≥ 20.10
 - Docker Compose ≥ 1.29
 - Java 17+
@@ -80,8 +74,6 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## 🛠️ Getting Started
 
-<a name="getting-started"></a>
-
 Clone the repository:
 
 ```bash
@@ -92,8 +84,6 @@ cd Gold-commodity-exchange
 ---
 
 ## 🧪 Local Development with Docker Compose
-
-<a name="local-development-with-docker-compose"></a>
 
 To build and start all services for local development:
 
@@ -111,8 +101,6 @@ docker-compose down
 
 ## ☸️ Kubernetes Deployment
 
-<a name="kubernetes-deployment"></a>
-
 Deploy all services to your Kubernetes cluster:
 
 ```bash
@@ -124,8 +112,6 @@ Ensure Kafka, Zookeeper, and other services are properly set up and the cluster 
 ---
 
 ## 🖥️ Deployment Diagram
-
-<a name="deployment-diagram"></a>
 
 This section shows how the system is deployed across containers, services, and infrastructure — highlighting interactions between Kafka, backend services, and other components.
 
@@ -195,8 +181,6 @@ flowchart LR
 ---
 
 ## 🧩 Spring Boot UML Diagrams
-
-<a name="spring-boot-uml-diagrams"></a>
 
 This section visualizes the internal architecture and flow of the Spring Boot services using various UML diagrams.
 
@@ -472,8 +456,6 @@ flowchart TD
 
 ## 🔧 Matching Engine UML Diagrams
 
-<a name="matching-engine-uml-diagrams"></a>
-
 This section provides visual representation of the matching engine internals using UML diagrams to help understand design structure, interactions, and order lifecycle.
 
 ### 📘 Class Diagram
@@ -711,8 +693,6 @@ stateDiagram-v2
 ```
 
 ## 📄 License
-
-<a name="license"></a>
 
 Licensed under the [MIT License](./LICENSE).
 
