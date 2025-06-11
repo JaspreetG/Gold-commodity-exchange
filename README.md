@@ -1,38 +1,46 @@
 # 💹 Real-Time Trading System
 
-A **microservices-based trading platform** built for **scalability and high performance**.
+A **microservices-based trading platform** built for **scalability and high performance**.  
 It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C++ matching engine, and uses Apache Kafka for real-time event streaming. All components are containerized with Docker and orchestrated via Kubernetes.
 
 ---
 
 ## 🧭 Table of Contents
 
-- [Architecture Overview](#-architecture-overview)
-- [Technologies Used](#-technologies-used)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Local Development](#-local-development-with-docker-compose)
-- [Kubernetes Deployment](#️-kubernetes-deployment)
-- [Deployment Diagram](#-deployment-diagram)
-- [Spring Boot UML Diagrams](#-spring-boot-uml-diagrams)
-- [Matching Engine UML Diagrams](#-matching-engine-uml-diagrams)
-- [License](#-license)
+- [Architecture Overview](#architecture-overview)
+- [Technologies Used](#technologies-used)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Local Development with Docker Compose](#local-development-with-docker-compose)
+- [Kubernetes Deployment](#kubernetes-deployment)
+- [Deployment Diagram](#deployment-diagram)
+- [Spring Boot UML Diagrams](#spring-boot-uml-diagrams)
+- [Matching Engine UML Diagrams](#matching-engine-uml-diagrams)
+- [License](#license)
 
 ---
 
 ## 🧱 Architecture Overview
 
-- 🖥️ **Frontend** (ReactJS)
+<a name="architecture-overview"></a>
+
+- 🖥️ **Frontend** (ReactJS)  
   User interface for placing and tracking trades.
 
-- 🔙 **Backend API** (Spring Boot)
+- 🔙 **Backend API** (Spring Boot)  
   REST API server for order validation and coordination.
 
-- ⚙️ **Matcher Engine** (C++17)
+- 🔌 **WebSocket Communication** (Spring WebSocket)  
+  Enables real-time updates like order book, LTP, and trades to clients.
+
+- ⚙️ **Matcher Engine** (C++17)  
   High-performance engine to match buy/sell orders in real-time.
 
-- 🔁 **Messaging** (Apache Kafka + Zookeeper)
+- 📬 **Messaging** (Apache Kafka + Zookeeper)  
   Decouples services and handles real-time order streaming.
+
+- 🗄️ **Database** (PostgreSQL)  
+  Stores user data, wallet balances, and trade history.
 
 - 🐳 **Containers** (Docker) & ☸️ **Orchestration** (Kubernetes)
 
@@ -40,19 +48,25 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## 🚀 Technologies Used
 
+<a name="technologies-used"></a>
+
 | Layer              | Technology        |
 | ------------------ | ----------------- |
 | 🖼️ Frontend        | ReactJS, NGINX    |
 | 🔙 Backend         | Spring Boot, Java |
+| 🔌 WebSocket       | Spring WebSocket  |
 | ⚙️ Matching Engine | C++17             |
 | 📬 Messaging       | Apache Kafka      |
 | 🧠 Coordination    | Zookeeper         |
+| 🗄️ Database        | PostgreSQL        |
 | 🐳 Containers      | Docker            |
 | ☸️ Orchestration   | Kubernetes        |
 
 ---
 
 ## ⚙️ Prerequisites
+
+<a name="prerequisites"></a>
 
 - Docker ≥ 20.10
 - Docker Compose ≥ 1.29
@@ -66,6 +80,8 @@ It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C
 
 ## 🛠️ Getting Started
 
+<a name="getting-started"></a>
+
 Clone the repository:
 
 ```bash
@@ -76,6 +92,8 @@ cd Gold-commodity-exchange
 ---
 
 ## 🧪 Local Development with Docker Compose
+
+<a name="local-development-with-docker-compose"></a>
 
 To build and start all services for local development:
 
@@ -93,6 +111,8 @@ docker-compose down
 
 ## ☸️ Kubernetes Deployment
 
+<a name="kubernetes-deployment"></a>
+
 Deploy all services to your Kubernetes cluster:
 
 ```bash
@@ -103,32 +123,9 @@ Ensure Kafka, Zookeeper, and other services are properly set up and the cluster 
 
 ---
 
-Great point! The Deployment Diagram is important — especially when you’re containerizing with Docker and orchestrating with Kubernetes. It shows how services are deployed and interact at the infrastructure level.
-
-⸻
-
-✅ Where to place the Deployment Diagram?
-
-Since the Deployment Diagram covers infrastructure-level architecture, it fits best after Kubernetes content but before license/legal info.
-
-⸻
-
-🔁 Updated TOC:
-
-- [Architecture Overview](#-architecture-overview)
-- [Technologies Used](#-technologies-used)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [Local Development](#-local-development-with-docker-compose)
-- [Kubernetes Deployment](#️-kubernetes-deployment)
-- [Deployment Diagram](#-deployment-diagram)
-- [Matching Engine UML Diagrams](#-matching-engine-uml-diagrams)
-- [Spring Boot UML Diagrams](#-spring-boot-uml-diagrams)
-- [License](#-license)
-
-⸻
-
 ## 🖥️ Deployment Diagram
+
+<a name="deployment-diagram"></a>
 
 This section shows how the system is deployed across containers, services, and infrastructure — highlighting interactions between Kafka, backend services, and other components.
 
@@ -195,15 +192,15 @@ flowchart LR
     style Data         fill:#F9F0FF,stroke:#722ED1,stroke-width:1px
 ```
 
-Excellent! For documenting your Java Spring Boot backend, adding UML diagrams makes your architecture easy to understand and impresses reviewers or recruiters.
-
-⸻
+---
 
 ## 🧩 Spring Boot UML Diagrams
 
+<a name="spring-boot-uml-diagrams"></a>
+
 This section visualizes the internal architecture and flow of the Spring Boot services using various UML diagrams.
 
-⸻
+---
 
 🎯 Use Case Diagram
 
@@ -251,7 +248,7 @@ flowchart TD
     User --> UC10
 ```
 
-⸻
+---
 
 📘 Class Diagram
 
@@ -354,7 +351,7 @@ TradeService --> KafkaTemplate
 TradeRepository ..> Trade
 ```
 
-⸻
+---
 
 🔁 Sequence Diagram
 
@@ -420,7 +417,7 @@ sequenceDiagram
     TradingService-->>Frontend: Return trade list
 ```
 
-⸻
+---
 
 🔄 Activity Diagram
 
@@ -471,9 +468,11 @@ flowchart TD
     P --> V
 ```
 
-⸻
+---
 
-## 🔧Matching Engine UML Diagrams
+## 🔧 Matching Engine UML Diagrams
+
+<a name="matching-engine-uml-diagrams"></a>
 
 This section provides visual representation of the matching engine internals using UML diagrams to help understand design structure, interactions, and order lifecycle.
 
@@ -712,6 +711,8 @@ stateDiagram-v2
 ```
 
 ## 📄 License
+
+<a name="license"></a>
 
 Licensed under the [MIT License](./LICENSE).
 
