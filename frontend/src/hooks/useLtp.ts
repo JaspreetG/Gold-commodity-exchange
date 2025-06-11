@@ -11,9 +11,8 @@
 
 //    const [ltp, setLtp] = useState<LtpData | null>();
 
-
 //   useEffect(() => {
-    
+
 //     const socket = new SockJS('http://localhost:8082/ws');
 //     const client = new Client({
 //       webSocketFactory: () => socket,
@@ -91,10 +90,9 @@
 //   return ltp;
 // };
 
-
-import { useEffect, useState } from 'react';
-import { Client } from '@stomp/stompjs';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { useEffect, useState } from "react";
+import { Client } from "@stomp/stompjs";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 interface LtpData {
   price: number;
@@ -102,7 +100,10 @@ interface LtpData {
 }
 
 export const useLtp = () => {
-  const [ltp, setLtp] = useState<LtpData | null>(null);
+  const [ltp, setLtp] = useState<LtpData>({
+    price: 1,
+    timestamp: Date.now(),
+  });
 
   useEffect(() => {
     let client: Client;
@@ -116,11 +117,11 @@ export const useLtp = () => {
       const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
-        debug: (str) => console.log('[STOMP]', str),
+        debug: (str) => console.log("[STOMP]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          console.log('Connected to WebSocket /topic/ltp');
-          client.subscribe('/topic/ltp', (message) => {
+          console.log("Connected to WebSocket /topic/ltp");
+          client.subscribe("/topic/ltp", (message) => {
             const body: LtpData = JSON.parse(message.body);
             setLtp(body);
           });
