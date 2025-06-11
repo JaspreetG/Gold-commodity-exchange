@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   auth-service:
     build:
@@ -39,8 +41,10 @@ services:
       - kafka-net
       - db-net
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_healthy
 
   frontend:
     build:
@@ -51,9 +55,9 @@ services:
     ports:
       - "3000:80"
     depends_on:
-    - auth-service
-    - wallet-service
-    - trade-service
+      - auth-service
+      - wallet-service
+      - trade-service
     networks:
       - kafka-net
       - db-net
@@ -69,7 +73,8 @@ services:
     networks:
       - kafka-net
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
 
   postgres:
     image: postgres:15
@@ -120,6 +125,11 @@ services:
       bash /script.sh;
       wait
       "
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
       - kafka-net
 
