@@ -15,8 +15,11 @@ import java.util.Map;
 //changed file name
 @Configuration
 public class KafkaProducerConfig {
-    
-    @Value("${KAFKA_BROKER:127.0.0.1:29092}")
+
+    // TODO: Update the Kafka broker address as needed.
+    // Uncomment the line below to use a different broker address.
+    // @Value("${KAFKA_BROKER:127.0.0.1:29092}")
+    @Value("${KAFKA_BROKER:kafka:9092}")
     private String bootstrapServers;
 
     @Bean
@@ -33,4 +36,3 @@ public class KafkaProducerConfig {
         return new KafkaTemplate<>(producerFactory());
     }
 }
-
