@@ -4,13 +4,13 @@ This backend is part of a larger gold commodity exchange platform. It consists o
 
 ## 🧱 Architecture Overview
 
-### Microservices:
+### Microservices
 
 - **auth-service**: Handles user authentication and registration
 - **wallet-service**: Manages user gold and currency balances
 - **trade-service**: Manages trade orders and status communication via Kafka and WebSocket
 
-### Communication:
+### Communication
 
 - Services communicate via **Kafka**
 - **WebSockets** used for pushing real-time trade status updates to the frontend
@@ -20,7 +20,7 @@ This backend is part of a larger gold commodity exchange platform. It consists o
 
 ## 🛠️ Tech Stack
 
-- Java 17
+- Java 21
 - Spring Boot 3.x
 - Spring Security + JWT + TOTP
 - Apache Kafka
@@ -55,21 +55,14 @@ This backend is part of a larger gold commodity exchange platform. It consists o
 
 ## ▶️ Running the Backend Using Docker Compose
 
-### Prerequisites:
+### Prerequisites
 
 - Docker
 - Docker Compose
 
-### Steps:
+### Only one step
 
-1. Clone the repository:
-
-```bash
-git clone https://github.com/your-username/gold-commodity-exchange.git
-cd gold-commodity-exchange/backend
-```
-
-2. Build and start the services using Docker Compose:
+1. Build and start the services using Docker Compose:
 
 ```bash
 docker-compose up --build
@@ -80,29 +73,12 @@ This will:
 - Build and run all 3 microservices
 - Start Kafka and Zookeeper
 - Expose the following ports:
-  - `auth-service`: 8081
-  - `wallet-service`: 8082
-  - `trade-service`: 8083
-  - `Kafka`: 9092 (internal use)
+  - `auth-service`: 8080
+  - `wallet-service`: 8081
+  - `trade-service`: 8082
 
-3. Access the services:
+2. Access the services
 
-- Authentication: `http://localhost:8081`
-- Wallet: `http://localhost:8082`
-- Trade: `http://localhost:8083`
-
----
-
-## 📡 Notes
-
-- Ensure your frontend connects to WebSocket and APIs using the correct exposed ports.
-- Kafka topics and group configurations should be set in each service's `application.yml`.
-
----
-
-## 📋 TODO
-
-- Add Swagger UI for API documentation
-- Setup health-checks and service discovery (optional for scale)
-
----
+- Authentication: `http://localhost:8080`
+- Wallet: `http://localhost:8081`
+- Trade: `http://localhost:8082`
