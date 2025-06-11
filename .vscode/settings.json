@@ -1,4 +1,5 @@
 {
+  "cmake.cmakePath": "/opt/homebrew/bin/cmake",
   "cmake.sourceDirectory": "/Users/jaspreetsingh/Development/Gold-commodity-exchange/MatchingEngine",
   "cmake.buildDirectory": "${workspaceFolder}/MatchingEngine/build",
   "C_Cpp.errorSquiggles": "enabled",
