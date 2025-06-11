@@ -1,6 +1,47 @@
+// import { useEffect, useState } from 'react';
+// import { Client } from '@stomp/stompjs';
+// import SockJS from 'sockjs-client';
+
+// interface LtpData {
+//   price: number;
+//   timestamp: number;
+// }
+
+// export const useLtp = () => {
+
+//    const [ltp, setLtp] = useState<LtpData | null>();
+
+
+//   useEffect(() => {
+    
+//     const socket = new SockJS('http://localhost:8082/ws');
+//     const client = new Client({
+//       webSocketFactory: () => socket,
+//       debug: (str) => console.log('[STOMP]', str),
+//       reconnectDelay: 5000,
+//       onConnect: () => {
+//         console.log('Connected to WebSocket topic-ltp');
+//         client.subscribe('/topic/ltp', (message) => {
+//           const body: LtpData = JSON.parse(message.body);
+//           setLtp(body);
+//           // localStorage.setItem('ltp', JSON.stringify(body)); // ✅ Store in localStorage
+//         });
+//       },
+//     });
+
+//     client.activate();
+
+//     return () => {
+//       client.deactivate();
+//     };
+//   }, []);
+
+//   return ltp;
+// };
+
 import { useEffect, useState } from 'react';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import FingerprintJS from '@fingerprintjs/fingerprintjs'; // assuming you're using this
 
 interface LtpData {
   price: number;
@@ -8,36 +49,42 @@ interface LtpData {
 }
 
 export const useLtp = () => {
-
-   const [ltp, setLtp] = useState<LtpData | null>();
-
-
-  // const [ltp, setLtp] = useState<LtpData | null>(() => {
-  //   // Initialize from localStorage if available
-  //   const stored = localStorage.getItem('ltp');
-  //   return stored ? JSON.parse(stored) : null;
-  // });
+  const [ltp, setLtp] = useState<LtpData | null>(null);
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8082/ws');
-    const client = new Client({
-      webSocketFactory: () => socket,
-      debug: (str) => console.log('[STOMP]', str),
-      reconnectDelay: 5000,
-      onConnect: () => {
-        console.log('Connected to WebSocket topic-ltp');
-        client.subscribe('/topic/ltp', (message) => {
-          const body: LtpData = JSON.parse(message.body);
-          setLtp(body);
-          // localStorage.setItem('ltp', JSON.stringify(body)); // ✅ Store in localStorage
-        });
-      },
-    });
+    let client: Client;
 
-    client.activate();
+    // Initialize FingerprintJS and get fingerprint
+    const setupWebSocket = async () => {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      const deviceFingerprint = result.visitorId;
+
+      client = new Client({
+        brokerURL: 'ws://localhost:8082/ws',
+        connectHeaders: {
+          'X-Device-Fingerprint': deviceFingerprint,
+        },
+        debug: (str) => console.log('[STOMP]', str),
+        reconnectDelay: 5000,
+        onConnect: () => {
+          console.log('Connected to WebSocket /topic/ltp');
+          client.subscribe('/topic/ltp', (message) => {
+            const body: LtpData = JSON.parse(message.body);
+            setLtp(body);
+          });
+        },
+      });
+
+      client.activate();
+    };
+
+    setupWebSocket();
 
     return () => {
-      client.deactivate();
+      if (client) {
+        client.deactivate();
+      }
     };
   }, []);
 

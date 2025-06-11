@@ -4,6 +4,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 // import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
+import io.goldexchange.trade_service.webSocket.LtpCache;
+
 // @Component
 // public class LtpConsumer {
 //     private final SimpMessagingTemplate messagingTemplate;

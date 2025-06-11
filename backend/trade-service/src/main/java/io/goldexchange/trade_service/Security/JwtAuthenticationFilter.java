@@ -23,16 +23,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Skip JWT auth for internal endpoints
+        System.out.println("********SHOULD NOT FILTER***********");
+        String path = request.getServletPath();
+        return path.startsWith("/ws");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
         // ✅ Skip JWT validation for WebSocket handshake
-        String path = request.getServletPath();
-        if (path.startsWith("/ws")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        // String path = request.getServletPath();
+        // if (path.startsWith("/ws")) {
+        //     filterChain.doFilter(request, response);
+        //     return;
+        // }
 
         String jwtToken = null;
 
