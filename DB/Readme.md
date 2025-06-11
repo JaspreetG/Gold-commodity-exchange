@@ -4,17 +4,7 @@ This project uses a PostgreSQL database running in Docker for local development.
 
 ---
 
-## 🧾 Step 1: Set Database Environment Variables
-
-Create a `db.env` file in the same directory as `docker-compose.yml`:
-
-```env
-POSTGRES_DB=goldexchange
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-```
-
-## 🐳 Step 2: Run PostgreSQL Container
+## 🐳 Run PostgreSQL Container
 
 From the directory containing docker-compose.yml, run:
 
@@ -23,6 +13,7 @@ docker-compose up -d
 ```
 
 for postgres sql cmd
+
 ```shell
 docker exec -it postgres_db psql -U postgres
 ```
