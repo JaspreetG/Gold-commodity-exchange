@@ -3,7 +3,16 @@
 A **microservices-based trading platform** built for **scalability and high performance**.  
 It features a modern ReactJS frontend, a Spring Boot backend API, a high-speed C++ matching engine, and uses Apache Kafka for real-time event streaming. All components are containerized with Docker and orchestrated via Kubernetes.
 
----
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-6.png)
+![alt text](image-7.png)
+![alt text](image-4.png)
+![alt text](image-5.png)
+![alt text](image-8.png)
+![alt text](image-9.png)
 
 ## Table of Contents
 
