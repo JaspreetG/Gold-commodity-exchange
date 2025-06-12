@@ -67,18 +67,6 @@ Live demo in GitHub Codespaces:
 
 ---
 
-## Prerequisites
-
-- Docker ≥ 20.10
-- Docker Compose ≥ 1.29
-- Java 17+
-- Node.js ≥ 16
-- A C++20 compatible compiler (e.g., `g++-10` or later)
-- kubectl ≥ 1.23
-- A running Kubernetes cluster (Minikube, Kind, EKS, etc.)
-
----
-
 ## Getting Started
 
 Clone the repository:
