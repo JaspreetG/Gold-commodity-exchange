@@ -3,7 +3,7 @@
   "dockerComposeFile": "../docker-compose.yml",
   "service": "frontend",
   "workspaceFolder": "/workspaces/Gold-commodity-exchange",
-  "postCreateCommand": "docker-compose up -d",
+  "postCreateCommand": "docker compose up -d",
   "forwardPorts": [3000],
   "customizations": {
     "vscode": {
