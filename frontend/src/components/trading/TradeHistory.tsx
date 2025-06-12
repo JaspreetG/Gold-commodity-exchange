@@ -13,7 +13,7 @@ const TradeHistory = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       getTradeHistory();
-    }, 5000); // 5000ms = 5 seconds
+    }, 3000); // 3000ms = 3 seconds
 
     // Optionally call immediately on mount
     getTradeHistory();
@@ -32,7 +32,7 @@ const TradeHistory = () => {
       <CardContent className="p-0">
         <div className="space-y-2">
           {/* Header */}
-          <div className="grid grid-cols-4 gap-2 px-6 pt-2 text-xs text-gray-500 font-light">
+          <div className="grid grid-cols-3 gap-2 px-6 pt-2 text-xs text-gray-500 font-light">
             <div>Side</div>
 
             {/* <div className="text-right">CreatedAt</div> */}
@@ -68,18 +68,10 @@ const TradeHistory = () => {
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    {pastTrade.quantity.toFixed(3)} gram
+                    {pastTrade.quantity.toFixed(0)} g
                   </div>
                   <div className="text-right text-black font-mono font-light">
                     ₹{pastTrade.price.toFixed(2)}
-                  </div>
-                  <div className="text-right space-y-1">
-                    <div className="text-black font-mono font-light">
-                      {/* ${pastTrades.total.toFixed(2)} */}
-                    </div>
-                    <div className="text-gray-500 text-xs font-light">
-                      {/* Fee: ${pastpastTradess.fee.toFixed(2)} */}
-                    </div>
                   </div>
                 </div>
               ))

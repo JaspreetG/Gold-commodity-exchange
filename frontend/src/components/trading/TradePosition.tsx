@@ -33,7 +33,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
       <CardContent className="p-0">
         <div className="space-y-2">
           {/* Header */}
-          <div className="grid grid-cols-4 gap-2 px-6 pt-2 text-xs text-gray-500 font-light">
+          <div className="grid grid-cols-3 gap-2 px-6 pt-2 text-xs text-gray-500 font-light">
             <div>Side</div>
             <div className="text-right">Quantity</div>
             <div className="text-right">Price</div>
@@ -65,20 +65,12 @@ const TradePosition = ({ positions }: TradePositionProps) => {
                     </div>
                   </div>
                   <div className="text-right text-black font-mono font-light">
-                    {order.quantity.toFixed(3)} gram
+                    {order.quantity.toFixed(0)} gram
                   </div>
                   <div className="text-right text-black font-mono font-light">
                     {order.type === "LIMIT"
                       ? `₹${order.price.toFixed(2)}`
                       : "Market Price"}
-                  </div>
-                  <div className="text-right space-y-1">
-                    <div className="text-black font-mono font-light">
-                      {/* ${position.total.toFixed(2)} */}
-                    </div>
-                    <div className="text-gray-500 text-xs font-light">
-                      {/* Fee: ${position.fee.toFixed(2)} */}
-                    </div>
                   </div>
                 </div>
               ))
