@@ -44,7 +44,7 @@ const OrderBook = () => {
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 font-light pb-2">
               {/* <div>Total (INR)</div> */}
-              <div className="text-center">Amount (gram)</div>
+              <div className="text-center">Volume (g)</div>
               <div className="text-right">Price (INR)</div>
             </div>
 
@@ -78,7 +78,7 @@ const OrderBook = () => {
             {/* Header - Flipped to bring price closer to center */}
             <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 font-light pb-2">
               <div>Price (INR)</div>
-              <div className="text-center">Price (gram)</div>
+              <div className="text-center">Volume (g)</div>
               {/* <div className="text-right">Total (INR)</div> */}
             </div>
 
