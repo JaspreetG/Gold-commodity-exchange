@@ -7,7 +7,7 @@ const isDev = import.meta.env.MODE === "development";
 const protocol = isDev ? "ws" : "wss";
 const host = isDev ? "localhost:8082" : window.location.host;
 
-const socketUrl = `${protocol}://${host}/wss`;
+const socketUrl = `${protocol}://${host}/ws`;
 
 let stompClient: Client | null = null;
 

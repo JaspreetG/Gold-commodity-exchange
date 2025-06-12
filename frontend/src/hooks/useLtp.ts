@@ -27,7 +27,7 @@ export const useLtp = () => {
       // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
       const protocol = window.location.protocol === "https:" ? "wss" : "ws";
       const host = window.location.host; // includes domain + port
-      const wsUrl = `${protocol}://${host}/wss?fingerprint=${deviceFingerprint}`;
+      const wsUrl = `${protocol}://${host}/ws?fingerprint=${deviceFingerprint}`;
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
