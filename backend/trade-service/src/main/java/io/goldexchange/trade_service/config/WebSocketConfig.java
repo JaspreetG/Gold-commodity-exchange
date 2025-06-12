@@ -31,9 +31,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addEndpoint("/ws")
                 .setAllowedOriginPatterns("*")
                 .addInterceptors(jwtHandshakeInterceptor);
-        registry
-                .addEndpoint("/ws/toast")
-                .setAllowedOriginPatterns("*")
-                .addInterceptors(jwtHandshakeInterceptor);
     }
 }
