@@ -21,7 +21,7 @@ export const useToastSocket = (userId: number | string) => {
       // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
       const protocol = window.location.protocol === "https:" ? "wss" : "ws";
       const host = window.location.host; // includes domain + port
-      const wsUrl = `${protocol}://${host}/ws/toast?fingerprint=${deviceFingerprint}&userId=${userId}`;
+      const wsUrl = `${protocol}://${host}/ws?fingerprint=${deviceFingerprint}&userId=${userId}`;
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Use fingerprint in query param
