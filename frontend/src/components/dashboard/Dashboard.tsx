@@ -15,11 +15,11 @@ const Dashboard = () => {
   const { authUser, logout } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<"trading" | "wallet">("trading");
-  const [userBalances, setUserBalances] = useState(authUser.balances);
+  const [userBalances, setUserBalances] = useState(authUser?.balances);
 
   useEffect(() => {
-    setUserBalances(authUser.balances ?? { inr: 0, gold: 0 });
-  }, [authUser.balances]);
+    setUserBalances(authUser?.balances ?? { inr: 0, gold: 0 });
+  }, [authUser?.balances]);
 
   const updateBalance = (inr: number, gold: number) => {
     useAuthStore.setState((state) => ({
