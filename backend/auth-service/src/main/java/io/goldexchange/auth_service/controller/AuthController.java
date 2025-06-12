@@ -24,15 +24,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
 import java.util.Map;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
-@CrossOrigin(
-    origins = "http://localhost:3000",
-    allowCredentials = "true"
-)
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -129,19 +123,19 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletResponse response,Authentication authentication) {
+    public ResponseEntity<?> logout(HttpServletResponse response, Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(401).body(Map.of("error", "User not authenticated, login first"));
         }
 
         authService.logout(response);
         // Remove the JWT cookie by setting it with maxAge=0
-        
+
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
     @GetMapping("/getUserId")
-     public ResponseEntity<?> getUserId(Authentication authentication) {
+    public ResponseEntity<?> getUserId(Authentication authentication) {
         System.out.println("in get UserId");
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
@@ -151,10 +145,9 @@ public class AuthController {
         // UserDTO userDTO = authService.getUserById(userId);
         // System.out.println(userDTO);
         // if (userDTO == null) {
-        //     return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+        // return ResponseEntity.status(404).body(Map.of("error", "User not found"));
         // }
         return ResponseEntity.ok(userId);
     }
-
 
 }
