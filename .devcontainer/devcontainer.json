@@ -1,0 +1,13 @@
+{
+  "name": "Gold Commodity Exchange",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "docker-compose up -d",
+  "forwardPorts": [3000],
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-azuretools.vscode-docker"]
+    }
+  }
+}
