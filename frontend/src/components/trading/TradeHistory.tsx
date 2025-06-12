@@ -3,10 +3,6 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { Clock, FileCheck, ShieldCheck } from "lucide-react";
 import React, { useEffect } from "react";
 
-// interface pastTradesHistoryProps {
-//   pastTradess: pastTrades[];
-// }
-
 const TradeHistory = () => {
   const { getTradeHistory, isGettingTradeHistory, pastTrades } = useAuthStore();
 
@@ -45,7 +41,7 @@ const TradeHistory = () => {
           <div className="max-h-96 overflow-y-auto">
             {!pastTrades ? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
-                No pastTradess yet
+                No past trades yet
               </div>
             ) : (
               pastTrades?.map((pastTrade) => (

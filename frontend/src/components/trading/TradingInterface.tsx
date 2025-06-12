@@ -97,7 +97,7 @@ const TradingInterface = ({
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
       <div>
-        <OrderBook orderBook={orderBook} currentPrice={currentPrice} />
+        <OrderBook />
       </div>
 
       <div>
@@ -133,7 +133,7 @@ const TradingInterface = ({
       />
 
       <div>
-        <TradeHistory trades={trades} />
+        <TradeHistory />
       </div>
     </div>
   );
