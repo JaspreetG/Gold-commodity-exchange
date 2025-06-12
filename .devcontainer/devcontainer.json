@@ -1,8 +1,5 @@
 {
   "name": "Gold Commodity Exchange",
-  // NOTE: The compose file is one level up from the .devcontainer folder.
-  // Make sure this path is valid relative to this devcontainer.json.
-  // Codespaces must be launched from the repository root for this to resolve correctly.
   "dockerComposeFile": "../docker-compose.yml",
   "service": "frontend",
   "workspaceFolder": "/workspaces/Gold-commodity-exchange",
@@ -13,7 +10,6 @@
       "extensions": ["ms-azuretools.vscode-docker"]
     }
   },
-  "remoteUser": "vscode",
   "portsAttributes": {
     "3000": {
       "label": "Frontend",
