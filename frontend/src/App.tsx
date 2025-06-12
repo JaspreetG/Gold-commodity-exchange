@@ -46,6 +46,7 @@ const App = () => {
             <Route path="/login" element={!authUser ? <LoginForm /> : <Navigate to="/dashboard" />} />
             <Route path="/signUp" element={!authUser ? <SignUpPage /> : <Navigate to="/dashboard" />}/>
             <Route path="/dashboard" element={authUser ? (<Dashboard/>) : (<Navigate to="/login" replace />)}/>
+            {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
 
             {/* TODO:  */}
 
