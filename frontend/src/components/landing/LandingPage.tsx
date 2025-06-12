@@ -161,7 +161,7 @@ const LandingPage = () => {
               Professional Gold Trading Platform
             </p>
             <p className="text-sm text-gray-500 font-light">
-              © 2024 GoldEx. All rights reserved.
+              © {new Date().getFullYear()} GoldEx. All rights reserved.
             </p>
           </div>
         </div>
