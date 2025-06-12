@@ -12,7 +12,7 @@ public class LtpBroadcaster {
     @Autowired
     private LtpCache ltpCache;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 3000)
     public void broadcastLtp() {
         String ltp = ltpCache.get();
         if (ltp != null) {

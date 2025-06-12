@@ -56,7 +56,7 @@ const TradingInterface = ({
     };
 
     generateOrderBook();
-    const interval = setInterval(generateOrderBook, 5000);
+    const interval = setInterval(generateOrderBook, 3000);
     return () => clearInterval(interval);
   }, [currentPrice]);
 

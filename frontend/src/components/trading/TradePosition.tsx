@@ -14,7 +14,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       getOrders();
-    }, 5000); // 5000ms = 5 seconds
+    }, 3000); // 3000ms = 3 seconds
 
     // Optionally call immediately on mount
     getOrders();
@@ -50,7 +50,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
               orders?.map((order) => (
                 <div
                   key={order.orderId}
-                  className="grid grid-cols-4 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
+                  className="grid grid-cols-3 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
                 >
                   <div className="space-y-1">
                     <div
