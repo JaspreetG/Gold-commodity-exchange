@@ -2,12 +2,12 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-// const socketUrl = 'http://localhost:8082/ws'; // Use trade-service port
-//TODO: changes here to use environment variable for WebSocket URL
-const socketUrl = "http://trade-service:8082/ws"; // Use trade-service port
+// const socketUrl = "http://localhost:8082/ws"; // Use trade-service port
+const isDev = import.meta.env.MODE === "development";
+const protocol = isDev ? "ws" : "wss";
+const host = isDev ? "localhost:8082" : window.location.host;
 
-// const wsProtocol = window.location.protocol === "https:" ? "ws" : "ws";
-// const socketUrl = `${wsProtocol}://${window.location.host}/ws`;
+const socketUrl = `${protocol}://${host}/wss`;
 
 let stompClient: Client | null = null;
 
