@@ -51,7 +51,7 @@ const TradeHistory = () => {
               pastTrades?.map((pastTrade) => (
                 <div
                   key={pastTrade.createdAt}
-                  className="grid grid-cols-4 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
+                  className="grid grid-cols-3 gap-2 px-6 py-3 text-sm hover:bg-gray-50 border-b border-gray-100 transition-colors"
                 >
                   <div className="space-y-1">
                     <div

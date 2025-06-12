@@ -12,7 +12,7 @@ public class OrderBookBroadcaster {
     @Autowired
     private OrderBookCache orderBookCache;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 3000)
     public void broadcastOrderBook() {
         String orderBook = orderBookCache.get();
         if (orderBook != null) {
