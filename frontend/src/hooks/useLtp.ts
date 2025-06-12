@@ -117,7 +117,7 @@ export const useLtp = () => {
 
       //TODO: Use environment variable for WebSocket URL
       // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
-      const wsUrl = `wss://trade-service:8082/ws?fingerprint=${deviceFingerprint}`;
+      const wsUrl = `ws://trade-service:8082/ws?fingerprint=${deviceFingerprint}`;
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
