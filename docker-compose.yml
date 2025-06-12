@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   auth-service:
@@ -13,7 +13,8 @@ services:
       - kafka-net
       - db-net
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   wallet-service:
     build:
@@ -27,7 +28,8 @@ services:
       - kafka-net
       - db-net
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   trade-service:
     build:
@@ -42,7 +44,7 @@ services:
       - db-net
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
       kafka:
         condition: service_healthy
 
@@ -90,6 +92,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - db-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   zookeeper:
     container_name: zookeeper
