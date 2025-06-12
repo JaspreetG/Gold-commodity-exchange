@@ -125,11 +125,22 @@ const Navbar = ({ user }: NavbarProps) => {
         {/* Mobile dropdown */}
         {menuOpen && (
           <div className="sm:hidden mt-2 space-y-3 text-sm text-gray-700">
-            <div>
-              {user?.userName} ({user?.phoneNumber})
+            <div className="text-sm text-gray-600 font-light">
+              <span className="font-normal text-black">{user?.userName}</span>
+              <span className="ml-2">({user?.phoneNumber})</span>
             </div>
-            <div>₹{user.balances?.inr?.toLocaleString() ?? "0.00"}</div>
-            <div>{user.balances?.gold?.toFixed(3) ?? "0.000"} gram</div>
+            {/* <div>
+              {user?.userName} ({user?.phoneNumber})
+            </div> */}
+            <div className="bg-green-50 text-green-700 px-4 py-2 rounded-md border border-green-200">
+              ₹{user.balances?.inr?.toLocaleString() ?? "0.00"}
+            </div>
+            <div className="bg-amber-50 text-amber-700 px-4 py-2 rounded-md border border-amber-200">
+              {user.balances?.gold?.toFixed(3) ?? "0.000"} gram
+            </div>
+
+            {/* <div>₹{user.balances?.inr?.toLocaleString() ?? "0.00"}</div>
+            <div>{user.balances?.gold?.toFixed(3) ?? "0.000"} gram</div> */}
             <Button
               onClick={onLogout}
               variant="outline"
