@@ -26,8 +26,8 @@ export const useOrderBook = () => {
 
       // Append fingerprint to WebSocket URL as query param
       //TODO: Use environment variable for WebSocket URL
-      // const wsUrl = `wss://localhost:8082/wss?fingerprint=${deviceFingerprint}`;
-      const wsUrl = `wss://trade-service:8082/wss?fingerprint=${deviceFingerprint}`;
+      // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
+      const wsUrl = `ws://trade-service:8082/ws?fingerprint=${deviceFingerprint}`;
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Use custom WebSocket
