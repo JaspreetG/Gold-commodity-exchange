@@ -9,7 +9,6 @@
       "extensions": ["ms-azuretools.vscode-docker"]
     }
   },
-  "remoteUser": "vscode",
   "portsAttributes": {
     "3000": {
       "label": "Frontend",
