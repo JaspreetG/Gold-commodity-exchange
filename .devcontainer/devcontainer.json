@@ -1,8 +1,11 @@
 {
   "name": "Gold Commodity Exchange",
-  "dockerComposeFile": "docker-compose.yml",
+  // NOTE: The compose file is one level up from the .devcontainer folder.
+  // Make sure this path is valid relative to this devcontainer.json.
+  // Codespaces must be launched from the repository root for this to resolve correctly.
+  "dockerComposeFile": "../docker-compose.yml",
   "service": "frontend",
-  "workspaceFolder": "../",
+  "workspaceFolder": "/workspaces/Gold-commodity-exchange",
   "postCreateCommand": "docker-compose up -d",
   "forwardPorts": [3000],
   "customizations": {
