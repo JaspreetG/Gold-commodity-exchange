@@ -8,24 +8,22 @@ import { useOrderBook } from "@/hooks/useOrderBook";
 import { useToastSocket } from "@/hooks/useToastSocket";
 import { useAuthStore } from "@/store/useAuthStore";
 
-
 interface OrderBookProps {
   orderBook: OrderBookType;
   currentPrice: number;
 }
 
 const OrderBook = () => {
-
-  const {getUserId,userId}=useAuthStore();
+  const { getUserId, userId } = useAuthStore();
 
   useEffect(() => {
-      getUserId();
-    }, [getUserId]);
+    getUserId();
+  }, [getUserId]);
 
-    const ltp = useLtp();
-    const orderBook = useOrderBook();
-    useToastSocket(userId); 
-    // const currentPrice = ltp?.price || 0;
+  const ltp = useLtp();
+  const orderBook = useOrderBook();
+  useToastSocket(userId);
+  // const currentPrice = ltp?.price || 0;
 
   return (
     <Card className="border border-gray-100 shadow-sm">
@@ -44,8 +42,8 @@ const OrderBook = () => {
             </div>
 
             {/* Header - Flipped to bring price closer to center */}
-            <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
-              <div>Total (INR)</div>
+            <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 font-light pb-2">
+              {/* <div>Total (INR)</div> */}
               <div className="text-center">Amount (gram)</div>
               <div className="text-right">Price (INR)</div>
             </div>
@@ -55,11 +53,11 @@ const OrderBook = () => {
               {orderBook?.bids?.map((bid, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm"
+                  className="grid grid-cols-2 gap-2 py-1.5 text-sm hover:bg-green-50 transition-colors rounded-sm"
                 >
-                  <div className="text-gray-600 font-mono text-sm">
+                  {/* <div className="text-gray-600 font-mono text-sm">
                     {bid.price * bid.volume}
-                  </div>
+                  </div> */}
                   <div className="text-center text-black font-mono text-sm">
                     {bid.volume.toFixed(0)}
                   </div>
@@ -78,10 +76,10 @@ const OrderBook = () => {
             </div>
 
             {/* Header - Flipped to bring price closer to center */}
-            <div className="grid grid-cols-3 gap-2 text-xs text-gray-500 font-light pb-2">
+            <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 font-light pb-2">
               <div>Price (INR)</div>
               <div className="text-center">Price (gram)</div>
-              <div className="text-right">Total (INR)</div>
+              {/* <div className="text-right">Total (INR)</div> */}
             </div>
 
             {/* Asks - Flipped */}
@@ -89,7 +87,7 @@ const OrderBook = () => {
               {orderBook?.asks?.map((ask, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-3 gap-2 py-1.5 text-sm hover:bg-red-50 transition-colors rounded-sm"
+                  className="grid grid-cols-2 gap-2 py-1.5 text-sm hover:bg-red-50 transition-colors rounded-sm"
                 >
                   <div className="text-red-600 font-mono text-sm">
                     {ask.price.toFixed(2)}
@@ -97,9 +95,9 @@ const OrderBook = () => {
                   <div className="text-center text-black font-mono text-sm">
                     {ask.volume.toFixed(0)}
                   </div>
-                  <div className="text-right text-gray-600 font-mono text-sm">
+                  {/* <div className="text-right text-gray-600 font-mono text-sm">
                     {ask.price * ask.volume}
-                  </div>
+                  </div> */}
                 </div>
               ))}
             </div>
