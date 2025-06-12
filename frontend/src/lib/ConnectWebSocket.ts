@@ -1,13 +1,13 @@
-// wss.ts (or a custom hook like useWebSocket.ts)
+// ws.ts (or a custom hook like useWebSocket.ts)
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-// const socketUrl = 'http://localhost:8082/wss'; // Use trade-service port
+// const socketUrl = 'http://localhost:8082/ws'; // Use trade-service port
 //TODO: changes here to use environment variable for WebSocket URL
-const socketUrl = "http://trade-service:8082/wss"; // Use trade-service port
+const socketUrl = "http://trade-service:8082/ws"; // Use trade-service port
 
-// const wsProtocol = window.location.protocol === "https:" ? "wss" : "wss";
-// const socketUrl = `${wsProtocol}://${window.location.host}/wss`;
+// const wsProtocol = window.location.protocol === "https:" ? "ws" : "ws";
+// const socketUrl = `${wsProtocol}://${window.location.host}/ws`;
 
 let stompClient: Client | null = null;
 
