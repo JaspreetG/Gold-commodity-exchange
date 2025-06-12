@@ -15,8 +15,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
-    WebSocketConfig (JwtHandshakeInterceptor jwtHandshakeInterceptor){
-        this.jwtHandshakeInterceptor=jwtHandshakeInterceptor;
+    WebSocketConfig(JwtHandshakeInterceptor jwtHandshakeInterceptor) {
+        this.jwtHandshakeInterceptor = jwtHandshakeInterceptor;
     }
 
     @Override
@@ -28,9 +28,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         registry
-        .addEndpoint("/ws")
-        .setAllowedOriginPatterns("*")
-        .addInterceptors(jwtHandshakeInterceptor);
-        //.withSockJS();
+                .addEndpoint("/wss")
+                .setAllowedOriginPatterns("*")
+                .addInterceptors(jwtHandshakeInterceptor);
+        // .withSockJS();
     }
 }

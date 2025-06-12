@@ -13,7 +13,7 @@
 
 //   useEffect(() => {
 
-//     const socket = new SockJS('http://localhost:8082/ws');
+//     const socket = new SockJS('http://localhost:8082/wss');
 //     const client = new Client({
 //       webSocketFactory: () => socket,
 //       debug: (str) => console.log('[STOMP]', str),
@@ -60,7 +60,7 @@
 //       const deviceFingerprint = result.visitorId;
 
 //       client = new Client({
-//         brokerURL: 'ws://localhost:8082/ws',
+//         brokerURL: 'wss://localhost:8082/wss',
 //         connectHeaders: {
 //           'X-Device-Fingerprint': deviceFingerprint,
 //         },
@@ -116,8 +116,8 @@ export const useLtp = () => {
       // Create raw WebSocket with fingerprint in query params
 
       //TODO: Use environment variable for WebSocket URL
-      // const wsUrl = `ws://localhost:8082/ws?fingerprint=${deviceFingerprint}`;
-      const wsUrl = `ws://trade-service:8082/ws?fingerprint=${deviceFingerprint}`;
+      // const wsUrl = `wss://localhost:8082/wss?fingerprint=${deviceFingerprint}`;
+      const wsUrl = `wss://trade-service:8082/wss?fingerprint=${deviceFingerprint}`;
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
