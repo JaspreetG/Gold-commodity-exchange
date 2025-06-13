@@ -16,7 +16,6 @@ Live demo in GitHub Codespaces:
 
 - [🧱 Architecture Overview](#architecture-overview)
 - [🚀 Technologies Used](#technologies-used)
-- [⚙️ Prerequisites](#prerequisites)
 - [🛠️ Getting Started](#getting-started)
 - [🧪 Local Development with Docker Compose](#local-development-with-docker-compose)
 - [☸️ Kubernetes Deployment](#kubernetes-deployment)
