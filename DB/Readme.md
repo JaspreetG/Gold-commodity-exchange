@@ -15,7 +15,7 @@ docker-compose up -d
 for postgres sql cmd
 
 ```shell
-docker exec -it postgres_db psql -U postgres
+docker exec -it postgres-db psql -U postgres
 ```
 
 ✅ This will:

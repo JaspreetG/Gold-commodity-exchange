@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend/auth-service
       dockerfile: Dockerfile
-    image: backend-auth-service
+    image: auth-service
     container_name: auth-service
     ports:
       - "8080:8080"
@@ -55,7 +55,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: frontend-frontend
+    image: frontend
     container_name: frontend
     ports:
       - "3000:80"
@@ -84,7 +84,7 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: postgres_db
+    container_name: postgres-db
     restart: always
     ports:
       - "5432:5432"

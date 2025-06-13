@@ -4,7 +4,7 @@ metadata:
   name: postgres
   namespace: gold-exchange
 spec:
-  serviceName: "postgres"
+  serviceName: "postgres-db"
   replicas: 1
   selector:
     matchLabels:
@@ -17,6 +17,7 @@ spec:
       containers:
         - name: postgres
           image: postgres:15
+          imagePullPolicy: Never
           ports:
             - containerPort: 5432
           env:
@@ -34,3 +35,6 @@ spec:
         name: postgres-data
       spec:
         accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 512Mi
