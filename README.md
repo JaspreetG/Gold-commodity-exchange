@@ -10,7 +10,7 @@ Live demo in GitHub Codespaces:
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&repo=JaspreetG/Gold-commodity-exchange&ref=main)
 
 > 💡 When the Codespace opens, it auto-runs all services via Docker Compose. The frontend runs on port **3000**. Use the “Ports” tab to open the live site.
-> ![alt text](image.png) > ![alt text](image-1.png) > ![alt text](image-2.png) > ![alt text](image-3.png) > ![alt text](image-6.png) > ![alt text](image-7.png) > ![alt text](image-4.png) > ![alt text](image-5.png) > ![alt text](image-8.png) > ![alt text](image-10.png)
+> ![alt text](image.png) ![alt text](image-1.png) ![alt text](image-2.png) ![alt text](image-3.png) ![alt text](image-6.png) ![alt text](image-7.png) ![alt text](image-4.png) ![alt text](image-5.png) ![alt text](image-8.png) ![alt text](image-10.png)
 
 ## Table of Contents
 
@@ -493,137 +493,177 @@ Structure of core classes in the matching engine.
 
 ```mermaid
 classDiagram
-    %% ==== ENUMS ====
-    class Side {
-      <<enumeration>>
-      BUY
-      SELL
-    }
-    class OrderType {
-      <<enumeration>>
-      MARKET
-      LIMIT
-    }
 
-    %% ==== DTO ====
-    class OrderData {
-      <<DTO>>
-      +string orderId
-      +string userId
-      +double quantity
-      +double price
-      +Side side
-      +OrderType type
-    }
+%% ================= ENUMS =================
+class Side {
+  <<enumeration>>
+  +BUY
+  +SELL
+}
 
-    %% ==== STRATEGY INTERFACE ====
-    class IMatchingStrategy {
-      <<interface>>
-      +vector<Trade> match(Order&, OrderBook&)
-    }
+class OrderType {
+  <<enumeration>>
+  +MARKET
+  +LIMIT
+}
 
-    %% ==== CONCRETE STRATEGIES ====
-    class BuyMarketStrategy
-    class BuyLimitStrategy
-    class SellMarketStrategy
-    class SellLimitStrategy
+%% ================= DTO =================
+class OrderData {
+  <<DTO>>
+  +string orderId
+  +string userId
+  +double quantity
+  +double price
+  +Side side
+  +OrderType type
+}
 
-    BuyMarketStrategy ..|> IMatchingStrategy
-    BuyLimitStrategy ..|> IMatchingStrategy
-    SellMarketStrategy ..|> IMatchingStrategy
-    SellLimitStrategy ..|> IMatchingStrategy
+%% ================= ORDER =================
+class Order {
+  -string orderId
+  -string userId
+  -double quantity
+  -double price
+  -Side side
+  -OrderType type
+  +Order(OrderData dto)
+}
 
-    %% ==== ORDER ====
-    class Order {
-      -string orderId
-      -string userId
-      -double quantity
-      -double price
-      -Side side
-      -OrderType type
-      -shared_ptr<IMatchingStrategy> strategy
-      +Order(OrderData dto, shared_ptr<IMatchingStrategy>)
-      +vector<Trade> match(OrderBook &book)
-    }
+class OrderFactory {
+  <<factory>>
+  +static Order create(const OrderData &dto)
+}
 
-    %% ==== FACTORY ====
-    class OrderFactory {
-      <<factory>>
-      +static Order create(const OrderData &dto)
-    }
+%% ================= ORDER BOOK =================
+class OrderBook {
+  <<singleton>>
+  -map<double, list<Order>, greater<double>> bids
+  -map<double, list<Order>> asks
+  -double lastTradedPrice
+  +void addOrder(const Order &o)
+  +void removeOrder(const Order &o)
+  +void updateLTP(double price)
+  +double getLTP() const
+  +optional<Order> getBestBid() const
+  +optional<Order> getBestAsk() const
+}
 
-    %% ==== ORDER BOOK ====
-    class OrderBook {
-      <<singleton>>
-      -map<double, list<Order>, greater<double>> bids
-      -map<double, list<Order>> asks
-      -double lastTradedPrice
-      +void addOrder(const Order &o)
-      +void removeOrder(const Order &o)
-      +void updateLTP(double price)
-      +double getLTP() const
-      +optional<Order> getBestBid() const
-      +optional<Order> getBestAsk() const
-    }
+%% ================= STRATEGY =================
+class IMatchingStrategy {
+  <<interface>>
+  +vector<Trade> match(Order&, OrderBook&)
+}
 
-    %% ==== SERVICE ====
-    class OrderMatchingService {
-      -OrderBook book
-      -KafkaTradeProducer tradeProd
-      -KafkaLTPProducer ltpProd
-      -KafkaOrderBookProducer obProd
-      -KafkaStatusProducer statusProd
-      +void handleOrder(const OrderData &dto)
-    }
+class StrategyFactory {
+  <<factory>>
+  +static shared_ptr<IMatchingStrategy> create(const OrderData &dto)
+}
 
-    %% ==== KAFKA I/O ====
-    class KafkaOrderConsumer {
-      +void start(OrderMatchingService &svc)
-    }
-    class KafkaTradeProducer {
-      +void publish(const Trade &t)
-    }
-    class KafkaLTPProducer {
-      +void publish(const LTP &l)
-    }
-    class KafkaOrderBookProducer {
-      +void publish(const OrderBookSnapshot &s)
-    }
-    class KafkaStatusProducer {
-      +void publish(const string &status)
-    }
+class BuyMarketStrategy {
+  +vector<Trade> match(Order&, OrderBook&)
+}
+class BuyLimitStrategy {
+  +vector<Trade> match(Order&, OrderBook&)
+}
+class SellMarketStrategy {
+  +vector<Trade> match(Order&, OrderBook&)
+}
+class SellLimitStrategy {
+  +vector<Trade> match(Order&, OrderBook&)
+}
 
-    %% ==== STREAM MODELS ====
-    class Trade {
-      -string buyerOrderId
-      -string buyerUserId
-      -string sellerOrderId
-      -string sellerUserId
-      -double price
-      -double quantity
-      -timestamp ts
-    }
-    class LTP {
-      -double price
-      -timestamp ts
-    }
-    class OrderBookSnapshot {
-      -map<double, list<Order>> bids
-      -map<double, list<Order>> asks
-      -timestamp ts
-    }
+%% ================= STREAM MODELS =================
+class Trade {
+  -string buyerOrderId
+  -string buyerUserId
+  -string sellerOrderId
+  -string sellerUserId
+  -double price
+  -double quantity
+  -timestamp ts
+}
 
-    %% ==== RELATIONS ====
-    KafkaOrderConsumer --> OrderMatchingService : calls handleOrder()
-    OrderMatchingService --> KafkaTradeProducer
-    OrderMatchingService --> KafkaLTPProducer
-    OrderMatchingService --> KafkaOrderBookProducer
-    OrderMatchingService --> KafkaStatusProducer
-    OrderMatchingService --> OrderBook
-    OrderMatchingService --> OrderFactory
-    OrderFactory --> Order : injects strategy
-    Order --> IMatchingStrategy : calls match()
-    IMatchingStrategy --> OrderBook : uses public API
+class LTP {
+  -double price
+  -timestamp ts
+}
+
+class OrderBookSnapshot {
+  -map<double, list<Order>> bids
+  -map<double, list<Order>> asks
+  -timestamp ts
+}
+
+%% ================= KAFKA =================
+class KafkaOrderConsumer {
+  +void start(OrderMatchingService &svc)
+}
+
+class KafkaTradeProducer {
+  +void publish(const Trade &t)
+}
+
+class KafkaLTPProducer {
+  +void publish(const LTP &l)
+}
+
+class KafkaOrderBookProducer {
+  +void publish(const OrderBookSnapshot &s)
+}
+
+class KafkaStatusProducer {
+  +void publish(const string &status)
+}
+
+%% ================= SERVICE =================
+class OrderMatchingService {
+  -OrderBook book
+  -KafkaTradeProducer tradeProd
+  -KafkaLTPProducer ltpProd
+  -KafkaOrderBookProducer obProd
+  -KafkaStatusProducer statusProd
+  +void handleOrder(const OrderData &dto)
+}
+
+%% ================= RELATIONSHIPS =================
+
+%% Kafka interactions
+KafkaOrderConsumer ..> OrderMatchingService : uses
+KafkaOrderConsumer ..> OrderData : receives
+
+KafkaTradeProducer ..> Trade : takes
+KafkaLTPProducer ..> LTP : takes
+KafkaOrderBookProducer ..> OrderBookSnapshot : takes
+
+%% Service internal flow
+OrderMatchingService ..> OrderFactory : creates
+OrderMatchingService ..> StrategyFactory : selects strategy
+OrderMatchingService ..> IMatchingStrategy : uses for matching
+OrderMatchingService ..> OrderBook : accesses state
+OrderMatchingService ..> LTP : sends
+OrderMatchingService ..> Trade : sends
+OrderMatchingService ..> OrderBookSnapshot : sends
+
+OrderMatchingService --> KafkaTradeProducer : composition
+OrderMatchingService --> KafkaLTPProducer : composition
+OrderMatchingService --> KafkaOrderBookProducer : composition
+
+%% Strategy logic
+StrategyFactory ..> OrderData : analyzes
+StrategyFactory ..> IMatchingStrategy : returns
+
+BuyMarketStrategy ..|> IMatchingStrategy
+BuyLimitStrategy ..|> IMatchingStrategy
+SellMarketStrategy ..|> IMatchingStrategy
+SellLimitStrategy ..|> IMatchingStrategy
+
+IMatchingStrategy ..> OrderBook : reads
+IMatchingStrategy ..> Trade : returns
+IMatchingStrategy ..> KafkaStatusProducer : reports status
+
+%% Order creation
+OrderFactory ..> Order : returns
+OrderFactory ..> OrderData : uses
 ```
 
 ---

@@ -4,15 +4,13 @@
 namespace core
 {
 
-  Order::Order(const dto::OrderData &dto,
-               std::shared_ptr<IMatchingStrategy> strat)
+  Order::Order(const dto::OrderData &dto)
       : order_id_(dto.order_id),
         user_id_(dto.user_id),
         quantity_(dto.quantity),
         price_(dto.price),
         side_(dto.side),
-        type_(dto.type),
-        strategy_(std::move(strat)) {}
+        type_(dto.type) {}
 
   const std::string &Order::order_id() const { return order_id_; }
   const std::string &Order::user_id() const { return user_id_; }
@@ -21,10 +19,4 @@ namespace core
   dto::Side Order::side() const { return side_; }
   dto::OrderType Order::type() const { return type_; }
   void Order::setQuantity(int q) { quantity_ = q; }
-
-  std::vector<models::Trade> Order::match(OrderBook &book)
-  {
-    return strategy_->match(*this, book);
-  }
-
 } // namespace core
