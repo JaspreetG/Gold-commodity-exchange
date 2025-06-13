@@ -8,7 +8,7 @@ services:
       - kafka-net
       - db-net
     depends_on:
-      - postgres_db
+      - postgres-db
 
   wallet-service:
     build: ./wallet-service
@@ -18,7 +18,7 @@ services:
       - kafka-net
       - db-net
     depends_on:
-      - postgres_db
+      - postgres-db
 
   trade-service:
     build: ./trade-service
@@ -29,7 +29,7 @@ services:
       - db-net
     depends_on:
       - kafka
-      - postgres_db
+      - postgres-db
 
 networks:
   kafka-net:

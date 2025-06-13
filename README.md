@@ -96,13 +96,48 @@ docker-compose down
 
 ## Kubernetes Deployment
 
-Deploy all services to your Kubernetes cluster:
+### Enable Kubernetes
+
+Open Docker Desktop → Preferences → Kubernetes → Enable Kubernetes → Apply & Restart
+
+### 2. Verify Kubernetes is Running
 
 ```bash
-kubectl apply -f k8s/
+kubectl cluster-info
+kubectl get nodes
 ```
 
-Ensure Kafka, Zookeeper, and other services are properly set up and the cluster is running.
+### 3. Apply All Kubernetes Resources
+
+```bash
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/ --recursive
+```
+
+### 4. Check Status of All Resources
+
+```bash
+kubectl get pods -n gold-exchange
+```
+
+Access <http://localhost:80>
+
+All services have been successfully deployed and are running in the Kubernetes cluster.
+![alt text](image-11.png)
+
+## 📉 Delete All Resources
+
+To delete everything within the `gold-exchange` namespace:
+
+```bash
+kubectl delete all --all -n gold-exchange
+```
+
+To delete the namespace itself:
+
+```bash
+kubectl delete namespace gold-exchange
+```
 
 ---
 

@@ -1,20 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: trade-deployment
+  name: trade-service
+  namespace: gold-exchange
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app: trade
+      app: trade-service
   template:
     metadata:
       labels:
-        app: trade
+        app: trade-service
     spec:
       containers:
         - name: trade-service
-          image: backend-trade-service
+          image: trade-service
           imagePullPolicy: Never
           ports:
             - containerPort: 8082
