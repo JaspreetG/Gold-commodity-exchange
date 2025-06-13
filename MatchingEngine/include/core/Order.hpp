@@ -19,11 +19,9 @@ namespace core
         double price_;
         dto::Side side_;
         dto::OrderType type_;
-        std::shared_ptr<core::IMatchingStrategy> strategy_;
 
     public:
-        Order(const dto::OrderData &dto,
-              std::shared_ptr<IMatchingStrategy> strat);
+        Order(const dto::OrderData &dto);
 
         const std::string &order_id() const;
         const std::string &user_id() const;
@@ -32,8 +30,6 @@ namespace core
         dto::Side side() const;
         dto::OrderType type() const;
         void setQuantity(int q);
-
-        std::vector<models::Trade> match(OrderBook &book);
     };
 
 } // namespace core

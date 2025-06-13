@@ -68,7 +68,8 @@
     "algorithm": "cpp",
     "bit": "cpp",
     "ranges": "cpp",
-    "text_encoding": "cpp"
+    "text_encoding": "cpp",
+    "syncstream": "cpp"
   },
   "java.compile.nullAnalysis.mode": "automatic",
   "java.configuration.updateBuildConfiguration": "automatic"

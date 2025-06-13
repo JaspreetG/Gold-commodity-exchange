@@ -1,6 +1,7 @@
 #include "service/OrderMatchingService.hpp"
 #include "models/LTP.hpp"
 #include "models/OrderBookSnapshot.hpp"
+#include "core/StrategyFactory.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -13,8 +14,10 @@ namespace core
 
     void OrderMatchingService::handleOrder(const dto::OrderData &dto)
     {
-        Order o = OrderFactory::create(dto);
-        auto trades = o.match(book_);
+
+        Order order = OrderFactory::create(dto);
+        std::shared_ptr<IMatchingStrategy> strategy = StrategyFactory::create(dto);
+        auto trades = strategy->match(order, book_);
         for (auto &t : trades)
         {
             tradeProd_.publish(t);
