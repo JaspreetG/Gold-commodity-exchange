@@ -260,7 +260,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       console.error("Failed to fetch userId:", error);
       set({ userId: null });
       // console.log(get().authUser);
-    } finally {
     }
   },
 
@@ -478,7 +477,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       }));
       get().addToast({
         title: "Gold Added",
-        description: `Successfully added ₹{quantity.toFixed(3)} gram`,
+        description: `Successfully added ${quantity.toFixed(3)} gram`,
       });
     } catch (error) {
       get().addToast({
