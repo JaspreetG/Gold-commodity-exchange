@@ -1,3 +1,8 @@
+/**
+ * @file KafkaStatusProducer.cpp
+ * @brief Implementation of the KafkaStatusProducer class.
+ */
+
 #include "kafka/KafkaStatusProducer.hpp"
 #include <iostream>
 #include <cppkafka/producer.h>

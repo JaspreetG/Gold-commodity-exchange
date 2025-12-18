@@ -33,10 +33,10 @@ export const useOrderBook = () => {
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Use custom WebSocket
-        debug: (str) => console.log("[STOMP - OrderBook]", str),
+        // debug: (str) => console.log("[STOMP - OrderBook]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          console.log("Connected to WebSocket /topic/orderbook");
+          // console.log("Connected to WebSocket /topic/orderbook");
           client.subscribe("/topic/orderbook", (message) => {
             const body: OrderBook = JSON.parse(message.body);
             setOrderBook(body);

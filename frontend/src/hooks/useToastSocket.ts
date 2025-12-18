@@ -25,13 +25,13 @@ export const useToastSocket = (userId: number | string) => {
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Use fingerprint in query param
-        debug: (str) => console.log("[STOMP - Toast]", str),
+        // debug: (str) => console.log("[STOMP - Toast]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          console.log(`Connected to WebSocket /topic/toast/${userId}`);
+          // console.log(`Connected to WebSocket /topic/toast/${userId}`);
           client.subscribe(`/topic/toast/${userId}`, (message) => {
             const body = message.body;
-            console.log("Toast Message:", body);
+            // console.log("Toast Message:", body);
             addToast({
               title: "From Backend",
               description: body,

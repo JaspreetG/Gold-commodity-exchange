@@ -18,6 +18,8 @@ import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.dto.LoginRequest;
 import io.goldexchange.auth_service.dto.RegisterRequest;
 import io.goldexchange.auth_service.dto.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -26,9 +28,15 @@ import org.springframework.security.core.AuthenticationException;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * REST Controller for Authentication services.
+ * Handles user login, registration, verification, and session management.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     private AuthService authService;
@@ -36,9 +44,15 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * Initiates the login process by checking if the user exists.
+     *
+     * @param loginRequest The login request containing the phone number.
+     * @return A response entity containing a redirect instruction or success message.
+     */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest user) {
-        String phoneNumber = user.getPhoneNumber();
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        String phoneNumber = loginRequest.getPhoneNumber();
 
         if (phoneNumber == null || phoneNumber.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Phone number is required"));
@@ -48,20 +62,30 @@ public class AuthController {
         if (!exists) {
             return ResponseEntity.ok(Map.of("redirect", "register"));
         }
-        // If user exists, proceed with login (dummy response for now)
+
+        String maskedPhone = phoneNumber.replaceAll(".(?=.{4})", "*");
+        logger.info("User with phone number {} exists, proceeding to verification", maskedPhone);
         return ResponseEntity.ok(Map.of("message", "user is in DB"));
     }
 
+    /**
+     * Verifies the TOTP code and logs the user in if successful.
+     *
+     * @param request  The verification request containing phone number and TOTP.
+     * @param response The HTTP servlet response to set cookies.
+     * @return A response entity containing the user details and a success message, or an error.
+     */
     @PostMapping("/verify")
     public ResponseEntity<?> verify(@Valid @RequestBody VerifyTotpRequest request, HttpServletResponse response) {
         try {
             OtpAuthenticationToken authRequest = new OtpAuthenticationToken(request.getPhoneNumber(),
                     request.getTotp());
             Authentication authentication = authenticationManager.authenticate(authRequest);
-            // If authentication is successful, you can generate JWT and set cookie as
-            // before
+
             User userEntity = (User) authentication.getPrincipal();
             if (userEntity == null) {
+                String maskedPhone = request.getPhoneNumber().replaceAll(".(?=.{4})", "*");
+                logger.warn("Authentication successful but user entity is null for phone: {}", maskedPhone);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
             }
 
@@ -71,7 +95,6 @@ public class AuthController {
             String deviceFingerprint = request.getDeviceFingerprint();
             String jwt = authService.generateJwt(user.getUserId(), deviceFingerprint);
 
-            // create jwt
             authService.createWallet(user, jwt, deviceFingerprint);
 
             ResponseCookie cookie = ResponseCookie.from("jwt", jwt)
@@ -80,12 +103,22 @@ public class AuthController {
                     .sameSite("Strict")
                     .build();
             response.addHeader("Set-Cookie", cookie.toString());
+
+            logger.info("User {} logged in successfully", user.getUserId());
             return ResponseEntity.ok(Map.of("message", "Login successful", "User", user));
         } catch (AuthenticationException e) {
+            String maskedPhone = request.getPhoneNumber().replaceAll(".(?=.{4})", "*");
+            logger.error("Authentication failed for phone: {}", maskedPhone, e);
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @param request The registration request containing user details.
+     * @return A response entity containing the QR code data and secret key.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         String userName = request.getUserName();
@@ -95,6 +128,8 @@ public class AuthController {
         }
         boolean exists = authService.userExistsByPhone(phoneNumber);
         if (exists) {
+            String maskedPhone = phoneNumber.replaceAll(".(?=.{4})", "*");
+            logger.warn("Registration attempt failed: Phone number {} already registered", maskedPhone);
             return ResponseEntity.badRequest()
                     .body(Map.of("redirect", "login", "error", "Phone number already registered"));
         }
@@ -104,9 +139,17 @@ public class AuthController {
         authService.saveUser(userName, phoneNumber, secretKey);
         // Generate QR code for the secret key
         String qrCodeData = authService.generateQrCode(userName, secretKey);
+
+        logger.info("New user registered temporarily: {}", userName);
         return ResponseEntity.ok(Map.of("qrCode", qrCodeData, "secretKey", secretKey));
     }
 
+    /**
+     * Retrieves the authenticated user's details.
+     *
+     * @param authentication The authentication object.
+     * @return The user details.
+     */
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser(Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
@@ -115,13 +158,23 @@ public class AuthController {
         // The principal is userId (Long) set by JwtAuthenticationFilter
         Long userId = (Long) authentication.getPrincipal();
         UserDTO userDTO = authService.getUserById(userId);
-        System.out.println(userDTO);
+
         if (userDTO == null) {
+            logger.error("User ID {} not found in database", userId);
             return ResponseEntity.status(404).body(Map.of("error", "User not found"));
         }
+
+        logger.debug("Fetched user details for ID: {}", userId);
         return ResponseEntity.ok(userDTO);
     }
 
+    /**
+     * Logs out the user by clearing the authentication cookie.
+     *
+     * @param response       The HTTP servlet response.
+     * @param authentication The authentication object.
+     * @return A success message.
+     */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response, Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
@@ -129,24 +182,25 @@ public class AuthController {
         }
 
         authService.logout(response);
-        // Remove the JWT cookie by setting it with maxAge=0
+        logger.info("User logged out successfully");
 
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
+    /**
+     * Retrieves the authenticated user's ID.
+     *
+     * @param authentication The authentication object.
+     * @return The user ID.
+     */
     @GetMapping("/getUserId")
     public ResponseEntity<?> getUserId(Authentication authentication) {
-        System.out.println("in get UserId");
         if (authentication == null || authentication.getPrincipal() == null) {
             return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
         }
-        // The principal is userId (Long) set by JwtAuthenticationFilter
+
         Long userId = (Long) authentication.getPrincipal();
-        // UserDTO userDTO = authService.getUserById(userId);
-        // System.out.println(userDTO);
-        // if (userDTO == null) {
-        // return ResponseEntity.status(404).body(Map.of("error", "User not found"));
-        // }
+        logger.debug("Fetched User ID: {}", userId);
         return ResponseEntity.ok(userId);
     }
 

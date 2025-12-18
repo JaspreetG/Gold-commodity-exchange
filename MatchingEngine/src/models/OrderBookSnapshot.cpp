@@ -1,3 +1,8 @@
+/**
+ * @file OrderBookSnapshot.cpp
+ * @brief Implementation of the OrderBookSnapshot class.
+ */
+
 #include "models/OrderBookSnapshot.hpp"
 
 namespace models

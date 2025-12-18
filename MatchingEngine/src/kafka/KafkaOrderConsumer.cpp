@@ -1,3 +1,8 @@
+/**
+ * @file KafkaOrderConsumer.cpp
+ * @brief Implementation of the KafkaOrderConsumer class.
+ */
+
 #include "kafka/KafkaOrderConsumer.hpp"
 #include <cppkafka/configuration.h>
 #include <cppkafka/message.h>

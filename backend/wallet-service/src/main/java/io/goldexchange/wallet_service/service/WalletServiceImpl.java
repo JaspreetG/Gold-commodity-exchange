@@ -10,18 +10,14 @@ import io.goldexchange.wallet_service.dto.WalletDTO;
 import io.goldexchange.wallet_service.model.Wallet;
 import io.goldexchange.wallet_service.repository.WalletRepositoryWrapper;
 
+/**
+ * Implementation of WalletService.
+ * Handles wallet operations such as creation, balance updates, and transaction processing.
+ */
 @Service
 public class WalletServiceImpl implements WalletService {
     @Autowired
     private WalletRepositoryWrapper walletRepository;
-
-    // @Override
-    // public WalletDTO getWallet(Long userId) {
-    // Wallet wallet = walletRepository.findByUserId(userId);
-    // WalletDTO walletDTO = new WalletDTO();
-    // BeanUtils.copyProperties(wallet, walletDTO);
-    // return walletDTO;
-    // }
 
     @Override
     public WalletDTO getWallet(Long userId) {
@@ -44,10 +40,6 @@ public class WalletServiceImpl implements WalletService {
         wallet.setGold(0.0);
 
         Wallet savedWallet = walletRepository.save(wallet);
-
-        // if (savedWallet == null) {
-        //     throw new IllegalStateException("Failed to save wallet for user: " + userId);
-        // }
 
         WalletDTO walletDTO = new WalletDTO();
         BeanUtils.copyProperties(savedWallet, walletDTO);

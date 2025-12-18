@@ -9,6 +9,10 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entity representing a user in the authentication system.
+ * Maps to the "users" table in the database.
+ */
 @Entity
 @Data
 @AllArgsConstructor
@@ -16,11 +20,30 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 public class User {
 
+    /**
+     * Unique identifier for the user.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
+
+    /**
+     * The user's username.
+     */
     private String userName;
+
+    /**
+     * The user's phone number.
+     */
     private String phoneNumber;
+
+    /**
+     * The secret key used for TOTP generation and verification.
+     */
     private String secretKey;
+
+    /**
+     * The state of the user account (e.g., "temporary", "permanent").
+     */
     private String state;
 }

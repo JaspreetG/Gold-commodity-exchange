@@ -7,23 +7,38 @@ import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO for incoming order requests from clients.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderRequest {
 
+    /**
+     * The quantity of the asset to trade. Must be positive.
+     */
     @Positive(message = "Quantity must be greater than 0")
     private int quantity;
 
+    /**
+     * The price per unit. Required and must be positive.
+     */
     @NotNull(message = "Price is required")
     @Positive(message = "Price must be greater than 0")
     private Double price;
 
+    /**
+     * The side of the trade (BUY or SELL).
+     */
     @NotNull(message = "Side is required")
     @Pattern(regexp = "BUY|SELL", message = "Side must be either BUY or SELL")
-    private String side; // BUY or SELL
+    private String side;
 
+    /**
+     * The type of the order (LIMIT or MARKET).
+     */
     @NotNull(message = "Type is required")
     @Pattern(regexp = "LIMIT|MARKET", message = "Type must be either LIMIT or MARKET")
-    private String type; // LIMIT or MARKET
+    private String type;
 }

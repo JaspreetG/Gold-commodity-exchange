@@ -1,3 +1,8 @@
+/**
+ * @file OrderBook.cpp
+ * @brief Implementation of the OrderBook class.
+ */
+
 #include "core/Order.hpp"
 #include "core/OrderBook.hpp"
 #include <algorithm>

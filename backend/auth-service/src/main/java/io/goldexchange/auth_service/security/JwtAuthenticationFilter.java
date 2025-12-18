@@ -15,6 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Filter to authenticate requests using JWT stored in cookies.
+ * Extracts JWT, validates it, and checks device fingerprint.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -23,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Only filter /api/auth/getUser
+        // Only filter specific protected endpoints
         String path = request.getServletPath();
         return !("/api/auth/getUser".equals(path) || "/api/auth/logout".equals(path)|| "/api/auth/getUserId".equals(path));
     }

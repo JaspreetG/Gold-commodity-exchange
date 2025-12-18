@@ -16,7 +16,7 @@ export const connectWebSocket = (onLtpUpdate: (ltp: string) => void) => {
     webSocketFactory: () => new SockJS(socketUrl),
     reconnectDelay: 5000,
     onConnect: () => {
-      console.log("Connected to WebSocket");
+      // console.log("Connected to WebSocket");
 
       // Subscribe to LTP topic
       stompClient?.subscribe("/topic/ltp", (message) => {

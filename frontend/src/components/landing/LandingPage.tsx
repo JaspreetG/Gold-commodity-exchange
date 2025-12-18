@@ -11,11 +11,11 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const onLoginClick = () => {
-    console.log("Login clicked");
+    // console.log("Login clicked");
     navigate("/login");
   };
   const onSignupClick = () => {
-    console.log("Signup clicked");
+    // console.log("Signup clicked");
     navigate("/signUp");
   };
 

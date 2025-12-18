@@ -37,9 +37,19 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import org.apache.commons.codec.binary.Base32;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation of the AuthService interface.
+ * Handles core authentication logic including TOTP generation/verification,
+ * user management, and communication with other services.
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     @Autowired
     private AuthRepositoryWrapper authRepository;
 
@@ -191,14 +201,14 @@ public class AuthServiceImpl implements AuthService {
                         Map.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("Wallet created successfully.");
+                    logger.info("Wallet created successfully for user {}", user.getUserId());
                 } else {
-                    System.err.println("Wallet creation failed with status: " + response.getStatusCode());
+                    logger.error("Wallet creation failed for user {} with status: {}", user.getUserId(), response.getStatusCode());
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("Failed to create wallet: " + e.getMessage());
+            logger.error("Failed to create wallet for user {}: {}", user.getUserId(), e.getMessage());
         }
     }
 
@@ -206,9 +216,9 @@ public class AuthServiceImpl implements AuthService {
     public UserDTO getUserById(Long userId) {
 
         Optional<User> userOpt = authRepository.findById(userId);
-        System.out.println(userOpt);
 
         if (userOpt.isEmpty()) {
+            logger.debug("User with ID {} not found", userId);
             return null;
         }
 
