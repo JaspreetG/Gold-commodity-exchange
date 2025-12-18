@@ -18,6 +18,10 @@ import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Security configuration for the Auth Service.
+ * Configures JWT authentication, CORS, and request authorization rules.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -31,6 +35,13 @@ public class SecurityConfig {
     @Autowired
     private OtpAuthenticationProvider otpAuthenticationProvider;
 
+    /**
+     * Configures the AuthenticationManager with the custom OTP authentication provider.
+     *
+     * @param http The HttpSecurity object.
+     * @return The configured AuthenticationManager.
+     * @throws Exception If configuration fails.
+     */
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
@@ -38,6 +49,13 @@ public class SecurityConfig {
         return builder.build();
     }
 
+    /**
+     * Configures the SecurityFilterChain for HTTP requests.
+     *
+     * @param http The HttpSecurity object.
+     * @return The configured SecurityFilterChain.
+     * @throws Exception If configuration fails.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())
@@ -51,6 +69,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures CORS settings.
+     *
+     * @return The CorsConfigurationSource.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

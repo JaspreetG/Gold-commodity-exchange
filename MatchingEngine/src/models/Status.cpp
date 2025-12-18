@@ -1,3 +1,8 @@
+/**
+ * @file Status.cpp
+ * @brief Implementation of the Status class.
+ */
+
 #include "models/Status.hpp"
 
 namespace models

@@ -1,10 +1,10 @@
-package com.goldexchange.trade_service;
+package io.goldexchange.wallet_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TradeServiceApplicationTests {
+class WalletServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

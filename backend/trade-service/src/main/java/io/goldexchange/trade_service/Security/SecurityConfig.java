@@ -12,6 +12,10 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import java.util.List;
 
+/**
+ * Security configuration for the Trade Service.
+ * Configures JWT authentication, CORS, and request authorization rules.
+ */
 @Configuration
 public class SecurityConfig {
 
@@ -21,6 +25,13 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
+    /**
+     * Configures the SecurityFilterChain for HTTP requests.
+     *
+     * @param http The HttpSecurity object.
+     * @return The configured SecurityFilterChain.
+     * @throws Exception If configuration fails.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(withDefaults())
@@ -34,6 +45,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures CORS settings.
+     *
+     * @return The CorsConfigurationSource.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

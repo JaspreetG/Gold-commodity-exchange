@@ -1,3 +1,8 @@
+/**
+ * @file StrategyFactory.cpp
+ * @brief Implementation of the StrategyFactory class.
+ */
+
 #include "core/StrategyFactory.hpp"
 #include "core/strategies/BuyLimitStrategy.hpp"
 #include "core/strategies/SellLimitStrategy.hpp"

@@ -1,3 +1,8 @@
+/**
+ * @file KafkaLTPProducer.cpp
+ * @brief Implementation of the KafkaLTPProducer class.
+ */
+
 #include "kafka/KafkaLTPProducer.hpp"
 #include <iostream>
 #include <cppkafka/producer.h>

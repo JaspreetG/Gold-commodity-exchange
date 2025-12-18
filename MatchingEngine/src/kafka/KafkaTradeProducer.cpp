@@ -1,3 +1,8 @@
+/**
+ * @file KafkaTradeProducer.cpp
+ * @brief Implementation of the KafkaTradeProducer class.
+ */
+
 #include "kafka/KafkaTradeProducer.hpp"
 #include <iostream>
 #include <cppkafka/producer.h>

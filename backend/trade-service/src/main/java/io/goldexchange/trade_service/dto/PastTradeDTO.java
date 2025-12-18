@@ -7,19 +7,43 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/**
+ * DTO representing a past trade execution.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PastTradeDTO {
 
+    /**
+     * The ID of the user involved in the trade.
+     */
     private Long userId;  
-    private Long orderId;
-    private Double price;
-    private int quantity;
-    private Timestamp createdAt;
-    private String side; // BUY or SELL
-    // private String type;
 
+    /**
+     * The ID of the order associated with the trade.
+     */
+    private Long orderId;
+
+    /**
+     * The execution price.
+     */
+    private Double price;
+
+    /**
+     * The traded quantity.
+     */
+    private int quantity;
+
+    /**
+     * The timestamp of the trade.
+     */
+    private Timestamp createdAt;
+
+    /**
+     * The side of the trade (BUY or SELL).
+     */
+    private String side;
 }
 
 

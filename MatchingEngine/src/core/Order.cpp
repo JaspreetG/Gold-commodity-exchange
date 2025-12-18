@@ -1,3 +1,8 @@
+/**
+ * @file Order.cpp
+ * @brief Implementation of the Order class.
+ */
+
 #include "core/Order.hpp"
 #include "core/IMatchingStrategy.hpp"
 #include <iostream>

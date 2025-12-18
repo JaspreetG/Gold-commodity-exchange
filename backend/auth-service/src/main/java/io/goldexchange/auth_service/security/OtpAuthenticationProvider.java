@@ -13,12 +13,22 @@ import java.util.List;
 import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.service.AuthService;
 
+/**
+ * Authentication provider for handling OTP/TOTP based authentication.
+ */
 @Component
 public class OtpAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private AuthService authService;
 
+    /**
+     * Authenticates the user based on phone number and TOTP.
+     *
+     * @param authentication The authentication request object.
+     * @return A fully authenticated token if successful.
+     * @throws AuthenticationException If authentication fails.
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String phoneNumber = authentication.getPrincipal().toString();
@@ -39,6 +49,12 @@ public class OtpAuthenticationProvider implements AuthenticationProvider {
         );
     }
 
+    /**
+     * Checks if this provider supports the given authentication type.
+     *
+     * @param authentication The authentication class.
+     * @return True if supported, false otherwise.
+     */
     @Override
     public boolean supports(Class<?> authentication) {
         return OtpAuthenticationToken.class.isAssignableFrom(authentication);

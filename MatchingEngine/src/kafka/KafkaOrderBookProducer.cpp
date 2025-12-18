@@ -1,3 +1,8 @@
+/**
+ * @file KafkaOrderBookProducer.cpp
+ * @brief Implementation of the KafkaOrderBookProducer class.
+ */
+
 #include "kafka/KafkaOrderBookProducer.hpp"
 #include <iostream>
 #include <cppkafka/producer.h>

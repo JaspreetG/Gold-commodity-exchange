@@ -1,3 +1,8 @@
+/**
+ * @file OrderFactory.cpp
+ * @brief Implementation of the OrderFactory class.
+ */
+
 #include "core/OrderFactory.hpp"
 
 namespace core

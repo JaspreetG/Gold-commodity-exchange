@@ -11,12 +11,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Filter to authenticate requests using JWT.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -24,9 +31,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // Skip JWT auth for internal endpoints
-        System.out.println("********SHOULD NOT FILTER***********");
         String path = request.getServletPath();
-        return path.startsWith("/api/wallet/internal");
+        boolean shouldSkip = path.startsWith("/api/wallet/internal");
+        if (shouldSkip) {
+            logger.debug("Skipping JWT filter for internal path: {}", path);
+        }
+        return shouldSkip;
     }
 
     @Override

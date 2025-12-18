@@ -9,22 +9,40 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 import io.goldexchange.trade_service.webSocket.JwtHandshakeInterceptor;
 
+/**
+ * Configuration for WebSocket message brokering.
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
+    /**
+     * Constructor for WebSocketConfig.
+     *
+     * @param jwtHandshakeInterceptor The interceptor for JWT validation during handshake.
+     */
     WebSocketConfig(JwtHandshakeInterceptor jwtHandshakeInterceptor) {
         this.jwtHandshakeInterceptor = jwtHandshakeInterceptor;
     }
 
+    /**
+     * Configures the message broker.
+     *
+     * @param config The MessageBrokerRegistry.
+     */
     @Override
     public void configureMessageBroker(@NonNull MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
 
+    /**
+     * Registers STOMP endpoints.
+     *
+     * @param registry The StompEndpointRegistry.
+     */
     @Override
     public void registerStompEndpoints(@NonNull StompEndpointRegistry registry) {
         registry

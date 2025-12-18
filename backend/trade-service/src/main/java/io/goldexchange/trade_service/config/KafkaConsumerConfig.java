@@ -13,6 +13,10 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Configuration for Kafka Consumer.
+ * Sets up the consumer factory and listener container factory.
+ */
 @Configuration
 @EnableKafka
 public class KafkaConsumerConfig {
@@ -23,6 +27,11 @@ public class KafkaConsumerConfig {
     @Value("${KAFKA_BROKER:kafka:9092}")
     private String bootstrapServers;
 
+    /**
+     * Creates the ConsumerFactory.
+     *
+     * @return The configured ConsumerFactory.
+     */
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -35,6 +44,11 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(props);
     }
 
+    /**
+     * Creates the ConcurrentKafkaListenerContainerFactory.
+     *
+     * @return The configured ConcurrentKafkaListenerContainerFactory.
+     */
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();

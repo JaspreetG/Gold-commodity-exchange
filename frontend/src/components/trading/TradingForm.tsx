@@ -94,7 +94,7 @@ const TradingForm = ({
   };
 
   const handleSell = async () => {
-    console.log("in handle sell");
+    // console.log("in handle sell");
 
     const quantity = parseInt(sellQuantity);
     if (!quantity || quantity <= 0) {

@@ -12,7 +12,10 @@ import org.springframework.kafka.core.ProducerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-//changed file name
+/**
+ * Configuration for Kafka Producer.
+ * Sets up the producer factory and Kafka template.
+ */
 @Configuration
 public class KafkaProducerConfig {
 
@@ -22,6 +25,11 @@ public class KafkaProducerConfig {
     @Value("${KAFKA_BROKER:kafka:9092}")
     private String bootstrapServers;
 
+    /**
+     * Creates the ProducerFactory.
+     *
+     * @return The configured ProducerFactory.
+     */
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
@@ -31,6 +39,11 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    /**
+     * Creates the KafkaTemplate.
+     *
+     * @return The configured KafkaTemplate.
+     */
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());

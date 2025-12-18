@@ -14,9 +14,16 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Interceptor for WebSocket handshakes to validate JWT and device fingerprints.
+ */
 @Component
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtHandshakeInterceptor.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -45,32 +52,26 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
                             String deviceFingerprint = claims.get("deviceFingerprint", String.class);
                             String requestFingerprint = req.getParameter("fingerprint");
 
-                            System.out.println("UserId: " + userId);
-                            System.out.println("JWT Fingerprint: " + deviceFingerprint);
-                            System.out.println("Query Param Fingerprint: " + requestFingerprint);
-
                             if (requestFingerprint == null || !requestFingerprint.equals(deviceFingerprint)) {
-                                System.out.println("❌ Fingerprint mismatch");
+                                logger.warn("Fingerprint mismatch for user {}. JWT: {}, Request: {}", userId, deviceFingerprint, requestFingerprint);
                                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                                 return false;
                             }
 
-                            attributes.put("userId", userId); // optionally store user info
-                            System.out.println("✅ WebSocket handshake allowed");
+                            attributes.put("userId", userId);
+                            logger.info("WebSocket handshake allowed for user {}", userId);
                             return true;
                         }
                     }
                 }
             }
 
-            // No JWT cookie
-            System.out.println("❌ JWT cookie not found");
+            logger.warn("JWT cookie not found during WebSocket handshake");
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
 
         } catch (Exception e) {
-            System.err.println("❌ Exception in WebSocket handshake: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Exception in WebSocket handshake: {}", e.getMessage(), e);
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return false;
         }
@@ -81,9 +82,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
             ServerHttpResponse response,
             WebSocketHandler wsHandler,
             Exception exception) {
-        // Optional logging
         if (exception != null) {
-            System.err.println("❌ Handshake exception: " + exception.getMessage());
+            logger.error("Handshake exception", exception);
         }
     }
 }

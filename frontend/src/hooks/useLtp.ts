@@ -31,10 +31,10 @@ export const useLtp = () => {
 
       client = new Client({
         webSocketFactory: () => new WebSocket(wsUrl), // ✅ Custom WebSocket
-        debug: (str) => console.log("[STOMP]", str),
+        // debug: (str) => console.log("[STOMP]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          console.log("Connected to WebSocket /topic/ltp");
+          // console.log("Connected to WebSocket /topic/ltp");
           client.subscribe("/topic/ltp", (message) => {
             const body: LtpData = JSON.parse(message.body);
             setLtp(body);

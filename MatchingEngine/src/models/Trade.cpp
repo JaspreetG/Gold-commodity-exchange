@@ -1,3 +1,8 @@
+/**
+ * @file Trade.cpp
+ * @brief Implementation of the Trade class.
+ */
+
 #include "models/Trade.hpp"
 
 namespace models

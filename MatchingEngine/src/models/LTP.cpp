@@ -1,3 +1,8 @@
+/**
+ * @file LTP.cpp
+ * @brief Implementation of the LTP class.
+ */
+
 #include "models/LTP.hpp"
 
 namespace models {
