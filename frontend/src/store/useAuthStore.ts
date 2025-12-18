@@ -59,7 +59,7 @@ interface tempUser {
 interface AuthStore {
   authUser: User | null;
   tempUser: tempUser | null;
-  userId: string;
+  userId: string | null;
   isSigningUp: boolean;
   isLoggingIn: boolean;
   isAddingUSD: boolean;
@@ -153,22 +153,12 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
       const result = res.data;
 
-      //   set({
-      //     authUser: {
-      //       userName: data.userName,
-      //       phoneNumber: data.phoneNumber,
-      //       balances: { inr: 0, gold: 0 },
-      //       qrCode: result.qrCode,
-      //       secretKey: result.secretKey,
-      //     },
-      //   });
       set({
         tempUser: {
           qrCode: result.qrCode,
           secretKey: result.secretKey,
         },
       });
-      console.log(get().tempUser);
 
       get().addToast({
         title: "Success",
@@ -196,7 +186,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   getUser: async () => {
     set({ isGettingUser: true });
     try {
-      console.log("in getUser");
       const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
         (m) => m.default
       );
@@ -231,18 +220,15 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         set({ authUser: null });
       }
 
-      console.log(get().authUser);
     } catch (error) {
-      console.error("Failed to fetch user:", error);
+      // console.error("Failed to fetch user:", error);
       set({ authUser: null });
-      console.log(get().authUser);
     } finally {
       set({ isGettingUser: false });
     }
   },
   getUserId: async () => {
     try {
-      console.log("in getUserId");
       const FingerprintJS = await import("@fingerprintjs/fingerprintjs").then(
         (m) => m.default
       );
@@ -254,19 +240,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
           "X-Device-Fingerprint": visitorId,
         },
       });
-      console.log("getUserId", res.data);
       set({ userId: res.data });
     } catch (error) {
-      console.error("Failed to fetch userId:", error);
+      // console.error("Failed to fetch userId:", error);
       set({ userId: null });
-      // console.log(get().authUser);
     }
   },
 
   login: async ({ phone }: LoginData, navigate) => {
     set({ isLoggingIn: true });
     try {
-      console.log("in login");
       const payload = { phoneNumber: phone };
       const res = await authApi.post("/login", payload);
       const data = res.data;
@@ -286,12 +269,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: "User found, proceed with TOTP verification.",
       });
 
-      //   set({ authUser: data });
-      console.log(get().authUser);
     } catch (error) {
       const err = error as AxiosError;
-      console.log("in login error");
-      console.log(err);
       let msg = "Something went wrong";
       if (
         err.response?.data &&
@@ -519,10 +498,11 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: `Successfully withdrew ₹${amount.toFixed(2)}`,
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      const err = error as AxiosError;
       get().addToast({
         title: "Error",
-        description: error.response.data.error,
+        description: (err.response?.data as { error?: string })?.error || "Withdrawal failed",
         variant: "destructive",
       });
     } finally {
@@ -555,14 +535,13 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         gold: walletData.gold,
       };
     } catch (error) {
-      console.error("Failed to fetch wallet:", error);
+      // console.error("Failed to fetch wallet:", error);
       return null;
     }
   },
   createOrder: async (quantity, price, side, type) => {
     set({ isCreatingOrder: true });
     try {
-      console.log("in createOrder");
       const fp = await FingerprintJS.load();
       const { visitorId } = await fp.get();
       const tradeApi = axiosInstance("trade");
@@ -580,7 +559,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         description: `Successfully created ${side} order for ${quantity} at ₹${price}`,
       });
     } catch (error) {
-      console.error("Failed to create order:", error);
+      // console.error("Failed to create order:", error);
       get().addToast({
         title: "Error",
         description: "Failed to create order",
@@ -606,10 +585,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         },
       });
       set({ orders: res.data.orders });
-      console.log(get().orders);
-      //   return res.data;
     } catch (error) {
-      console.error("Failed to fetch orders:", error);
+      // console.error("Failed to fetch orders:", error);
       set({ orders: [] });
 
       //   return [];
@@ -633,11 +610,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         },
       });
       set({ pastTrades: res.data.pastTrades });
-      console.log(get().pastTrades);
 
       //   return res.data;
     } catch (error) {
-      console.error("Failed to fetch trade history:", error);
+      // console.error("Failed to fetch trade history:", error);
       set({ pastTrades: [] });
       //   return [];
     } finally {

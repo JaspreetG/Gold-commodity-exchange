@@ -2,7 +2,6 @@ package io.goldexchange.trade_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.goldexchange.trade_service.consumer.StatusConsumer;
 import io.goldexchange.trade_service.dto.AuthCredentials;
 import io.goldexchange.trade_service.dto.OrderDTO;
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
@@ -21,6 +20,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,8 +35,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Service for handling trades, orders, and interactions with other services like Wallet and Matching Engine.
+ */
 @Service
 public class TradeService {
+
+    private static final Logger logger = LoggerFactory.getLogger(TradeService.class);
+
     private final TradeRepository tradeRepository;
     private final OrderProducer orderProducer;
     private final OrderRepository orderRepository;
@@ -56,6 +63,13 @@ public class TradeService {
         this.messagingTemplate = messagingTemplate;
     }
 
+    /**
+     * Sends an order to the matching engine via Kafka.
+     *
+     * @param orderRequest The order details.
+     * @param userId       The ID of the user placing the order.
+     * @throws Exception If serialization or sending fails.
+     */
     public void sendOrderToMatcher(OrderRequest orderRequest, Long userId) throws Exception {
 
         // Convert OrderRequest to OrderProducerDTO for adding userId to
@@ -64,7 +78,7 @@ public class TradeService {
         BeanUtils.copyProperties(orderRequest, orderProducerDTO);
         orderProducerDTO.setUserId(userId.toString());
 
-        // save the orderin the orders table
+        // save the order in the orders table
         Order orderEntity = new Order();
         orderEntity.setUserId(userId);
         orderEntity.setPrice(orderRequest.getPrice());
@@ -79,8 +93,14 @@ public class TradeService {
 
         String orderJson = objectMapper.writeValueAsString(orderProducerDTO);
         orderProducer.sendOrder(orderJson);
+        logger.info("Order sent to matcher: {}", orderProducerDTO);
     }
 
+    /**
+     * Saves a completed trade from the matching engine.
+     *
+     * @param tradeConsumerDTO The trade details.
+     */
     public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
 
         try {
@@ -124,12 +144,19 @@ public class TradeService {
 
             // wallet update for both
             updateWallets(tradeConsumerDTO);
+            logger.info("Trade saved and wallets updated for trade: {}", tradeConsumerDTO);
 
         } catch (Exception e) {
+            logger.error("Error saving trade: {}", e.getMessage(), e);
             throw new RuntimeException("Error saving trade: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Calls the Wallet Service to update balances after a trade.
+     *
+     * @param tradeConsumerDTO The trade details.
+     */
     public void updateWallets(TradeConsumerDTO tradeConsumerDTO) {
         try {
             String url = walletServiceUrl + "internal/updateWallets"; // ensure this is the correct endpoint
@@ -146,16 +173,23 @@ public class TradeService {
                     Map.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Wallet updated successfully.");
+                logger.info("Wallet updated successfully.");
             } else {
-                System.err.println("Wallet update failed with status: " + response.getStatusCode());
+                logger.error("Wallet update failed with status: {}", response.getStatusCode());
                 throw new RuntimeException("Failed to update wallet");
             }
         } catch (Exception e) {
+            logger.error("Error updating wallets: {}", e.getMessage(), e);
             throw new RuntimeException("Error updating wallets: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Retrieves past trades for a user.
+     *
+     * @param userId The ID of the user.
+     * @return List of PastTradeDTOs.
+     */
     public List<PastTradeDTO> pastTrades(Long userId) {
         // Fetch trades where user is involved
         List<Trade> userTrades = tradeRepository.findByUserId(userId);
@@ -181,6 +215,11 @@ public class TradeService {
         return pastTrades;
     }
 
+    /**
+     * Fetches the current user's wallet details from the Wallet Service.
+     *
+     * @return The WalletDTO, or null if failed.
+     */
     public WalletDTO getWallet() {
         WalletDTO walletDTO = null;
 
@@ -204,36 +243,26 @@ public class TradeService {
                     requestEntity,
                     WalletDTO.class);
 
-            System.out.println(response.getBody());
+            logger.debug("Wallet response: {}", response.getBody());
             if (response.getStatusCode().is2xxSuccessful()) {
-                System.out.println("Wallet fetched successfully.");
+                logger.info("Wallet fetched successfully.");
                 walletDTO = (WalletDTO) response.getBody();
             } else {
-                System.err.println("Wallet fetch failed with status: " + response.getStatusCode());
+                logger.error("Wallet fetch failed with status: {}", response.getStatusCode());
                 throw new RuntimeException("Failed to fetch wallet");
             }
         } catch (Exception e) {
-            System.err.println("Failed to fetch wallet: " + e.getMessage());
+            logger.error("Failed to fetch wallet: {}", e.getMessage());
         }
         return walletDTO;
     }
 
-    // public boolean checkWallet(OrderRequest orderRequest) {
-    // WalletDTO walletDTO = getWallet();
-    // if (walletDTO == null) {
-    // return false;
-    // }
-
-    // // Check if the user has enough balance
-    // if (orderRequest.getSide().equals("BUY")) {
-    // return walletDTO.getBalance() >=
-    // orderRequest.getPrice()*orderRequest.getQuantity();
-    // } else if (orderRequest.getSide().equals("SELL")) {
-    // return walletDTO.getGold() >= orderRequest.getQuantity();
-    // }
-    // return false;
-    // }
-
+    /**
+     * Checks if the user has sufficient funds/assets in their wallet for the order.
+     *
+     * @param orderRequest The order request.
+     * @return true if sufficient funds/assets, false otherwise.
+     */
     public boolean checkWallet(OrderRequest orderRequest) {
         WalletDTO walletDTO = getWallet();
         if (walletDTO == null) {
@@ -250,13 +279,8 @@ public class TradeService {
                 return walletDTO.getBalance() >= cost;
             } else if ("MARKET".equals(type)) {
 
-                // For market buy: you don't know exact price, so:
-                // Option 1: Assume a max slippage or fetch current lowest ask
-                // double estimatedPrice = fetchLTPOrBestAsk(); // Implement this
-                // double estimatedCost = estimatedPrice * orderRequest.getQuantity();
-                // return walletDTO.getBalance() >= estimatedCost;
-
-                // Option 2: Assume a fixed price for market orders
+                // For market buy: you don't know exact price
+                // Option 2: Assume a fixed price for market orders or check min balance
                 return true; // Assuming user has enough balance for market buy, as price is not known
             }
         } else if ("SELL".equals(side)) {
@@ -267,14 +291,25 @@ public class TradeService {
         return false;
     }
 
+    /**
+     * Sends a WebSocket toast notification to the user.
+     *
+     * @param userId  The ID of the user.
+     * @param message The message to send.
+     */
     private void sendToast(Long userId, String message) {
         messagingTemplate.convertAndSend("/topic/toast/" + userId, message);
     }
 
+    /**
+     * Updates an order based on status updates (e.g., filled, partial fill).
+     *
+     * @param statusConsumerDTO The status update details.
+     */
     public void updateOrder(StatusConsumerDTO statusConsumerDTO) {
         try {
             // Fetch the order by orderId
-            System.out.println("\u001B[32mThis is green text in updateorder service\u001B[0m");
+            logger.info("Updating order with ID: {}", statusConsumerDTO.getOrderId());
             Long orderId = Long.parseLong(statusConsumerDTO.getOrderId());
             Order order = orderRepository.findById(orderId).orElse(null);
             if (order == null) {
@@ -284,7 +319,7 @@ public class TradeService {
             Long userId=Long.parseLong(statusConsumerDTO.getUserId());
             String type = order.getType();   // MARKET/TYPE
             int quantity_order = order.getQuantity();
-            String side = order.getSide();    // BUY/SELL
+            String side = order.getSide();    // BUY/SELL (unused variable warning)
 
             int quantity_status = statusConsumerDTO.getQuantity();
 
@@ -315,19 +350,25 @@ public class TradeService {
             }
 
         } catch (Exception e) {
+            logger.error("Error updating order: {}", e.getMessage(), e);
             throw new RuntimeException("Error updating order: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * Retrieves all active orders for a user.
+     *
+     * @param userId The ID of the user.
+     * @return List of OrderDTOs.
+     */
     public List<OrderDTO> getOrders(Long userId) {
 
         // Fetch orders for the user
-        System.out.println("in get orderService");
+        logger.debug("Fetching orders for user: {}", userId);
         List<Order> orders = orderRepository.findByUserId(userId);
 
         if (orders == null || orders.isEmpty()) {
-            System.out.println("order is null");
-
+            logger.debug("No orders found for user: {}", userId);
             return null;
         }
 

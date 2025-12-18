@@ -2,20 +2,28 @@ import { Button } from "@/components/ui/button";
 import { Banknote, Coins, Shield, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Props for the LandingPage component.
+ * Currently unused as the component handles navigation internally.
+ */
 interface LandingPageProps {
-  onLoginClick: () => void;
-  onSignupClick: () => void;
+  onLoginClick?: () => void;
+  onSignupClick?: () => void;
 }
 
+/**
+ * LandingPage Component
+ *
+ * The main entry point for the application. Displays the hero section,
+ * features, and calls to action for logging in or signing up.
+ */
 const LandingPage = () => {
   const navigate = useNavigate();
 
   const onLoginClick = () => {
-    console.log("Login clicked");
     navigate("/login");
   };
   const onSignupClick = () => {
-    console.log("Signup clicked");
     navigate("/signUp");
   };
 

@@ -10,6 +10,8 @@ import io.goldexchange.auth_service.dto.UserDTO;
 import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.repository.AuthRepositoryWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,8 +40,15 @@ import java.util.Date;
 import org.apache.commons.codec.binary.Base32;
 import java.util.Map;
 
+/**
+ * Implementation of the AuthService.
+ * Handles user authentication, TOTP generation/verification, JWT management, and wallet creation.
+ */
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     @Autowired
     private AuthRepositoryWrapper authRepository;
 
@@ -52,17 +61,34 @@ public class AuthServiceImpl implements AuthService {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    /**
+     * Checks if a user exists by their phone number.
+     *
+     * @param phoneNumber The phone number to check.
+     * @return true if the user exists, false otherwise.
+     */
     @Override
     public boolean userExistsByPhone(String phoneNumber) {
         return authRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
 
+    /**
+     * Retrieves a user by their phone number.
+     *
+     * @param phoneNumber The phone number to search for.
+     * @return The User object if found, null otherwise.
+     */
     @Override
     public User getUserByPhone(String phoneNumber) {
         Optional<User> userOpt = authRepository.findByPhoneNumber(phoneNumber);
         return userOpt.orElse(null);
     }
 
+    /**
+     * Generates a secret key for TOTP.
+     *
+     * @return A Base32 encoded secret key string.
+     */
     @Override
     public String generateSecretKey() {
         try {
@@ -80,10 +106,19 @@ public class AuthServiceImpl implements AuthService {
             Base32 base32 = new Base32();
             return base32.encodeToString(combined).replace("=", "");
         } catch (NoSuchAlgorithmException e) {
+            logger.error("Failed to generate secret key", e);
             throw new RuntimeException("Failed to generate secret key", e);
         }
     }
 
+    /**
+     * Saves a new user to the repository.
+     *
+     * @param userName    The user's name.
+     * @param phoneNumber The user's phone number.
+     * @param secretKey   The user's secret key for TOTP.
+     * @return The saved User object.
+     */
     @Override
     public User saveUser(String userName, String phoneNumber, String secretKey) {
         User user = new User();
@@ -94,6 +129,13 @@ public class AuthServiceImpl implements AuthService {
         return authRepository.save(user);
     }
 
+    /**
+     * Generates a QR code for TOTP setup.
+     *
+     * @param userName  The user's name.
+     * @param secretKey The user's secret key.
+     * @return A Base64 encoded data URI of the QR code image.
+     */
     @Override
     public String generateQrCode(String userName, String secretKey) {
         String issuer = "GoldExchange";
@@ -108,13 +150,20 @@ public class AuthServiceImpl implements AuthService {
             byte[] pngData = pngOutputStream.toByteArray();
             // Still encode the image as Base64 for data URI
             return "data:image/png;base64," + java.util.Base64.getEncoder().encodeToString(pngData);
-        } catch (WriterException e) {
-            throw new RuntimeException("Failed to generate QR code", e);
-        } catch (java.io.IOException e) {
+        } catch (WriterException | java.io.IOException e) {
+            logger.error("Failed to generate QR code", e);
             throw new RuntimeException("Failed to generate QR code", e);
         }
     }
 
+    /**
+     * Verifies the provided TOTP code against the user's secret key.
+     *
+     * @param secretKey The user's secret key.
+     * @param totp      The TOTP code to verify.
+     * @param user      The user object.
+     * @return true if the TOTP is valid, false otherwise.
+     */
     @Override
     public boolean verifyTotp(String secretKey, String totp, User user) {
         try {
@@ -151,15 +200,22 @@ public class AuthServiceImpl implements AuthService {
             if (valid) {
                 user.setState("permanent");
                 authRepository.save(user);
-                // rest template call
             }
             return valid;
 
         } catch (Exception e) {
+            logger.error("Failed to verify TOTP", e);
             throw new RuntimeException("Failed to verify TOTP", e);
         }
     }
 
+    /**
+     * Generates a JWT for the user.
+     *
+     * @param userId            The ID of the user.
+     * @param deviceFingerprint The device fingerprint.
+     * @return The generated JWT string.
+     */
     @Override
     public String generateJwt(Long userId, String deviceFingerprint) {
         return Jwts.builder()
@@ -171,16 +227,23 @@ public class AuthServiceImpl implements AuthService {
                 .compact();
     }
 
+    /**
+     * Creates a wallet for the user in the Wallet Service.
+     *
+     * @param user              The UserDTO.
+     * @param jwt               The JWT token.
+     * @param deviceFingerprint The device fingerprint.
+     */
     @Override
     public void createWallet(UserDTO user, String jwt, String deviceFingerprint) {
         try {
             if ("permanent".equals(user.getState())) {
-                String url = walletServiceUrl; // ensure this is the correct endpoint
+                String url = walletServiceUrl;
 
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Cookie", "jwt=" + jwt); // Send JWT in cookie format
                 headers.set("X-Device-Fingerprint", deviceFingerprint);
-                headers.setContentType(MediaType.APPLICATION_JSON); // optional, since body is empty
+                headers.setContentType(MediaType.APPLICATION_JSON);
 
                 HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
 
@@ -191,22 +254,27 @@ public class AuthServiceImpl implements AuthService {
                         Map.class);
 
                 if (response.getStatusCode().is2xxSuccessful()) {
-                    System.out.println("Wallet created successfully.");
+                    logger.info("Wallet created successfully for user ID: {}", user.getUserId());
                 } else {
-                    System.err.println("Wallet creation failed with status: " + response.getStatusCode());
+                    logger.error("Wallet creation failed with status: {}", response.getStatusCode());
                 }
             }
 
         } catch (Exception e) {
-            System.err.println("Failed to create wallet: " + e.getMessage());
+            logger.error("Failed to create wallet: {}", e.getMessage());
         }
     }
 
+    /**
+     * Retrieves user details by ID.
+     *
+     * @param userId The ID of the user.
+     * @return The UserDTO, or null if not found.
+     */
     @Override
     public UserDTO getUserById(Long userId) {
 
         Optional<User> userOpt = authRepository.findById(userId);
-        System.out.println(userOpt);
 
         if (userOpt.isEmpty()) {
             return null;
@@ -218,6 +286,11 @@ public class AuthServiceImpl implements AuthService {
         return userDTO;
     }
 
+    /**
+     * Logs out the user by clearing the JWT cookie.
+     *
+     * @param response The HttpServletResponse.
+     */
     public void logout(HttpServletResponse response) {
 
         // Remove the JWT cookie by setting it with maxAge=0
