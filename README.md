@@ -731,36 +731,6 @@ flowchart TD
 
 ---
 
-### State Transition Diagram
-
-Lifecycle states of an order during processing.
-
-```mermaid
-stateDiagram-v2
-    [*] --> Incoming : Received from Kafka
-    Incoming --> Parsing : Parsing order Data
-    Parsing --> Rejected : Invalid format
-    Parsing --> Accepted : Successfully parsed
-
-    Accepted --> Enriched : Strategy assigned via factory
-    Enriched --> Matching : Matching started using OrderBook
-
-    Matching --> FullyMatched : Complete match found
-    Matching --> PartiallyMatched : Partial match, some qty remains
-    Matching --> Unmatched : No match found
-
-    FullyMatched --> Updated : OrderBook & LTP updated
-    PartiallyMatched --> Updated
-    Unmatched --> Queued : Order added to book
-
-    Updated --> Published : Trade, LTP, Snapshot published
-    Queued --> Published : Snapshot published only
-
-    Published --> Acknowledged : KafkaStatusProducer emits final status
-    Rejected --> Acknowledged
-    Acknowledged --> [*]
-```
-
 ## License
 
 Licensed under the [MIT License](./LICENSE).
