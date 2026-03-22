@@ -3,6 +3,9 @@
 # Runs auth-service (8080), wallet-service (8081), trade-service (8082),
 # matching-engine (C++), and frontend/nginx (80) in a single container
 # managed by supervisord.
+#
+# External dependencies (postgres, zookeeper, kafka) remain as separate
+# Railway services and are wired in via environment variables.
 # =============================================================================
 
 # -----------------------------------------------------------------------------
@@ -107,7 +110,7 @@ COPY --from=build-wallet /app/target/wallet-service-0.0.1-SNAPSHOT.jar /app/wall
 COPY --from=build-trade  /app/target/trade-service-0.0.1-SNAPSHOT.jar  /app/trade-service.jar
 
 # ── Matching engine binary + shared libraries ─────────────────────────────────
-COPY --from=build-matching-engine /app/build/MatchingEngine          /app/MatchingEngine
+COPY --from=build-matching-engine /app/build/MatchingEngine           /app/MatchingEngine
 COPY --from=build-matching-engine /usr/local/lib/libcppkafka.so.0.4.1 /usr/lib/
 COPY --from=build-matching-engine /usr/local/lib/libcppkafka.so       /usr/lib/
 RUN cd /usr/lib && \
