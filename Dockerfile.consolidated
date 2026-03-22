@@ -1,0 +1,61 @@
+# =============================================================================
+# Consolidated Java Services Dockerfile
+# Runs auth-service (8080), wallet-service (8081), and trade-service (8082)
+# in a single container managed by supervisord.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Stage 1: Build auth-service
+# -----------------------------------------------------------------------------
+FROM maven:3.9.6-eclipse-temurin-21 AS build-auth
+WORKDIR /app
+COPY backend/auth-service/pom.xml .
+COPY backend/auth-service/src ./src
+RUN mvn clean package -DskipTests
+
+# -----------------------------------------------------------------------------
+# Stage 2: Build wallet-service
+# -----------------------------------------------------------------------------
+FROM maven:3.9.6-eclipse-temurin-21 AS build-wallet
+WORKDIR /app
+COPY backend/wallet-service/pom.xml .
+COPY backend/wallet-service/src ./src
+RUN mvn clean package -DskipTests
+
+# -----------------------------------------------------------------------------
+# Stage 3: Build trade-service
+# -----------------------------------------------------------------------------
+FROM maven:3.9.6-eclipse-temurin-21 AS build-trade
+WORKDIR /app
+COPY backend/trade-service/pom.xml .
+COPY backend/trade-service/src ./src
+RUN mvn clean package -DskipTests
+
+# -----------------------------------------------------------------------------
+# Stage 4: Runtime image — all three services + supervisord
+# -----------------------------------------------------------------------------
+FROM eclipse-temurin:21-jdk
+
+# Install supervisord
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends supervisor && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy built JARs from each build stage
+COPY --from=build-auth  /app/target/auth-service-0.0.1-SNAPSHOT.jar   /app/auth-service.jar
+COPY --from=build-wallet /app/target/wallet-service-0.0.1-SNAPSHOT.jar /app/wallet-service.jar
+COPY --from=build-trade  /app/target/trade-service-0.0.1-SNAPSHOT.jar  /app/trade-service.jar
+
+# Copy supervisord configuration
+COPY supervisord.conf /etc/supervisor/conf.d/services.conf
+
+# Create log directory for supervisord
+RUN mkdir -p /var/log/supervisor
+
+# Expose all three service ports
+EXPOSE 8080 8081 8082
+
+# supervisord runs in the foreground and manages all three Java processes
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
