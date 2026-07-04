@@ -7,14 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO for withdrawing gold from a wallet.
+ * Data Transfer Object (DTO) for client requests to withdraw gold from their wallet.
+ * Employs validation annotations to enforce that the withdrawal quantity requested 
+ * is a valid, strictly positive amount before hitting business logic.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class WithdrawGoldRequestDTO {
     /**
-     * The quantity of gold to withdraw (in grams). Must be positive.
+     * The specific quantity of gold (measured in grams) the user is attempting to withdraw.
+     * Must be provided in the request body as a positive integer.
      */
     @NotNull(message = "quantity is required")
     @Positive(message = "quantity must be greater than 0")

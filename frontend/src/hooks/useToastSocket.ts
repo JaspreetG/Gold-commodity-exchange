@@ -28,10 +28,8 @@ export const useToastSocket = (userId: number | string) => {
         // debug: (str) => console.log("[STOMP - Toast]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          // console.log(`Connected to WebSocket /topic/toast/${userId}`);
           client.subscribe(`/topic/toast/${userId}`, (message) => {
             const body = message.body;
-            // console.log("Toast Message:", body);
             addToast({
               title: "From Backend",
               description: body,

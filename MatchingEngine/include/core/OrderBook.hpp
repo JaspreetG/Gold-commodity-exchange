@@ -1,9 +1,7 @@
 #pragma once
 #include <map>
 #include <list>
-#include <optional>
 #include <functional>
-#include <mutex>
 
 namespace core
 {
@@ -21,31 +19,18 @@ namespace core
     class OrderBook
     {
     private:
-        // Private constructor to prevent instantiation
         OrderBook() = default;
 
-        // Delete copy constructor and assignment operator
         OrderBook(const OrderBook &) = delete;
         OrderBook &operator=(const OrderBook &) = delete;
-
-        // Delete move constructor and move assignment operator
         OrderBook(OrderBook &&) = delete;
         OrderBook &operator=(OrderBook &&) = delete;
 
-        // Static instance
-        static OrderBook *instance_;
-        static std::once_flag initFlag_;
-
-        // Private members
         std::map<double, std::list<Order>, std::greater<>> bids_;
         std::map<double, std::list<Order>> asks_;
         double lastTradedPrice_{0.0};
 
     public:
-        /**
-         * @brief Gets the singleton instance of the OrderBook.
-         * @return Reference to the OrderBook instance.
-         */
         static OrderBook &getInstance();
 
         /**
@@ -88,13 +73,18 @@ namespace core
          * @brief Retrieves the map of bids.
          * @return A map of bids sorted by price in descending order.
          */
-        std::map<double, std::list<Order>, std::greater<>> getBids();
+        const std::map<double, std::list<Order>, std::greater<>>& getBids() const;
 
         /**
          * @brief Retrieves the map of asks.
          * @return A map of asks sorted by price in ascending order.
          */
-        std::map<double, std::list<Order>> getAsks();
+        const std::map<double, std::list<Order>>& getAsks() const;
+
+        /**
+         * @brief Clears all orders and resets LTP.
+         */
+        void clear();
     };
 
 } // namespace core

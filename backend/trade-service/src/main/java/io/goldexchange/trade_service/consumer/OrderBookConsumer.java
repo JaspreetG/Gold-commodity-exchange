@@ -6,26 +6,12 @@ import org.springframework.stereotype.Component;
 
 import io.goldexchange.trade_service.webSocket.OrderBookCache;
 
-// @Component
-// public class OrderBookConsumer {
-//     private final SimpMessagingTemplate messagingTemplate;
-
-//     public OrderBookConsumer(SimpMessagingTemplate messagingTemplate) {
-//         this.messagingTemplate = messagingTemplate;
-//     }
-
-//     @KafkaListener(topics = "orderbook", groupId = "MatchingEngine-group")
-//     public void listenOrderBook(String message) {
-//         // Forward order book to WebSocket clients
-//         messagingTemplate.convertAndSend("/topic/orderbook", message);
-//     }
-// }
-
 /**
  * Kafka Consumer for Order Book updates.
  */
 @Component
 public class OrderBookConsumer {
+    /** Cache component for storing the most recent order book state. */
     private final OrderBookCache orderBookCache;
 
     /**

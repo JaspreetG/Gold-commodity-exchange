@@ -11,7 +11,6 @@ import io.goldexchange.auth_service.model.User;
 import io.goldexchange.auth_service.repository.AuthRepositoryWrapper;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -48,31 +47,78 @@ import org.slf4j.LoggerFactory;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    /**
+     * Logger instance for recording operational events and errors.
+     */
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
-    @Autowired
-    private AuthRepositoryWrapper authRepository;
+    /**
+     * Repository for persisting and retrieving User entities.
+     */
+    private final AuthRepositoryWrapper authRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    /**
+     * REST client for communicating with external services, such as the Wallet Service.
+     */
+    private final RestTemplate restTemplate;
 
+    /**
+     * The URL endpoint for the external Wallet Service.
+     * Injected from the application properties.
+     */
     @Value("${wallet.service.url}")
     private String walletServiceUrl;
 
+    /**
+     * The secret key used for signing and validating JWT tokens.
+     * Injected from the application properties.
+     */
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    /**
+     * Constructs an AuthServiceImpl with required dependencies.
+     * 
+     * @param authRepository The repository for user data access.
+     * @param restTemplate   The RestTemplate for making external HTTP calls.
+     */
+    public AuthServiceImpl(AuthRepositoryWrapper authRepository, RestTemplate restTemplate) {
+        this.authRepository = authRepository;
+        this.restTemplate = restTemplate;
+    }
+
+    /**
+     * Checks if a user already exists with the given phone number.
+     * This is useful during registration to prevent duplicate accounts.
+     * 
+     * @param phoneNumber The user's phone number.
+     * @return true if the user exists, false otherwise.
+     */
     @Override
     public boolean userExistsByPhone(String phoneNumber) {
         return authRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
 
+    /**
+     * Retrieves a user entity by its associated phone number.
+     * Often used during the login and OTP verification processes to load user details.
+     * 
+     * @param phoneNumber The phone number to search for.
+     * @return The User entity if found, or null if it doesn't exist.
+     */
     @Override
     public User getUserByPhone(String phoneNumber) {
         Optional<User> userOpt = authRepository.findByPhoneNumber(phoneNumber);
         return userOpt.orElse(null);
     }
 
+    /**
+     * Generates a new, secure Time-Based One-Time Password (TOTP) secret key.
+     * Uses HMAC-SHA1 to create a strong key and encodes it in Base32, which is
+     * the standard format required by authenticator apps like Google Authenticator.
+     * 
+     * @return The Base32 encoded secret key string.
+     */
     @Override
     public String generateSecretKey() {
         try {
@@ -94,6 +140,16 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * Creates and persists a new user account with a temporary state.
+     * A temporary state indicates the user has registered but hasn't yet completed
+     * their initial TOTP verification.
+     * 
+     * @param userName    The user's chosen display name.
+     * @param phoneNumber The user's mobile phone number used for login.
+     * @param secretKey   The generated TOTP secret key for this user.
+     * @return The newly saved User entity.
+     */
     @Override
     public User saveUser(String userName, String phoneNumber, String secretKey) {
         User user = new User();
@@ -104,6 +160,15 @@ public class AuthServiceImpl implements AuthService {
         return authRepository.save(user);
     }
 
+    /**
+     * Generates a Base64-encoded QR code image containing the user's TOTP setup URI.
+     * This QR code can be scanned by any standard authenticator app to easily add
+     * the account without manual key entry.
+     * 
+     * @param userName  The username to embed in the QR code URI.
+     * @param secretKey The secret key to embed in the QR code URI.
+     * @return A data URI string representing the PNG image of the QR code.
+     */
     @Override
     public String generateQrCode(String userName, String secretKey) {
         String issuer = "GoldExchange";
@@ -125,37 +190,53 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * Verifies the provided 6-digit TOTP code against the user's secret key.
+     * This implementation checks the current time window as well as the immediately
+     * preceding and succeeding windows to tolerate slight clock skew on the user's device.
+     * If the user is in a 'temporary' state and verification fails, their account is deleted to prevent stale registrations.
+     * If successful, the user's state is upgraded to 'permanent'.
+     * 
+     * @param secretKey The user's Base32-encoded secret key.
+     * @param totp      The 6-digit code submitted by the user.
+     * @param user      The user entity attempting verification.
+     * @return true if the TOTP code is valid for the current time window, false otherwise.
+     */
     @Override
     public boolean verifyTotp(String secretKey, String totp, User user) {
         try {
-            // Google Authenticator compatible TOTP
-            long timeIndex = System.currentTimeMillis() / 1000 / 30;
-            // Use Base32 decoder to match the Base32-encoded secret key
+            // Google Authenticator compatible TOTP with clock skew tolerance
             Base32 base32 = new Base32();
             byte[] keyBytes = base32.decode(secretKey);
             SecretKeySpec signKey = new SecretKeySpec(keyBytes, "HmacSHA1");
             Mac mac = Mac.getInstance("HmacSHA1");
             mac.init(signKey);
-            byte[] data = new byte[8];
-            long value = timeIndex;
-            for (int i = 7; value > 0; i--) {
-                data[i] = (byte) (value & 0xFF);
-                value >>= 8;
-            }
-            byte[] hash = mac.doFinal(data);
-            int offset = hash[hash.length - 1] & 0xF;
-            int binary = ((hash[offset] & 0x7F) << 24) |
-                    ((hash[offset + 1] & 0xFF) << 16) |
-                    ((hash[offset + 2] & 0xFF) << 8) |
-                    (hash[offset + 3] & 0xFF);
-            int otp = binary % 1000000;
-            String generatedTotp = String.format("%06d", otp);
 
-            boolean valid = generatedTotp.equals(totp);
+            boolean valid = false;
+            long currentIndex = System.currentTimeMillis() / 1000 / 30;
+            for (long timeIndex = currentIndex - 1; timeIndex <= currentIndex + 1 && !valid; timeIndex++) {
+                byte[] data = new byte[8];
+                long value = timeIndex;
+                for (int i = 7; value > 0; i--) {
+                    data[i] = (byte) (value & 0xFF);
+                    value >>= 8;
+                }
+                byte[] hash = mac.doFinal(data);
+                int offset = hash[hash.length - 1] & 0xF;
+                int binary = ((hash[offset] & 0x7F) << 24) |
+                        ((hash[offset + 1] & 0xFF) << 16) |
+                        ((hash[offset + 2] & 0xFF) << 8) |
+                        (hash[offset + 3] & 0xFF);
+                int otp = binary % 1000000;
+                String generatedTotp = String.format("%06d", otp);
+                valid = generatedTotp.equals(totp);
+            }
+
             if (!valid) {
-                if (user.getState().equals("temporary")) {
+                if ("temporary".equals(user.getState())) {
                     authRepository.deleteById(user.getUserId());
                 }
+                throw new RuntimeException("Invalid TOTP code");
             }
 
             if (valid) {
@@ -170,6 +251,15 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * Generates a JSON Web Token (JWT) for an authenticated user.
+     * The token includes the user's ID and a device fingerprint to prevent token theft
+     * or reuse across different devices. It is signed using HMAC-SHA256 and expires in 1 day.
+     * 
+     * @param userId            The unique identifier of the authenticated user.
+     * @param deviceFingerprint A unique identifier representing the user's current device or browser.
+     * @return The signed JWT string.
+     */
     @Override
     public String generateJwt(Long userId, String deviceFingerprint) {
         return Jwts.builder()
@@ -181,6 +271,16 @@ public class AuthServiceImpl implements AuthService {
                 .compact();
     }
 
+    /**
+     * Asynchronously or synchronously creates a wallet for a newly verified user
+     * by calling the external Wallet Service. This ensures the user has a provisioned
+     * wallet immediately after their account becomes permanent.
+     * The JWT and device fingerprint are passed along to authorize the inter-service request.
+     * 
+     * @param user              The Data Transfer Object of the user.
+     * @param jwt               The JWT token created during the current login/verification session.
+     * @param deviceFingerprint The device fingerprint of the client.
+     */
     @Override
     public void createWallet(UserDTO user, String jwt, String deviceFingerprint) {
         try {
@@ -209,9 +309,18 @@ public class AuthServiceImpl implements AuthService {
 
         } catch (Exception e) {
             logger.error("Failed to create wallet for user {}: {}", user.getUserId(), e.getMessage());
+            throw new RuntimeException("Failed to create wallet", e);
         }
     }
 
+    /**
+     * Fetches user details by their unique database ID and maps them to a Data Transfer Object.
+     * Abstracting the entity behind a DTO prevents exposing sensitive fields (like secret keys)
+     * over the network.
+     * 
+     * @param userId The ID of the user to fetch.
+     * @return A UserDTO containing the safe public fields, or null if the user isn't found.
+     */
     @Override
     public UserDTO getUserById(Long userId) {
 
@@ -228,6 +337,13 @@ public class AuthServiceImpl implements AuthService {
         return userDTO;
     }
 
+    /**
+     * Logs out the user by instructing the client to invalidate the JWT cookie.
+     * This is achieved by setting the "jwt" cookie's max age to 0, effectively deleting it.
+     * 
+     * @param response The HTTP response object to attach the invalidated cookie to.
+     */
+    @Override
     public void logout(HttpServletResponse response) {
 
         // Remove the JWT cookie by setting it with maxAge=0

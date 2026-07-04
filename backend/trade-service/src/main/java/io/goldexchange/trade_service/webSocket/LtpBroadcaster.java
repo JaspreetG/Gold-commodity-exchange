@@ -1,6 +1,5 @@
 package io.goldexchange.trade_service.webSocket;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,10 +10,22 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LtpBroadcaster {
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
-    @Autowired
-    private LtpCache ltpCache;
+    /** Template for sending messages to connected WebSocket clients. */
+    private final SimpMessagingTemplate messagingTemplate;
+
+    /** Cache holding the latest traded price data. */
+    private final LtpCache ltpCache;
+
+    /**
+     * Constructs the LtpBroadcaster.
+     *
+     * @param messagingTemplate The template for WebSocket messaging.
+     * @param ltpCache          The cache containing LTP data.
+     */
+    public LtpBroadcaster(SimpMessagingTemplate messagingTemplate, LtpCache ltpCache) {
+        this.messagingTemplate = messagingTemplate;
+        this.ltpCache = ltpCache;
+    }
 
     /**
      * Broadcasts the latest LTP to "/topic/ltp" every 3 seconds.

@@ -3,12 +3,28 @@
 #include "core/Order.hpp" // Include for full definition of Order
 #include <chrono>
 #include <algorithm>
-#include <deque>
 
 namespace core
 {
+    /**
+     * @brief Constructor for BuyMarketStrategy.
+     */
     BuyMarketStrategy::BuyMarketStrategy() {}
 
+    /**
+     * @brief Matches an incoming Buy Market order against existing Sell orders in the OrderBook.
+     * 
+     * Iterates while the incoming order has remaining quantity and there are any
+     * sell orders (asks) in the book. A match occurs at the best available ask price
+     * regardless of the price. 
+     * Generates Trade objects for executed matches and publishes Status events.
+     * If the orderbook is empty, it publishes a status indicating 0 quantity filled,
+     * effectively canceling the remainder.
+     * 
+     * @param incoming The new Buy Market order to be matched.
+     * @param book Reference to the OrderBook containing resting orders.
+     * @return std::vector<models::Trade> List of trades resulting from the matches.
+     */
     std::vector<models::Trade> BuyMarketStrategy::match(Order &incoming, OrderBook &book)
     {
         int qty = incoming.quantity();
@@ -40,11 +56,16 @@ namespace core
             if (bestAsk.quantity() == 0)
                 book.removeOrder(bestAsk);
         }
+        // Update the Last Traded Price (LTP) in the OrderBook if any trades occurred.
         if (!trades.empty())
             book.updateLTP(trades.back().price());
+            
         return trades;
     }
 
+    /**
+     * @brief Destructor for BuyMarketStrategy.
+     */
     BuyMarketStrategy::~BuyMarketStrategy() {}
 
 } // namespace core

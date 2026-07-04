@@ -34,7 +34,6 @@ export const useLtp = () => {
         // debug: (str) => console.log("[STOMP]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          // console.log("Connected to WebSocket /topic/ltp");
           client.subscribe("/topic/ltp", (message) => {
             const body: LtpData = JSON.parse(message.body);
             setLtp(body);

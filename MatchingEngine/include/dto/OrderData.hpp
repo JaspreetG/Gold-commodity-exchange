@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include "core/IMatchingStrategy.hpp"
 
 namespace dto
 {

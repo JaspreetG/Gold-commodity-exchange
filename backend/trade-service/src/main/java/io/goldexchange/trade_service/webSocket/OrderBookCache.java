@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OrderBookCache {
+    /** The most recently received snapshot of the order book. */
     private volatile String latestOrderBook;
 
     /**

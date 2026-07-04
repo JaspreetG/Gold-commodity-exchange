@@ -24,14 +24,13 @@ RUN git clone --branch v0.4.1 https://github.com/mfontanini/cppkafka.git && \
     make -j$(nproc) && \
     make install
 
-    # Rahul Jha
 # Copy built cppkafka source to /app/cppkafka for CMake add_subdirectory
 RUN mkdir -p /app && cp -r /tmp/cppkafka /app/cppkafka
 
 WORKDIR /app
-COPY . .
 # Ensure json.hpp is present before building
 ADD https://raw.githubusercontent.com/nlohmann/json/v3.11.3/single_include/nlohmann/json.hpp /usr/include/nlohmann/json.hpp
+COPY . .
 
 RUN cmake -Bbuild -H. && cmake --build build --target MatchingEngine -- -j$(nproc)
 

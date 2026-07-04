@@ -25,19 +25,20 @@ const LoginForm = () => {
 
   const navigate = useNavigate();
   const onBackToLanding = () => {
-    // console.log("Back to landing page");
     navigate("/");
   };
 
   const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // console.log("in handlePhoneSubmit");
-
-    await login({ phone }, navigate);
-    setStep("totp");
-
-    setIsLoading(false);
+    try {
+      await login({ phone }, navigate);
+      setStep("totp");
+    } catch (error) {
+      // Stay on phone step
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleTOTPSubmit = async (e: React.FormEvent) => {

@@ -11,7 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Component
 public class TradeConsumer {
+    /** Service to handle core trade processing logic. */
     private final TradeService tradeService;
+
+    /** Mapper to deserialize JSON messages into Java objects. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**

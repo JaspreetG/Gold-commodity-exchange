@@ -4,7 +4,9 @@ package io.goldexchange.trade_service.model;
 import java.sql.Timestamp;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
@@ -13,7 +15,7 @@ import lombok.AllArgsConstructor;
  * Maps to the "orders" table in the database.
  */
 @Entity
-@Data
+@Getter @Setter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")

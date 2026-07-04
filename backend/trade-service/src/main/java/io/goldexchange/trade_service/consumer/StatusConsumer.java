@@ -14,11 +14,20 @@ import org.slf4j.LoggerFactory;
 @Component
 public class StatusConsumer {
 
+    /** Logger for tracking status consumer activities. */
     private static final Logger logger = LoggerFactory.getLogger(StatusConsumer.class);
 
+    /** Service to handle core trade processing and order updates. */
     private final TradeService tradeService;
+
+    /** Mapper to deserialize JSON messages into Java objects. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Constructs the StatusConsumer.
+     *
+     * @param tradeService The trade service to handle order updates.
+     */
     public StatusConsumer(TradeService tradeService) {
         this.tradeService = tradeService;
     }

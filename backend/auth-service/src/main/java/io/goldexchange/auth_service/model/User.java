@@ -5,7 +5,9 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
  * Maps to the "users" table in the database.
  */
 @Entity
-@Data
+@Getter @Setter @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
@@ -44,6 +46,7 @@ public class User {
 
     /**
      * The state of the user account (e.g., "temporary", "permanent").
+     * Temporary state might imply registration is incomplete or awaiting further verification.
      */
     private String state;
 }

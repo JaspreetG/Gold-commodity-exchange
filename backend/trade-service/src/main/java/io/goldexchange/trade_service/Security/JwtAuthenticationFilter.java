@@ -24,8 +24,10 @@ import java.nio.charset.StandardCharsets;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    /** Logger for tracking authentication activities. */
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
+    /** Secret key used to sign and verify JWT tokens. */
     @Value("${jwt.secret}")
     private String jwtSecret;
 

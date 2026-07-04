@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object for TOTP Verification Request.
+ * Used during the second step of authentication to verify the user's OTP and device.
  */
 @Data
 @AllArgsConstructor

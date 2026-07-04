@@ -2,7 +2,6 @@ package io.goldexchange.trade_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.goldexchange.trade_service.consumer.StatusConsumer;
 import io.goldexchange.trade_service.dto.AuthCredentials;
 import io.goldexchange.trade_service.dto.OrderDTO;
 import io.goldexchange.trade_service.dto.OrderProducerDTO;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,29 +41,55 @@ import org.slf4j.LoggerFactory;
  */
 @Service
 public class TradeService {
+    /** Logger for tracking trade service activities. */
     private static final Logger logger = LoggerFactory.getLogger(TradeService.class);
 
+    /** Constant for buy side trade. */
+    private static final String SIDE_BUY = "BUY";
+    /** Constant for sell side trade. */
+    private static final String SIDE_SELL = "SELL";
+    /** Constant for market order type. */
+    private static final String TYPE_MARKET = "MARKET";
+    /** Constant for limit order type. */
+    private static final String TYPE_LIMIT = "LIMIT";
+
+    /** Repository for accessing and managing trade records. */
     private final TradeRepository tradeRepository;
+    /** Producer for sending order requests to the matching engine. */
     private final OrderProducer orderProducer;
+    /** Repository for accessing and managing order records. */
     private final OrderRepository orderRepository;
+    /** Template for sending messages to WebSocket clients. */
     private final SimpMessagingTemplate messagingTemplate;
+    /** Template for executing HTTP requests to other services. */
+    private final RestTemplate restTemplate;
+    /** Mapper for converting between Java objects and JSON. */
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /** The URL of the wallet service. */
     @Value("${wallet.service.url}")
     private String walletServiceUrl;
 
+    /** The secret token used for internal service communication. */
     @Value("${internal.secret.token:mySecretToken}")
     private String internalSecretToken;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
+    /**
+     * Constructs a new TradeService with the specified dependencies.
+     *
+     * @param orderProducer     Producer for sending orders.
+     * @param tradeRepository   Repository for trades.
+     * @param orderRepository   Repository for orders.
+     * @param messagingTemplate Template for WebSocket messaging.
+     * @param restTemplate      Template for REST calls.
+     */
     public TradeService(OrderProducer orderProducer, TradeRepository tradeRepository, OrderRepository orderRepository,
-            SimpMessagingTemplate messagingTemplate) {
+            SimpMessagingTemplate messagingTemplate, RestTemplate restTemplate) {
         this.tradeRepository = tradeRepository;
         this.orderProducer = orderProducer;
         this.orderRepository = orderRepository;
         this.messagingTemplate = messagingTemplate;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -104,6 +129,7 @@ public class TradeService {
      *
      * @param tradeConsumerDTO The trade execution details.
      */
+    @Transactional
     public void saveTrade(TradeConsumerDTO tradeConsumerDTO) {
 
         try {
@@ -114,7 +140,7 @@ public class TradeService {
             tradeBuyerSide.setOrderId(Long.parseLong(tradeConsumerDTO.getBuyOrderId()));
             tradeBuyerSide.setPrice(tradeConsumerDTO.getPrice());
             tradeBuyerSide.setQuantity(tradeConsumerDTO.getQuantity());
-            tradeBuyerSide.setSide("BUY");
+            tradeBuyerSide.setSide(SIDE_BUY);
 
             Trade existingBuyerTrade=tradeRepository.findByOrderId(tradeBuyerSide.getOrderId());
             if(existingBuyerTrade==null){
@@ -132,7 +158,7 @@ public class TradeService {
             tradeSellerSide.setOrderId(Long.parseLong(tradeConsumerDTO.getSellOrderId()));
             tradeSellerSide.setPrice(tradeConsumerDTO.getPrice());
             tradeSellerSide.setQuantity(tradeConsumerDTO.getQuantity());
-            tradeSellerSide.setSide("SELL");
+            tradeSellerSide.setSide(SIDE_SELL);
 
             Trade existingSellerTrade=tradeRepository.findByOrderId(tradeSellerSide.getOrderId());
             if(existingSellerTrade==null){
@@ -275,17 +301,17 @@ public class TradeService {
         String side = orderRequest.getSide();
         String type = orderRequest.getType();
 
-        if ("BUY".equals(side)) {
-            if ("LIMIT".equals(type)) {
+        if (SIDE_BUY.equals(side)) {
+            if (TYPE_LIMIT.equals(type)) {
                 // For limit buy: user pays price * quantity
                 double cost = orderRequest.getPrice() * orderRequest.getQuantity();
                 return walletDTO.getBalance() >= cost;
-            } else if ("MARKET".equals(type)) {
+            } else if (TYPE_MARKET.equals(type)) {
                 // For market buy: price is not known beforehand.
                 // Assuming user has enough balance for market buy for now.
                 return true;
             }
-        } else if ("SELL".equals(side)) {
+        } else if (SIDE_SELL.equals(side)) {
             // For both limit and market sell, quantity of gold must be available
             return walletDTO.getGold() >= orderRequest.getQuantity();
         }
@@ -321,11 +347,9 @@ public class TradeService {
             Long userId=Long.parseLong(statusConsumerDTO.getUserId());
             String type = order.getType();   // MARKET/TYPE
             int quantity_order = order.getQuantity();
-            String side = order.getSide();    // BUY/SELL
-
             int quantity_status = statusConsumerDTO.getQuantity();
 
-            if (type.equals("MARKET")) {
+            if (type.equals(TYPE_MARKET)) {
                 if (quantity_status == 0) {
                     sendToast(userId, "Market order cancelled.");
                 } else if (quantity_status == quantity_order) {
@@ -337,7 +361,7 @@ public class TradeService {
                 orderRepository.delete(order);
             }
 
-            if (type.equals("LIMIT")) {
+            if (type.equals(TYPE_LIMIT)) {
                 if (quantity_status == quantity_order) {
                     orderRepository.delete(order);
                     sendToast(userId, "Limit order fully filled."+quantity_status);

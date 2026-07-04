@@ -1,18 +1,12 @@
 import { useState, useEffect } from "react";
-import { User } from "@/types/auth";
 import Navbar from "./Navbar";
 import Portfolio from "./Portfolio";
 import TradingInterface from "../trading/TradingInterface";
 import WalletManager from "./WalletManager";
 import { useAuthStore } from "@/store/useAuthStore";
 
-interface DashboardProps {
-  user: User;
-  onLogout: () => void;
-}
-
 const Dashboard = () => {
-  const { authUser, logout } = useAuthStore();
+  const { authUser } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<"trading" | "wallet">("trading");
   const [userBalances, setUserBalances] = useState(authUser?.balances);
@@ -22,15 +16,18 @@ const Dashboard = () => {
   }, [authUser?.balances]);
 
   const updateBalance = (inr: number, gold: number) => {
-    useAuthStore.setState((state) => ({
-      authUser: {
-        ...state.authUser!,
-        balances: {
-          inr,
-          gold,
+    useAuthStore.setState((state) => {
+      if (!state.authUser) return state;
+      return {
+        authUser: {
+          ...state.authUser,
+          balances: {
+            inr,
+            gold,
+          },
         },
-      },
-    }));
+      };
+    });
     setUserBalances({ inr, gold });
   };
 
@@ -38,7 +35,6 @@ const Dashboard = () => {
     <div className="min-h-screen bg-white">
       <Navbar
         user={{ ...authUser, balances: userBalances }}
-        onLogout={logout}
       />
 
       <div className="container mx-auto px-6 py-8">

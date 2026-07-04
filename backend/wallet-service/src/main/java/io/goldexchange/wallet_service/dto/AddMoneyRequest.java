@@ -11,7 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 
 /**
- * DTO for adding money to a wallet.
+ * Data Transfer Object (DTO) for client requests to deposit fiat currency into their wallet.
+ * Includes necessary validation checks to guarantee the deposit amount is 
+ * not null and strictly greater than zero, preventing invalid or zero-value transactions.
  */
 @Data
 @NoArgsConstructor
@@ -19,7 +21,8 @@ import lombok.AllArgsConstructor;
 public class AddMoneyRequest {
 
     /**
-     * The amount of money to add. Must be positive.
+     * The exact monetary value the user intends to deposit.
+     * Validated at the controller level to ensure it is a positive amount.
      */
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than 0")

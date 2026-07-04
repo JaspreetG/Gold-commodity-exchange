@@ -1,8 +1,5 @@
 package io.goldexchange.trade_service.dto;
 
-import java.sql.Timestamp;
-
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

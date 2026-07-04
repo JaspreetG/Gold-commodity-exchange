@@ -1,6 +1,5 @@
 package io.goldexchange.auth_service.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,8 +18,19 @@ import io.goldexchange.auth_service.service.AuthService;
 @Component
 public class OtpAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private AuthService authService;
+    /**
+     * Service to handle authentication logic like retrieving users and verifying TOTP.
+     */
+    private final AuthService authService;
+
+    /**
+     * Constructs the authentication provider with the required AuthService.
+     * 
+     * @param authService The service used for core authentication operations.
+     */
+    public OtpAuthenticationProvider(AuthService authService) {
+        this.authService = authService;
+    }
 
     /**
      * Authenticates the user based on phone number and TOTP.

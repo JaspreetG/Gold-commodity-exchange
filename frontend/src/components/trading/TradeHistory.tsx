@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/store/useAuthStore";
-import { Clock, FileCheck, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import React, { useEffect } from "react";
 
 const TradeHistory = () => {
@@ -39,7 +39,7 @@ const TradeHistory = () => {
 
           {/* pastTradess */}
           <div className="max-h-96 overflow-y-auto">
-            {!pastTrades ? (
+            {!pastTrades || pastTrades.length === 0 ? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
                 No past trades yet
               </div>

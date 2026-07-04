@@ -19,6 +19,7 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
+    /** The Kafka bootstrap servers connection string. */
     // TODO: Update the Kafka broker address as needed.
     // Uncomment the line below to use a different broker address.
     // @Value("${KAFKA_BROKER:127.0.0.1:29092}")

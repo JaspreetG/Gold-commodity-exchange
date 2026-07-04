@@ -2,18 +2,19 @@ package io.goldexchange.wallet_service.repository;
 
 import io.goldexchange.wallet_service.model.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 /**
- * Repository interface for Wallet entity operations.
+ * Repository interface for standard CRUD and custom database operations on the {@link Wallet} entity.
+ * Extends JpaRepository to inherit standard persistence capabilities without boilerplate code.
  */
-@Repository
 public interface WalletRepositoryWrapper extends JpaRepository<Wallet, Long> {
+    
     /**
-     * Finds a wallet by user ID.
+     * Retrieves a wallet associated with a specific user.
+     * As each user has exactly one wallet, this method acts as a direct lookup to fetch user balances.
      *
-     * @param userId The ID of the user.
-     * @return The Wallet entity associated with the user.
+     * @param userId The unique identifier of the user who owns the wallet.
+     * @return The {@link Wallet} entity if found, otherwise null.
      */
     Wallet findByUserId(Long userId);
 }

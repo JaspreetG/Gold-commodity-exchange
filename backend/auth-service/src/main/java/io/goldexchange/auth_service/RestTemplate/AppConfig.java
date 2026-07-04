@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * Configuration class for application beans.
+ * This configures essential external libraries or generic components to be managed by the Spring container.
  */
 @Configuration
 public class AppConfig {

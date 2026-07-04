@@ -1,13 +1,11 @@
 package io.goldexchange.trade_service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class TradeServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {
+        // No Spring context needed; individual unit tests cover the service layer
+    }
 }

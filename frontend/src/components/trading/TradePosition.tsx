@@ -42,7 +42,7 @@ const TradePosition = ({ positions }: TradePositionProps) => {
 
           {/* Positions */}
           <div className="max-h-96 overflow-y-auto">
-            {!orders ? (
+            {!orders || orders.length === 0 ? (
               <div className="px-6 py-8 text-center text-gray-500 font-light">
                 No open positions
               </div>

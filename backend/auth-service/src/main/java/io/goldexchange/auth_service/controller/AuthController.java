@@ -1,7 +1,6 @@
 package io.goldexchange.auth_service.controller;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +35,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    /**
+     * Logger instance for recording controller events and operational flows.
+     */
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    @Autowired
-    private AuthService authService;
+    /**
+     * Service layer dependency for business logic related to authentication.
+     */
+    private final AuthService authService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    /**
+     * Spring Security component used to authenticate users based on tokens.
+     */
+    private final AuthenticationManager authenticationManager;
+
+    /**
+     * Constructs the AuthController with required dependencies.
+     * 
+     * @param authService           The service handling authentication business logic.
+     * @param authenticationManager The manager handling authentication processes.
+     */
+    public AuthController(AuthService authService, AuthenticationManager authenticationManager) {
+        this.authService = authService;
+        this.authenticationManager = authenticationManager;
+    }
 
     /**
      * Initiates the login process by checking if the user exists.
@@ -86,7 +103,7 @@ public class AuthController {
             if (userEntity == null) {
                 String maskedPhone = request.getPhoneNumber().replaceAll(".(?=.{4})", "*");
                 logger.warn("Authentication successful but user entity is null for phone: {}", maskedPhone);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "User not found"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not found"));
             }
 
             UserDTO user = new UserDTO();
@@ -109,7 +126,7 @@ public class AuthController {
         } catch (AuthenticationException e) {
             String maskedPhone = request.getPhoneNumber().replaceAll(".(?=.{4})", "*");
             logger.error("Authentication failed for phone: {}", maskedPhone, e);
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
         }
     }
 
@@ -153,7 +170,7 @@ public class AuthController {
     @GetMapping("/getUser")
     public ResponseEntity<?> getUser(Authentication authentication) {
         if (authentication == null || authentication.getPrincipal() == null) {
-            return ResponseEntity.status(401).body(Map.of("error", "User not authenticated"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not authenticated"));
         }
         // The principal is userId (Long) set by JwtAuthenticationFilter
         Long userId = (Long) authentication.getPrincipal();

@@ -40,7 +40,7 @@ const TradingForm = ({
   const [sellPrice, setSellPrice] = useState("");
 
   const handleBuy = async () => {
-    const quantity = parseInt(buyQuantity);
+    const quantity = parseFloat(buyQuantity);
     if (!quantity || quantity <= 0) {
       addToast({
         title: "Order Failed",
@@ -94,9 +94,7 @@ const TradingForm = ({
   };
 
   const handleSell = async () => {
-    // console.log("in handle sell");
-
-    const quantity = parseInt(sellQuantity);
+    const quantity = parseFloat(sellQuantity);
     if (!quantity || quantity <= 0) {
       addToast({
         title: "Order Failed",
@@ -382,7 +380,7 @@ const TradingForm = ({
                   }
                 }}
                 className="bg-white border-gray-300 text-black focus:border-red-500 focus:ring-red-500"
-                placeholder="0.000"
+                placeholder="0"
                 min="0"
                 step="1"
               />

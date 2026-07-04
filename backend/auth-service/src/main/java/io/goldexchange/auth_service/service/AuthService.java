@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Interface for Authentication Service.
- * Defines methods for user management, OTP verification, and JWT generation.
+ * Defines the core business logic contract for user management, TOTP verification,
+ * JWT generation, and integration with external systems like the Wallet service.
+ * Separating this interface from its implementation allows for easier testing and loose coupling.
  */
 public interface AuthService {
 

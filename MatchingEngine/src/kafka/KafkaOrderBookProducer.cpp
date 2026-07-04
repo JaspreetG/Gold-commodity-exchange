@@ -5,25 +5,38 @@
 
 #include "kafka/KafkaOrderBookProducer.hpp"
 #include <iostream>
-#include <cppkafka/producer.h>
 #include <nlohmann/json.hpp>
 #include <cstdlib>
 
 namespace kafka
 {
 
+    /**
+     * @brief Default constructor for KafkaOrderBookProducer.
+     * 
+     * Initializes the underlying cppkafka::Producer by fetching the broker address
+     * from the KAFKA_BROKER environment variable (default: 127.0.0.1:29092).
+     */
+    KafkaOrderBookProducer::KafkaOrderBookProducer()
+        : producer_([] {
+            const char* broker_env = std::getenv("KAFKA_BROKER");
+            std::string broker = broker_env ? broker_env : "127.0.0.1:29092";
+            return cppkafka::Configuration{{"metadata.broker.list", broker}};
+        }())
+    {
+    }
+
+    /**
+     * @brief Serializes an OrderBookSnapshot model into JSON and publishes it to the "orderbook" topic.
+     * 
+     * Processes both bids and asks into JSON arrays of {price, volume} objects.
+     * 
+     * @param s The OrderBookSnapshot containing aggregated bid and ask volumes.
+     */
     void KafkaOrderBookProducer::publish(const models::OrderBookSnapshot &s)
     {
-        const char *broker_env = std::getenv("KAFKA_BROKER");
-        std::string broker = broker_env ? broker_env : "127.0.0.1:29092";
-        cppkafka::Configuration config = {
-            {"metadata.broker.list", broker}};
-        cppkafka::Producer producer(config);
-        // Convert timestamp to milliseconds since epoch
         long long ms = std::chrono::duration_cast<std::chrono::milliseconds>(s.timestamp().time_since_epoch()).count();
-        // Prepare bids and asks as arrays of {price, volume}
         nlohmann::json bids = nlohmann::json::array();
-        // Use int for volume values
         std::map<double, int, std::greater<>> bid_vols = s.bidVolumes();
         for (std::map<double, int, std::greater<>>::const_iterator it = bid_vols.begin(); it != bid_vols.end(); ++it)
         {
@@ -46,8 +59,7 @@ namespace kafka
             {"bids", bids},
             {"asks", asks}};
         std::string payload = j.dump();
-        producer.produce(cppkafka::MessageBuilder("orderbook").partition(0).payload(payload));
-        producer.flush();
+        producer_.produce(cppkafka::MessageBuilder("orderbook").payload(payload));
         std::cout << "Published OrderBook Snapshot to 'orderbook': " << payload << std::endl;
     }
 

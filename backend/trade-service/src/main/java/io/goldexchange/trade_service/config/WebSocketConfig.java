@@ -16,6 +16,7 @@ import io.goldexchange.trade_service.webSocket.JwtHandshakeInterceptor;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /** Interceptor to perform JWT authentication during the initial WebSocket handshake. */
     private final JwtHandshakeInterceptor jwtHandshakeInterceptor;
 
     /**

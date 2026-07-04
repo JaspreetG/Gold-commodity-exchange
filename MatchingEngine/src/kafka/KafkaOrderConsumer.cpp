@@ -14,6 +14,16 @@
 namespace kafka
 {
 
+    /**
+     * @brief Starts the Kafka consumer loop to receive and process orders.
+     * 
+     * Uses the KAFKA_BROKER environment variable (or defaults to 127.0.0.1:29092)
+     * to connect to the Kafka cluster. It subscribes to the "order" topic, continuously
+     * polls for new messages, parses the JSON payload into an OrderData DTO, and
+     * forwards it to the OrderMatchingService.
+     * 
+     * @param svc Reference to the OrderMatchingService that will process the incoming orders.
+     */
     void KafkaOrderConsumer::start(core::OrderMatchingService &svc)
     {
 
@@ -48,13 +58,23 @@ namespace kafka
                         double price = j.at("price").get<double>();
                         std::string side = j.at("side").get<std::string>();
                         std::string type = j.at("type").get<std::string>();
+                        dto::Side parsedSide;
+                        if (side == "BUY") parsedSide = dto::Side::BUY;
+                        else if (side == "SELL") parsedSide = dto::Side::SELL;
+                        else throw std::runtime_error("Invalid side: " + side);
+
+                        dto::OrderType parsedType;
+                        if (type == "MARKET") parsedType = dto::OrderType::MARKET;
+                        else if (type == "LIMIT") parsedType = dto::OrderType::LIMIT;
+                        else throw std::runtime_error("Invalid order type: " + type);
+
                         dto::OrderData orderData = {
                             order_id,
                             user_id,
                             quantity,
                             price,
-                            (side == "BUY" ? dto::Side::BUY : dto::Side::SELL),
-                            (type == "LIMIT" ? dto::OrderType::LIMIT : dto::OrderType::MARKET)};
+                            parsedSide,
+                            parsedType};
                         std::cout << "Received order: " << user_id << std::endl;
                         svc.handleOrder(orderData);
                         // std::cout << "Order handled successfully." << std::endl;

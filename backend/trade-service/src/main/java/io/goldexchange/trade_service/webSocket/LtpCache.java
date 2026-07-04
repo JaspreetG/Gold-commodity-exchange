@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LtpCache {
+    /** The most recently received last traded price string. */
     private volatile String latestLtp;
 
     /**

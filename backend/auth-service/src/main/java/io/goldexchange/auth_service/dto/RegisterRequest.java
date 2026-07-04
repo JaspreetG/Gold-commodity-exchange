@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 
 /**
  * Data Transfer Object for Registration Request.
+ * Encapsulates the user details required to register a new account.
  */
 @Data
 @AllArgsConstructor

@@ -18,16 +18,30 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Filter to authenticate requests using JWT.
+ * Filter to authenticate incoming HTTP requests using JSON Web Tokens (JWT).
+ * This filter intercepts every request once, extracts the JWT from cookies, verifies it against the secret key,
+ * and sets the SecurityContext to establish the user's authenticated state. It also checks for device 
+ * fingerprinting to prevent token theft.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
+    /**
+     * The secret key used to digitally sign the JWTs. Sourced from application configuration properties.
+     */
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    /**
+     * Determines whether this filter should be skipped for a given request.
+     * Internal endpoints (e.g., used by other microservices) bypass JWT validation 
+     * since they rely on internal secret headers instead.
+     *
+     * @param request The incoming HTTP request.
+     * @return true if the request path starts with "/api/wallet/internal", false otherwise.
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         // Skip JWT auth for internal endpoints
@@ -39,6 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return shouldSkip;
     }
 
+    /**
+     * Core logic of the filter. It extracts the JWT from the "jwt" cookie, validates its signature,
+     * checks for expiration, and validates the device fingerprint to prevent session hijacking.
+     * If valid, an Authentication token is created and placed in the SecurityContext.
+     *
+     * @param request     The incoming HTTP request.
+     * @param response    The outgoing HTTP response.
+     * @param filterChain The chain of filters to pass the request along to.
+     * @throws ServletException If an error occurs during filtering.
+     * @throws IOException      If an input or output error occurs.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
             HttpServletResponse response,

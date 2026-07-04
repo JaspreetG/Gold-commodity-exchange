@@ -1,19 +1,32 @@
 #pragma once
 #include "models/OrderBookSnapshot.hpp"
+#include <cppkafka/producer.h>
 
 namespace kafka {
 
-/**
- * @class KafkaOrderBookProducer
- * @brief Producer for publishing Order Book snapshots to Kafka.
- */
-class KafkaOrderBookProducer {
-public:
     /**
-     * @brief Publishes an Order Book snapshot.
-     * @param s The snapshot of the order book.
+     * @class KafkaOrderBookProducer
+     * @brief Producer for publishing OrderBook snapshots to Kafka.
+     * 
+     * Periodically or event-driven, this class serializes the entire state of 
+     * the orderbook (bids and asks with aggregated volumes) and sends it to the 
+     * "orderbook" topic.
      */
-    void publish(const models::OrderBookSnapshot& s);
+    class KafkaOrderBookProducer {
+    public:
+        /**
+         * @brief Default constructor, initializes the Kafka producer.
+         */
+        KafkaOrderBookProducer();
+
+        /**
+         * @brief Publishes an OrderBookSnapshot object to the Kafka broker.
+         * @param s The OrderBookSnapshot object to publish.
+         */
+        void publish(const models::OrderBookSnapshot& s);
+
+private:
+    cppkafka::Producer producer_;
 };
 
 } // namespace kafka

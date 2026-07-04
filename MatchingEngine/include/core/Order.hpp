@@ -2,7 +2,6 @@
 #include <memory>
 #include <vector>
 #include "dto/OrderData.hpp"
-#include "core/IMatchingStrategy.hpp"
 #include "models/Trade.hpp"
 
 namespace core

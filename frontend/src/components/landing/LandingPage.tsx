@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Banknote, Coins, Shield, TrendingUp, Users } from "lucide-react";
+import { Banknote, Shield, TrendingUp, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface LandingPageProps {
@@ -11,11 +11,9 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const onLoginClick = () => {
-    // console.log("Login clicked");
     navigate("/login");
   };
   const onSignupClick = () => {
-    // console.log("Signup clicked");
     navigate("/signUp");
   };
 

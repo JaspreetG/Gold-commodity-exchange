@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object for Login Request.
+ * Contains the necessary information to initiate a user login.
  */
 @Data
 @AllArgsConstructor

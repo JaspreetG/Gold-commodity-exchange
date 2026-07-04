@@ -9,12 +9,8 @@ import LoginForm from "./components/auth/LoginForm";
 import SignUpPage from "./components/auth/SignUpPage";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
-import { Loader } from "lucide-react";
 
 const queryClient = new QueryClient();
-// const logout = () => { };
-
-
 
 
 

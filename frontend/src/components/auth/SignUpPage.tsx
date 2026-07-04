@@ -49,8 +49,12 @@ const SignupForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    await signup({ phoneNumber: phone, userName: username });
-    setStep("register-qr");
+    try {
+      await signup({ phoneNumber: phone, userName: username });
+      setStep("register-qr");
+    } catch {
+      // registration failed — stay on register step
+    }
 
     setIsLoading(false);
   };

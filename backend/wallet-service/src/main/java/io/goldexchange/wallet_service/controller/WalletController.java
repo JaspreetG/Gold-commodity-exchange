@@ -14,7 +14,6 @@ import io.goldexchange.wallet_service.service.WalletService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.goldexchange.wallet_service.dto.WalletDTO;
@@ -25,8 +24,10 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * REST Controller for Wallet services.
- * Handles wallet creation, retrieval, updates, and transactions.
+ * REST Controller for managing user wallets within the Gold Exchange platform.
+ * Exposes endpoints for wallet creation, retrieval, and performing transactions
+ * such as adding or withdrawing money and gold. Also provides secure internal 
+ * endpoints for cross-service trade settlement.
  */
 @RestController
 @RequestMapping("api/wallet")
@@ -34,18 +35,36 @@ public class WalletController {
 
     private static final Logger logger = LoggerFactory.getLogger(WalletController.class);
 
-    @Autowired
-    private WalletService walletService;
+    /**
+     * Service layer dependency handling the core wallet logic.
+     */
+    private final WalletService walletService;
 
+    /**
+     * Secret token used to authenticate internal requests originating from other microservices
+     * (e.g., the Trade Service during order execution).
+     */
     @Value("${internal.secret.token:mySecretToken}")
     private String internalSecretToken;
 
     /**
-     * Creates a new wallet for the authenticated user.
+     * Constructor for dependency injection of WalletService.
+     * 
+     * @param walletService the business logic service for wallet operations.
+     */
+    public WalletController(WalletService walletService) {
+        this.walletService = walletService;
+    }
+
+    /**
+     * Creates a new wallet for the currently authenticated user.
+     * This is typically invoked upon user registration or when a user first attempts to use wallet features.
+     * Prevents the creation of duplicate wallets for a single user.
      *
-     * @param authentication The authentication object.
-     * @param request        The HTTP request.
-     * @return A response entity with the created wallet details.
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @param request        The current HTTP request context.
+     * @return A ResponseEntity containing a success message and the newly created wallet data, 
+     *         or an error response if creation fails (e.g., wallet already exists).
      */
     @PostMapping("/createWallet")
     @PreAuthorize("isAuthenticated()")
@@ -74,10 +93,10 @@ public class WalletController {
     }
 
     /**
-     * Retrieves the wallet details for the authenticated user.
+     * Retrieves the wallet details (monetary and gold balances) for the currently authenticated user.
      *
-     * @param authentication The authentication object.
-     * @return The wallet details.
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @return A ResponseEntity containing the user's WalletDTO, or a 404 Not Found if no wallet exists for the user.
      */
     @GetMapping("/getWallet")
     @PreAuthorize("isAuthenticated()")
@@ -99,11 +118,13 @@ public class WalletController {
     }
 
     /**
-     * Updates wallets after a trade. Internal endpoint.
+     * Internal endpoint to atomically update the wallets of both the buyer and seller upon trade execution.
+     * This endpoint bypasses standard user authentication but requires a shared internal secret
+     * to prevent unauthorized public access.
      *
-     * @param internalSecret The secret token for internal authorization.
-     * @param tradeDTO       The trade details affecting the wallets.
-     * @return A success message or error.
+     * @param internalSecret The secret token provided in the 'X-Internal-Secret' header for internal authorization.
+     * @param tradeDTO       The Data Transfer Object containing trade details (buyer ID, seller ID, quantity, price).
+     * @return A ResponseEntity indicating successful update or unauthorized/server error.
      */
     @PostMapping("/internal/updateWallets")
     public ResponseEntity<?> updateWallets(@RequestHeader("X-Internal-Secret") String internalSecret, @RequestBody TradeDTO tradeDTO) {
@@ -125,11 +146,12 @@ public class WalletController {
     }
 
     /**
-     * Adds money to the authenticated user's wallet.
+     * Handles requests to add fiat currency to the authenticated user's wallet.
+     * Expected to be used when a user deposits funds via a payment gateway.
      *
-     * @param req            The request containing the amount to add.
-     * @param authentication The authentication object.
-     * @return A success message.
+     * @param req            The payload containing the specific monetary amount to be added. Validated for constraints (e.g., positive value).
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @return A ResponseEntity with a success message confirming the addition.
      */
     @PostMapping("/addMoney")
     @PreAuthorize("isAuthenticated()")
@@ -145,11 +167,12 @@ public class WalletController {
     }
 
     /**
-     * Withdraws money from the authenticated user's wallet.
+     * Handles requests to withdraw fiat currency from the authenticated user's wallet.
+     * Ensures the user has a sufficient balance before processing the withdrawal.
      *
-     * @param req            The request containing the amount to withdraw.
-     * @param authentication The authentication object.
-     * @return A success message or error.
+     * @param req            The payload containing the monetary amount to be withdrawn.
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @return A ResponseEntity indicating a successful withdrawal or a 400 Bad Request if funds are insufficient.
      */
     @PostMapping("/withdrawMoney")
     @PreAuthorize("isAuthenticated()")
@@ -170,11 +193,12 @@ public class WalletController {
     }
 
     /**
-     * Adds gold to the authenticated user's wallet.
+     * Handles requests to add physical or digital gold to the authenticated user's wallet.
+     * Typically used for direct deposits of gold into the user's account.
      *
-     * @param req            The request containing the quantity of gold to add.
-     * @param authentication The authentication object.
-     * @return A success message.
+     * @param req            The payload indicating the exact quantity of gold to add.
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @return A ResponseEntity with a success message confirming the addition.
      */
     @PostMapping("/addGold")
     @PreAuthorize("isAuthenticated()")
@@ -191,11 +215,12 @@ public class WalletController {
     }
 
     /**
-     * Withdraws gold from the authenticated user's wallet.
+     * Handles requests to withdraw gold from the authenticated user's wallet.
+     * Ensures the user has an adequate gold balance before completing the withdrawal.
      *
-     * @param req            The request containing the quantity of gold to withdraw.
-     * @param authentication The authentication object.
-     * @return A success message.
+     * @param req            The payload indicating the exact quantity of gold to be withdrawn.
+     * @param authentication The Spring Security authentication object containing the user's principal (userId).
+     * @return A ResponseEntity indicating a successful withdrawal or error if there is insufficient gold.
      */
     @PostMapping("/withdrawGold")
     @PreAuthorize("isAuthenticated()")

@@ -4,8 +4,9 @@ import io.goldexchange.wallet_service.dto.TradeDTO;
 import io.goldexchange.wallet_service.dto.WalletDTO;
 
 /**
- * Interface for Wallet Service.
- * Defines methods for wallet management and transactions.
+ * Interface defining the contract for the Wallet Service.
+ * Outlines the necessary methods for wallet lifecycle management and transaction processing,
+ * such as querying balances, creating wallets, and handling fund/gold transfers.
  */
 public interface WalletService {
 

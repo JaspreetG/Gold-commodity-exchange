@@ -2,6 +2,7 @@ package io.goldexchange.trade_service.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -17,10 +18,17 @@ import java.util.List;
  * Configures JWT authentication, CORS, and request authorization rules.
  */
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
+    /** Filter that validates JWT tokens for incoming requests. */
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    /**
+     * Constructs the SecurityConfig.
+     *
+     * @param jwtAuthenticationFilter The JWT filter.
+     */
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }

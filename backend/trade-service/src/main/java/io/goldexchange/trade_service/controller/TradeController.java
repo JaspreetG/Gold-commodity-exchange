@@ -28,10 +28,17 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("api/trade")
 public class TradeController {
 
+    /** Logger for tracking trade controller activities. */
     private static final Logger logger = LoggerFactory.getLogger(TradeController.class);
 
+    /** Service for handling trade business logic. */
     private final TradeService tradeService;
 
+    /**
+     * Constructs a new TradeController with the specified TradeService.
+     *
+     * @param tradeService The service used for trade operations.
+     */
     public TradeController(TradeService tradeService) {
         this.tradeService = tradeService;
     }

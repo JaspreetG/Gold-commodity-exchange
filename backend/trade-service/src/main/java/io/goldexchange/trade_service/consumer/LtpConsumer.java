@@ -6,27 +6,13 @@ import org.springframework.stereotype.Component;
 
 import io.goldexchange.trade_service.webSocket.LtpCache;
 
-// @Component
-// public class LtpConsumer {
-//     private final SimpMessagingTemplate messagingTemplate;
-
-//     public LtpConsumer(SimpMessagingTemplate messagingTemplate) {
-//         this.messagingTemplate = messagingTemplate;
-//     }
-
-//     @KafkaListener(topics = "ltp", groupId = "MatchingEngine-group")
-//     public void listenLtp(String message) {
-//         // Forward LTP to WebSocket clients
-//         messagingTemplate.convertAndSend("/topic/ltp", message);
-//     }
-// }
-
 /**
  * Kafka Consumer for Last Traded Price (LTP) updates.
  */
 @Component
 public class LtpConsumer {
 
+    /** Cache component for storing the most recently traded price. */
     private final LtpCache ltpCache;
 
     /**

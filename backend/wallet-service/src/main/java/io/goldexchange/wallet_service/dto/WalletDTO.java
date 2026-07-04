@@ -5,7 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /**
- * Data Transfer Object for Wallet details.
+ * Data Transfer Object (DTO) for conveying Wallet details to clients.
+ * This object is used to decouple the internal database entity from the external API representation,
+ * ensuring that only relevant data (balances and identifiers) is exposed over the network.
  */
 @Data
 @NoArgsConstructor
@@ -13,22 +15,22 @@ import lombok.AllArgsConstructor;
 public class WalletDTO {
     
     /**
-     * The unique identifier of the wallet.
+     * The primary key, auto-generated unique identifier for the wallet.
      */
     private Long walletId;
 
     /**
-     * The identifier of the user owning the wallet.
+     * The unique identifier of the user who owns the wallet.
      */
     private Long userId;
 
     /**
-     * The currency balance (e.g., INR).
+     * The current fiat currency balance of the user (e.g., INR).
      */
     private Double balance;
 
     /**
-     * The gold balance (in grams).
+     * The current physical or digital gold balance of the user (in grams).
      */
     private Double gold;
 }

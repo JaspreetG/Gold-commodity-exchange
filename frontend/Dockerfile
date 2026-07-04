@@ -2,8 +2,10 @@
 FROM --platform=$BUILDPLATFORM node:18-slim AS build
 
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
 COPY . .
-RUN npm install && npm run build
+RUN npm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine

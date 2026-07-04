@@ -12,11 +12,28 @@
 
 namespace core
 {
+    /**
+     * @brief Constructor for OrderMatchingService.
+     * 
+     * Initializes the service by acquiring the singleton instance of the OrderBook.
+     * It also implicitly initializes the Kafka producers for trades, LTP, and orderbook snapshots.
+     */
     OrderMatchingService::OrderMatchingService()
-        : book_(OrderBook::getInstance()), tradeProd_(), ltpProd_(), obProd_() // Initialize all members
+        : book_(OrderBook::getInstance())
     {
     }
 
+    /**
+     * @brief Core handler for processing an incoming order.
+     * 
+     * Takes an OrderData DTO, creates an Order object, and determines the appropriate 
+     * matching strategy via the StrategyFactory. It then executes the strategy against 
+     * the order book.
+     * Finally, it publishes any resulting trades, the new Last Traded Price (LTP),
+     * and the updated OrderBook snapshot to Kafka.
+     * 
+     * @param dto The data transfer object containing the incoming order's parameters.
+     */
     void OrderMatchingService::handleOrder(const dto::OrderData &dto)
     {
 

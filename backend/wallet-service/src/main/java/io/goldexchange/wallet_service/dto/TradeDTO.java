@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /**
- * DTO representing trade details for wallet updates.
+ * Data Transfer Object (DTO) encapsulating the details of a successfully executed trade.
+ * Used internally across microservices to process the financial impact (fiat and gold transfers)
+ * on the wallets of the users involved in the trade.
  */
 @Data
 @NoArgsConstructor
@@ -14,32 +16,34 @@ import lombok.AllArgsConstructor;
 public class TradeDTO {
 
     /**
-     * The ID of the buyer.
+     * The unique identifier of the user acting as the buyer in the trade.
+     * This user will pay fiat currency and receive gold.
      */
     private String buyUserId;  //buyer
 
     /**
-     * The ID of the seller.
+     * The unique identifier of the user acting as the seller in the trade.
+     * This user will surrender gold and receive fiat currency.
      */
     private String sellUserId; // seller
 
     /**
-     * The ID of the buy order.
+     * The identifier of the specific buy order that was matched in this trade.
      */
     private String buyOrderId;  //buyer
 
     /**
-     * The ID of the sell order.
+     * The identifier of the specific sell order that was matched in this trade.
      */
     private String sellOrderId;  // seller
 
     /**
-     * The execution price.
+     * The agreed-upon execution price per unit of gold for this trade.
      */
     private Double price;
 
     /**
-     * The executed quantity.
+     * The total quantity of gold exchanged in this specific trade execution.
      */
     private int quantity;
 

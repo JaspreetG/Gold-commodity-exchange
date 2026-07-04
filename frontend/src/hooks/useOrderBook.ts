@@ -36,7 +36,6 @@ export const useOrderBook = () => {
         // debug: (str) => console.log("[STOMP - OrderBook]", str),
         reconnectDelay: 5000,
         onConnect: () => {
-          // console.log("Connected to WebSocket /topic/orderbook");
           client.subscribe("/topic/orderbook", (message) => {
             const body: OrderBook = JSON.parse(message.body);
             setOrderBook(body);
